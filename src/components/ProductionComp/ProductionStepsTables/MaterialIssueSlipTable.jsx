@@ -4,9 +4,15 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import { MdModeEdit } from "react-icons/md";
 import { RiDeleteBin5Line } from "react-icons/ri";
+import { useRouter } from "next/navigation";
 
 const MaterialIssueSlipTable = ({ productionStep }) => {
   console.log("productionStep", productionStep);
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push("/production/production-planning-sheets/materialIssueForm")
+  }
 
   const CustomButtonComponent = (props) => {
     return (
@@ -148,7 +154,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
       {/* Button positioned at the top right corner */}
       <button
         className="self-end m-4 bg-gray-400 px-4 py-2 rounded-lg"
-        // onClick={handleClick}
+        onClick={handleClick}
       >
         Create
       </button>
