@@ -3,12 +3,16 @@ import MaterialIssueForm from "@/components/ProductionComp/ProductionStepsForms/
 import ProductionReportForm from "@/components/ProductionComp/ProductionStepsForms/ProductionReportForm";
 import ProductionSheetForm from "@/components/ProductionComp/ProductionStepsForms/ProductionSheetForm";
 import RoutingSheetForm from "@/components/ProductionComp/ProductionStepsForms/RoutingSheetForm";
+import ProductionForm from "@/components/ProductionComp/ProductionStepsForms/productionForm";
 
 const productionForm = ({ params }) => {
   const { productionForm } = params;
   console.log("productionStep", productionForm);
   return (
     <div className="bg-gray-300">
+      {productionForm === "productionForm" && (
+        <ProductionForm productionForm={productionForm} />
+      )}
       {productionForm === "productionSheetForm" && (
         <ProductionSheetForm productionForm={productionForm} />
       )}

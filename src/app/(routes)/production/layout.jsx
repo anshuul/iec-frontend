@@ -2,7 +2,6 @@
 import ProductionHeader from "@/components/ProductionComp/ProductionHeader";
 import { SelectedItemProvider } from "@/context/SelectedItemContext";
 import { usePathname } from "next/navigation";
-import Link from "next/link";
 
 const ProductionLayout = ({ children }) => {
   const pathName = usePathname();
@@ -10,6 +9,7 @@ const ProductionLayout = ({ children }) => {
   // Define the valid paths that should show the layout
   const validPaths = [
     "/production",
+    "/production/productionSheetForm",
     "/production/production-planning-sheets",
     "/production/material-issue-slip",
     "/production/routing-sheet",
