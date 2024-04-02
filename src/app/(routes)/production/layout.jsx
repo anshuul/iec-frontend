@@ -9,6 +9,7 @@ const ProductionLayout = ({ children }) => {
 
   // Define the valid paths that should show the layout
   const validPaths = [
+    "/production",
     "/production/production-planning-sheets",
     "/production/material-issue-slip",
     "/production/routing-sheet",
