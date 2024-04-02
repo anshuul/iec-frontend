@@ -9,7 +9,7 @@ const ProducitonStep = ({ params }) => {
   console.log("productionStep", productionStep);
 
   return (
-    <div className="bg-gray-500">
+    <div className="bg-gray-300">
       {productionStep === "production-planning-sheets" && (
         <ProductionSheetTable productionStep={productionStep} />
       )}

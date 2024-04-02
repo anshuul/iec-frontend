@@ -11,8 +11,8 @@ const ProductionSheetTable = ({ productionStep }) => {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push("/production/production-planning-sheets/productionSheetForm")
-  }
+    router.push(`/production/${productionStep}/productionSheetForm`);
+  };
 
   const CustomButtonComponent = (props) => {
     return (
@@ -34,11 +34,16 @@ const ProductionSheetTable = ({ productionStep }) => {
   };
 
   const columnDefs = [
-    { headerName: "Sr No", field: "srNo", flex: 0.5 },
-    { headerName: "Production Planning", field: "ProductionPlanning", flex: 3 },
-    { headerName: "Created Data", field: "CreatedData", flex: 3 },
-    { headerName: "Created By", field: "CreatedBy", flex: 3 },
-    { headerName: "Action", cellRenderer: CustomButtonComponent, flex: 1 },
+    { headerName: "Sr No", field: "srNo", minWidth: 50, maxWidth: 80 },
+    { headerName: "Production Planning", field: "ProductionPlanning", flex: 1 },
+    { headerName: "Created Data", field: "CreatedData", flex: 1 },
+    { headerName: "Created By", field: "CreatedBy", flex: 1 },
+    {
+      headerName: "Action",
+      cellRenderer: CustomButtonComponent,
+      minWidth: 150,
+      maxWidth: 200,
+    },
   ];
 
   const rowData = [
@@ -94,7 +99,7 @@ const ProductionSheetTable = ({ productionStep }) => {
 
   return (
     // <div className="flex flex-col justify-center items-center">
-    <div className="flex flex-col bg-white">
+    <div className="flex flex-col mx-4 bg-white">
       {/* Button positioned at the top right corner */}
       <button
         className="self-end m-4 bg-gray-400 px-4 py-2 rounded-lg"

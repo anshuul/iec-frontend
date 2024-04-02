@@ -40,7 +40,7 @@ const ProductionTable = () => {
 
   return (
     <div 
-      className="ag-theme-alpine p-4 w-full h-[90vh]"
+      className="ag-theme-alpine px-4 w-full h-[90vh]"
       // style={{ width: "100%", height: "100vh"}}
     >
       <AgGridReact

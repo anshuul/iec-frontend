@@ -8,7 +8,7 @@ const productionForm = ({ params }) => {
   const { productionForm } = params;
   console.log("productionStep", productionForm);
   return (
-    <div>
+    <div className="bg-gray-300">
       {productionForm === "productionSheetForm" && (
         <ProductionSheetForm productionForm={productionForm} />
       )}

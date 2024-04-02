@@ -12,8 +12,8 @@ const DimensionReport = ({ productionStep }) => {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push("/production/production-planning-sheets/dimensionReportForm")
-  }
+    router.push(`/production/${productionStep}/dimensionReportForm`);
+  };
 
   const CustomButtonComponent = (props) => {
     return (
@@ -35,11 +35,15 @@ const DimensionReport = ({ productionStep }) => {
   };
 
   const columnDefs = [
-    { headerName: "Sr No", field: "srNo", flex: 0.5 },
-    { headerName: "Production Planning", field: "ProductionPlanning", flex: 3 },
-    { headerName: "Created Data", field: "CreatedData", flex: 3 },
-    { headerName: "Created By", field: "CreatedBy", flex: 3 },
-    { headerName: "Action", cellRenderer: CustomButtonComponent, flex: 1 },
+    { headerName: "Sr No", field: "srNo", maxWidth: 80 },
+    {
+      headerName: "Production Planning",
+      field: "ProductionPlanning",
+      minWidth: 400,
+    },
+    { headerName: "Created Data", field: "CreatedData", minWidth: 400 },
+    { headerName: "Created By", field: "CreatedBy", minWidth: 400 },
+    { headerName: "Action", cellRenderer: CustomButtonComponent },
   ];
 
   const rowData = [
@@ -71,7 +75,7 @@ const DimensionReport = ({ productionStep }) => {
 
   return (
     // <div className="flex flex-col justify-center items-center">
-    <div className="flex flex-col bg-white">
+    <div className="flex flex-col mx-4 bg-white">
       {/* Button positioned at the top right corner */}
       <button
         className="self-end m-4 bg-gray-400 px-4 py-2 rounded-lg"

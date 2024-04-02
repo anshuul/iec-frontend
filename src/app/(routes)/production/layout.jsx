@@ -28,7 +28,7 @@ const ProductionLayout = ({ children }) => {
     <div className="">
       <SelectedItemProvider>
         {isProducitonPage && !hasAdditionalSegments ? (
-          <div className="w-full bg-white">
+          <div className="w-full bg-gray-300">
             <ProductionHeader />
             {children}
           </div>

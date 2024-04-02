@@ -11,8 +11,8 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push("/production/production-planning-sheets/materialIssueForm")
-  }
+    router.push(`/production/${productionStep}/materialIssueForm`);
+  };
 
   const CustomButtonComponent = (props) => {
     return (
@@ -34,15 +34,15 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
   };
 
   const columnDefs = [
-    { headerName: "Sr No", field: "srNo", flex: 1 },
-    { headerName: "PO Number", field: "PONumber", flex: 2 },
-    { headerName: "Item Desc", field: "ItemDesc", flex: 2 },
-    { headerName: "Material Grade", field: "MaterialGrade", flex: 2 },
-    { headerName: "Size", field: "Size", flex: 2 },
-    { headerName: "Quantity Required", field: "QuantityRequired", flex: 2 },
-    { headerName: "Quantity Issued", field: "QuantityIssued", flex: 2 },
-    { headerName: "Remarks", field: "Remarks", flex: 2 },
-    { headerName: "Action", cellRenderer: CustomButtonComponent, flex: 1 },
+    { headerName: "Sr No", field: "srNo", maxWidth: 80 },
+    { headerName: "PO Number", field: "PONumber" },
+    { headerName: "Item Desc", field: "ItemDesc" },
+    { headerName: "Material Grade", field: "MaterialGrade" },
+    { headerName: "Size", field: "Size" },
+    { headerName: "Quantity Required", field: "QuantityRequired" },
+    { headerName: "Quantity Issued", field: "QuantityIssued" },
+    { headerName: "Remarks", field: "Remarks" },
+    { headerName: "Action", cellRenderer: CustomButtonComponent },
   ];
 
   const rowData = [
@@ -150,7 +150,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
 
   return (
     // <div className="flex flex-col justify-center items-center">
-    <div className="flex flex-col bg-white">
+    <div className="flex flex-col mx-4 bg-white">
       {/* Button positioned at the top right corner */}
       <button
         className="self-end m-4 bg-gray-400 px-4 py-2 rounded-lg"

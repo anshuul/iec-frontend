@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
       <body className="scrollbar-none scroll-smooth bg-white">
         <div className="flex h-full">
           <SideBar />
-          <div className="w-full bg-white">
+          <div className="w-full bg-gray-300">
             <Header />
             {children}
           </div>
