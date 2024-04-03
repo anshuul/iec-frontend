@@ -5,43 +5,46 @@ import { useEffect, useState } from "react";
 import { FiArrowLeft, FiFile, FiPrinter, FiSave } from "react-icons/fi";
 import axios from "axios";
 
-const ProductionForm = () => {
+const CutomerPoHistoryForm = () => {
   const searchParams = useSearchParams();
 
-  const CustomerPO = searchParams.get("CustomerPO");
-  console.log("first", CustomerPO);
+  const poNo = searchParams.get("CustomerPO");
+  const historyId = searchParams.get("historyId");
+  console.log("poNo", poNo);
+  console.log("historyId", historyId);
 
   const router = useRouter();
-  const [customerName, setCustomerName] = useState("Vishal Doshi");
-  const [poNo, setPoNo] = useState("");
-  const [materialCode, setMaterialCode] = useState("");
-  const [itemDescription, setItemDescription] = useState("");
-  const [itemGrade, setItemGrade] = useState("");
-  const [sizeFirstPart, setSizeFirstPart] = useState("");
-  const [sizeSecondPart, setSizeSecondPart] = useState("");
-  const [sizeThirdPart, setSizeThirdPart] = useState("");
-  const [quantity, setQuantity] = useState("");
+  const [customerPO, setCustomerPO] = useState({
+    customerName: "",
+    poNo: "",
+    materialCode: "",
+    itemDescription: "",
+    itemGrade: "",
+    size: {
+      diameter: "",
+      thread: "",
+      unit: "",
+    },
+    quantity: "",
+  });
   const [selectedFile, setSelectedFile] = useState(null);
-
   useEffect(() => {
-    try {
-      const fetchData = async () => {
-        try {
-          const response = await axios.get(
-            `http://localhost:8000/api/customerPO/${CustomerPO}`
-          );
-          setRowData(response);
-          // router.push("/production");
-          console.log("response", response);
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        }
-      };
-      fetchData();
-    } catch (error) {
-      console.log(error);
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8000/api/customerPO/customerPOHistory/${poNo}/${historyId}`
+        );
+        
+        setCustomerPO(response.data.historyRecord.previousData); // Set the customer PO data in state
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    if (poNo && historyId) {
+      fetchData(); // Fetch customer PO data when CustomerPO is available
     }
-  }, []);
+  }, [poNo, historyId]);
 
   const handleFileSelection = (e) => {
     const file = e.target.files[0];
@@ -60,24 +63,12 @@ const ProductionForm = () => {
 
   const saveFormData = async () => {
     try {
-      const response = await axios.post(
-        "http://localhost:8000/api/customerPO/createCustomerPO",
-        {
-          customerName,
-          poNo, // Make sure to get the value from the input field
-          materialCode, // Get the value from the input field
-          itemDescription, // Get the value from the input field
-          itemGrade, // Get the value from the input field
-          size: {
-            diameter: sizeFirstPart, // Get the value from the input field
-            thread: sizeSecondPart, // Get the value from the input field
-            unit: sizeThirdPart, // Get the value from the input field
-          },
-          quantity,
-          // attachment: selectedFile?.name,
-        }
+      const response = await axios.put(
+        `http://localhost:8000/api/customerPO/update/${poNo}`,
+        customerPO
       );
       console.log("response ", response);
+      router.push("/production");
     } catch (error) {
       console.log(error);
     }
@@ -101,8 +92,10 @@ const ProductionForm = () => {
             <input
               id="poNo"
               type="text"
-              value={poNo}
-              onChange={(e) => setPoNo(e.target.value)}
+              value={customerPO.poNo}
+              onChange={(e) =>
+                setCustomerPO({ ...customerPO, poNo: e.target.value })
+              }
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -118,8 +111,10 @@ const ProductionForm = () => {
               id="ProductionName"
               type="text"
               placeholder="Input"
-              value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
+              value={customerPO.customerName}
+              onChange={(e) =>
+                setCustomerPO({ ...customerPO, customerName: e.target.value })
+              }
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
@@ -133,8 +128,10 @@ const ProductionForm = () => {
             <input
               id="materialCode"
               type="text"
-              value={materialCode}
-              onChange={(e) => setMaterialCode(e.target.value)}
+              value={customerPO.materialCode}
+              onChange={(e) =>
+                setCustomerPO({ ...customerPO, materialCode: e.target.value })
+              }
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -149,8 +146,13 @@ const ProductionForm = () => {
             <input
               id="itemDescription"
               type="text"
-              value={itemDescription}
-              onChange={(e) => setItemDescription(e.target.value)}
+              value={customerPO.itemDescription}
+              onChange={(e) =>
+                setCustomerPO({
+                  ...customerPO,
+                  itemDescription: e.target.value,
+                })
+              }
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -165,8 +167,10 @@ const ProductionForm = () => {
             <input
               id="itemGrade"
               type="text"
-              value={itemGrade}
-              onChange={(e) => setItemGrade(e.target.value)}
+              value={customerPO.itemGrade}
+              onChange={(e) =>
+                setCustomerPO({ ...customerPO, itemGrade: e.target.value })
+              }
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -186,8 +190,13 @@ const ProductionForm = () => {
             <input
               id="sizeFirstPart"
               type="text"
-              value={sizeFirstPart}
-              onChange={(e) => setSizeFirstPart(e.target.value)}
+              value={customerPO.size.diameter}
+              onChange={(e) =>
+                setCustomerPO({
+                  ...customerPO,
+                  size: { ...customerPO.size, diameter: e.target.value },
+                })
+              }
               placeholder="Input"
               className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -200,8 +209,13 @@ const ProductionForm = () => {
             <input
               id="sizeFirstPart"
               type="text"
-              value={sizeSecondPart}
-              onChange={(e) => setSizeSecondPart(e.target.value)}
+              value={customerPO.size.thread}
+              onChange={(e) =>
+                setCustomerPO({
+                  ...customerPO,
+                  size: { ...customerPO.size, thread: e.target.value },
+                })
+              }
               placeholder="Input"
               className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -214,8 +228,13 @@ const ProductionForm = () => {
             <input
               id="sizeFirstPart"
               type="text"
-              value={sizeThirdPart}
-              onChange={(e) => setSizeThirdPart(e.target.value)}
+              value={customerPO.size.unit}
+              onChange={(e) =>
+                setCustomerPO({
+                  ...customerPO,
+                  size: { ...customerPO.size, unit: e.target.value },
+                })
+              }
               placeholder="Input"
               className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -242,6 +261,10 @@ const ProductionForm = () => {
             <input
               type="text"
               placeholder="Input"
+              value={customerPO.quantity}
+              onChange={(e) =>
+                setCustomerPO({ ...customerPO, quantity: e.target.value })
+              }
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
@@ -294,4 +317,4 @@ const ProductionForm = () => {
   );
 };
 
-export default ProductionForm;
+export default CutomerPoHistoryForm;

@@ -27,12 +27,14 @@ const LoginPage = () => {
       if (response.status === 200) {
         // If login is successful, redirect or perform any other action
         const userData = response.data;
+        console.log("userData ", userData)
 
-        // Store user data in cookies
-        Cookies.set("userData", userData, { expires: 7 });
+        const token = userData.token;
+
+        document.cookie = `token=${token}`;
 
         console.log("Login successful");
-        router.push("/production");
+        router.push("/");
       } else {
         // If login fails, display error message
         console.error("Login failed:");
@@ -58,7 +60,7 @@ const LoginPage = () => {
         </div>
 
         <form 
-        // onSubmit={handleSubmit}
+        onSubmit={handleSubmit}
         >
           {/* Email Input */}
           <input
