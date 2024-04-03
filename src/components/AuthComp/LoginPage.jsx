@@ -43,26 +43,28 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
-      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full mx-4 md:max-w-screen-md border container border-black">
+    <div className="flex items-center justify-center h-screen">
+      <div className="container w-full px-8 pt-6 pb-8 mx-4 mb-4 bg-white border border-black rounded shadow-md md:max-w-screen-md">
         <div className="text-center">
           {/* Logo */}
           <img
             src="/loginlogo.jpeg"
             alt="Logo"
-            className="w-20 h-20 mb-8 mx-auto"
+            className="w-20 h-20 mx-auto mb-8"
           />
 
           {/* Title */}
-          <h1 className="text-3xl font-bold mb-4">Log In</h1>
+          <h1 className="mb-4 text-3xl font-bold">Log In</h1>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <form 
+        // onSubmit={handleSubmit}
+        >
           {/* Email Input */}
           <input
             type="email"
             placeholder="Email"
-            className="w-full h-10 border border-gray-500 bg-gray-200 rounded py-4 px-6 mb-4 block mx-auto text-xl"
+            className="block w-full h-10 px-6 py-4 mx-auto mb-4 text-xl bg-gray-200 border border-gray-500 rounded"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -72,7 +74,7 @@ const LoginPage = () => {
           <input
             type="password"
             placeholder="Password"
-            className="w-full h-10 border border-gray-500 bg-gray-200 rounded py-4 px-6 mb-4 block mx-auto text-xl"
+            className="block w-full h-10 px-6 py-4 mx-auto mb-4 text-xl bg-gray-200 border border-gray-500 rounded"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -81,7 +83,7 @@ const LoginPage = () => {
           {/* Login Button */}
           <button
             type="submit"
-            className="bg-blue-500 text-white px-4 py-2 text-xl rounded hover:bg-blue-600 block mx-auto"
+            className="block px-4 py-2 mx-auto text-xl text-white bg-blue-500 rounded hover:bg-blue-600"
           >
             Log In
           </button>
