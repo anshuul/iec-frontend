@@ -26,6 +26,7 @@ const CutomerPoHistoryForm = () => {
       unit: "",
     },
     quantity: "",
+    createdAt: "",
   });
   const [selectedFile, setSelectedFile] = useState(null);
   useEffect(() => {
@@ -34,7 +35,7 @@ const CutomerPoHistoryForm = () => {
         const response = await axios.get(
           `http://localhost:8000/api/customerPO/customerPOHistory/${poNo}/${historyId}`
         );
-        
+
         setCustomerPO(response.data.historyRecord.previousData); // Set the customer PO data in state
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -269,6 +270,26 @@ const CutomerPoHistoryForm = () => {
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
               Quantity
+            </span>
+          </label>
+        </div>
+
+        <div className="flex items-center my-4">
+          <label className="relative cursor-pointer App">
+            <input
+              type="text"
+              placeholder="Input"
+              value={new Date(customerPO.createdAt).toLocaleString(undefined, {
+                dateStyle: "long",
+                timeStyle: "medium",
+              })}
+              onChange={(e) =>
+                setCustomerPO({ ...customerPO, quantity: e.target.value })
+              }
+              className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+            />
+            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+              createdAt
             </span>
           </label>
         </div>

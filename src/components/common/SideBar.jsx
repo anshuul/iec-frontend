@@ -41,26 +41,31 @@ const SideBar = () => {
   return (
     <div className="flex bg-white">
       <div
-        className={` ${open ? "w-72" : "w-20 "
-          } bg-dark-purple h-screen p-5 pt-4 relative duration-300`}
+        className={` ${
+          open ? "w-72" : "w-20 "
+        } bg-dark-purple h-screen p-5 pt-4 relative duration-300`}
       >
         {/* <div className=""> */}
-        <MdOutlineKeyboardArrowLeft
-          className={`absolute cursor-pointer -right-3 top-4 h-[42px] w-[42px] rounded-full  ${!open && "rotate-180"
-            }`}
+        {/* <MdOutlineKeyboardArrowLeft
+          className={`absolute cursor-pointer -right-3 top-4 h-[42px] w-[42px] rounded-full  ${
+            !open && "rotate-180"
+          }`}
           onClick={() => setOpen(!open)}
-        />
+        /> */}
         {/* </div> */}
         <Link href={"/"}>
           <div className="flex items-center gap-x-4">
             <img
               src="/homelogo.jpeg"
-              className={`cursor-pointer duration-500 h-[42px] w-[42px] ${open && "rotate-[360deg]"
-                }`}
+              className={`cursor-pointer duration-500 h-[42px] w-[42px] ${
+                open && "rotate-[360deg]"
+              }`}
+              onClick={() => setOpen(!open)}
             />
             <h1
-              className={`text-black origin-left font-medium text-xl duration-200 ${!open && "scale-0"
-                }`}
+              className={`text-black origin-left font-medium text-xl duration-200 ${
+                !open && "scale-0"
+              }`}
             >
               IEC
             </h1>

@@ -64,20 +64,20 @@ const ProductionForm = () => {
         "http://localhost:8000/api/customerPO/createCustomerPO",
         {
           customerName,
-          poNo, // Make sure to get the value from the input field
-          materialCode, // Get the value from the input field
-          itemDescription, // Get the value from the input field
-          itemGrade, // Get the value from the input field
+          poNo,
+          materialCode,
+          itemDescription,
+          itemGrade,
           size: {
-            diameter: sizeFirstPart, // Get the value from the input field
-            thread: sizeSecondPart, // Get the value from the input field
-            unit: sizeThirdPart, // Get the value from the input field
+            diameter: sizeFirstPart,
+            thread: sizeSecondPart,
+            unit: sizeThirdPart, 
           },
           quantity,
-          // attachment: selectedFile?.name,
         }
       );
       console.log("response ", response);
+      router.push("/production")
     } catch (error) {
       console.log(error);
     }
@@ -206,7 +206,7 @@ const ProductionForm = () => {
               className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              Thread
+              Pitch
             </span>
           </label>
           {/* Unit */}
@@ -220,7 +220,7 @@ const ProductionForm = () => {
               className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              Unit
+              Length
             </span>
           </label>
           <label

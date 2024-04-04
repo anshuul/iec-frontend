@@ -7,7 +7,7 @@ import { IoSearch } from "react-icons/io5";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { BsInfoCircle } from "react-icons/bs";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
 const ProductionTable = () => {
@@ -16,6 +16,7 @@ const ProductionTable = () => {
   const [historyRowData, setHistoryRowData] = useState([]);
   const [showHistoryTable, setShowHistoryTable] = useState(false);
   const [loading, setLoading] = useState(false);
+  const gridApiRef = useRef(null);
 
   useEffect(() => {
     try {
@@ -44,7 +45,17 @@ const ProductionTable = () => {
     } catch (error) {
       console.log(error);
     }
+
+    // Clear localStorage on component unmount or tab close
+    window.addEventListener("beforeunload", clearLocalStorage);
+    return () => {
+      window.removeEventListener("beforeunload", clearLocalStorage);
+    };
   }, []);
+
+  const clearLocalStorage = () => {
+    localStorage.removeItem("selectedCustomerPO");
+  };
 
   const handleClick = () => {
     router.push(`/production/production-page/productionForm`);
@@ -54,9 +65,19 @@ const ProductionTable = () => {
     router.push(`/production/productionForm/update?CustomerPO=${CustomerPO}`);
   };
 
-  const handleDeleteClick = (data) => {
-    const updatedRows = rowData.filter((row) => row !== data);
-    setRowData(updatedRows);
+  const handleDeleteClick = async (data) => {
+    try {
+      setLoading(true);
+      await axios.delete(
+        `http://localhost:8000/api/customerPO/delete/${data.CustomerPO}`
+      );
+      const updatedRows = rowData.filter((row) => row !== data);
+      setRowData(updatedRows);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      setLoading(false);
+    }
   };
 
   const handleHistoryClick = async (poNo) => {
@@ -69,6 +90,14 @@ const ProductionTable = () => {
         srNo: index + 1,
         CustomerPO: record.poNo,
         CustomerName: record.previousData.customerName,
+        CreatedAt: new Date(record.previousData.createdAt).toLocaleString(
+          undefined,
+          { dateStyle: "long", timeStyle: "medium" }
+        ), // Convert to pretty format
+        UpdatedAt: new Date(record.previousData.updatedAt).toLocaleString(
+          undefined,
+          { dateStyle: "long", timeStyle: "medium" }
+        ), // Convert to pretty format
         historyId: record._id,
       }));
       setHistoryRowData(historyData);
@@ -90,6 +119,7 @@ const ProductionTable = () => {
         >
           <MdModeEdit />
         </button>
+        {/* Delete Button */}
         <button
           onClick={() => handleDeleteClick(data)}
           className="p-2 bg-red-200 rounded-lg text-red-600"
@@ -148,6 +178,8 @@ const ProductionTable = () => {
     { headerName: "Sr No", field: "srNo", minWidth: 50, maxWidth: 80 },
     { headerName: "Customer PO", field: "CustomerPO", flex: 1 },
     { headerName: "Customer Name", field: "CustomerName", flex: 1 },
+    { headerName: "CreatedAt", field: "CreatedAt", flex: 1 },
+    { headerName: "UpdatedAt", field: "UpdatedAt", flex: 1 },
     {
       headerName: "Action",
       cellRenderer: HistoryButton,
@@ -155,6 +187,29 @@ const ProductionTable = () => {
       maxWidth: 200,
     },
   ];
+
+  const onSelectionChanged = async () => {
+    const selectedRows = gridApiRef.current.getSelectedRows(); // Access gridApi using ref
+
+    if (selectedRows.length > 0) {
+      const selectedCustomerPO = selectedRows[0].CustomerPO;
+      try {
+        setLoading(true);
+        const response = await axios.get(
+          `http://localhost:8000/api/customerPO/${selectedCustomerPO}`
+        );
+        const customerPOData = response.data.customerPO;
+        localStorage.setItem(
+          "selectedCustomerPO",
+          JSON.stringify(customerPOData)
+        );
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching customer PO data:", error);
+        setLoading(false);
+      }
+    }
+  };
 
   return (
     <div className="flex flex-col mx-4 h-screen bg-white">
@@ -175,6 +230,9 @@ const ProductionTable = () => {
           overlayLoadingTemplate={
             '<span class="ag-overlay-loading-center">Please wait while loading...</span>'
           }
+          onGridReady={(params) => (gridApiRef.current = params.api)} // Assign gridApi to ref
+          onSelectionChanged={onSelectionChanged}
+          rowSelection="single"
         />
       </div>
       {showHistoryTable ? (

@@ -6,12 +6,16 @@ import ProductionSheetForm from "@/components/ProductionComp/ProductionStepsForm
 import RoutingSheetForm from "@/components/ProductionComp/ProductionStepsForms/RoutingSheetForm";
 import CutomerPoHistoryForm from "@/components/ProductionComp/ProductionStepsForms/CutomerPoHistoryForm";
 import ProductionForm from "@/components/ProductionComp/ProductionStepsForms/productionForm";
+import ProductionSheetFormUpdate from "@/components/ProductionComp/productionFormUpdate/ProductionSheetFormUpdate";
 
 const productionForm = ({ params }) => {
   const { productionForm } = params;
   console.log("productionStep", productionForm);
   return (
     <div className="bg-gray-300">
+      {productionForm === "productionSheetFormUpdate" && (
+        <ProductionSheetFormUpdate productionForm={productionForm} />
+      )}
       {productionForm === "view" && (
         <CutomerPoHistoryForm productionForm={productionForm} />
       )}
