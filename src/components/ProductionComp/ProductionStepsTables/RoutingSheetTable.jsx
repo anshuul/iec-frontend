@@ -4,9 +4,15 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import { MdModeEdit } from "react-icons/md";
 import { RiDeleteBin5Line } from "react-icons/ri";
+import { useRouter } from "next/navigation";
 
 const RoutingSheetTable = ({ productionStep }) => {
   console.log("productionStep", productionStep);
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push(`/production/${productionStep}/routingSheetForm`);
+  };
 
   const CustomButtonComponent = (props) => {
     return (
@@ -28,11 +34,16 @@ const RoutingSheetTable = ({ productionStep }) => {
   };
 
   const columnDefs = [
-    { headerName: "Sr No", field: "srNo", flex: 0.5 },
-    { headerName: "Routing Sheets", field: "RoutingSheets", flex: 3 },
-    { headerName: "Created Data", field: "CreatedData", flex: 3 },
-    { headerName: "Created By", field: "CreatedBy", flex: 3 },
-    { headerName: "Action", cellRenderer: CustomButtonComponent, flex: 1 },
+    { headerName: "Sr No", field: "srNo", minWidth: 50, maxWidth: 80 },
+    { headerName: "Routing Sheets", field: "RoutingSheets", flex: 1 },
+    { headerName: "Created Data", field: "CreatedData", flex: 1 },
+    { headerName: "Created By", field: "CreatedBy", flex: 1 },
+    {
+      headerName: "Action",
+      cellRenderer: CustomButtonComponent,
+      minWidth: 150,
+      maxWidth: 200,
+    },
   ];
 
   const rowData = [
@@ -78,33 +89,15 @@ const RoutingSheetTable = ({ productionStep }) => {
       CreatedData: "2024-01-07",
       CreatedBy: "Sophia Lee",
     },
-    // {
-    //   srNo: 8,
-    //   RoutingSheets: "Routing Sheet 8",
-    //   CreatedData: "2024-01-08",
-    //   CreatedBy: "David Miller",
-    // },
-    // {
-    //   srNo: 9,
-    //   RoutingSheets: "Routing Sheet 9",
-    //   CreatedData: "2024-01-09",
-    //   CreatedBy: "Olivia Martinez",
-    // },
-    // {
-    //   srNo: 10,
-    //   RoutingSheets: "Routing Sheet 10",
-    //   CreatedData: "2024-01-10",
-    //   CreatedBy: "William Taylor",
-    // },
   ];
 
   return (
     // <div className="flex flex-col justify-center items-center">
-    <div className="flex flex-col bg-white">
+    <div className="flex flex-col mx-4 bg-white">
       {/* Button positioned at the top right corner */}
       <button
         className="self-end m-4 bg-gray-400 px-4 py-2 rounded-lg"
-        // onClick={handleClick}
+        onClick={handleClick}
       >
         Create
       </button>

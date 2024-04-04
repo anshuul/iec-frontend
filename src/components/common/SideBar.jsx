@@ -46,28 +46,31 @@ const SideBar = () => {
         } bg-dark-purple h-screen p-5 pt-4 relative duration-300`}
       >
         {/* <div className=""> */}
-        <MdOutlineKeyboardArrowLeft
+        {/* <MdOutlineKeyboardArrowLeft
           className={`absolute cursor-pointer -right-3 top-4 h-[42px] w-[42px] rounded-full  ${
             !open && "rotate-180"
           }`}
           onClick={() => setOpen(!open)}
-        />
+        /> */}
         {/* </div> */}
-        <div className="flex gap-x-4 items-center">
-          <img
-            src="/homelogo.jpeg"
-            className={`cursor-pointer duration-500 h-[42px] w-[42px] ${
-              open && "rotate-[360deg]"
-            }`}
-          />
-          <h1
-            className={`text-black origin-left font-medium text-xl duration-200 ${
-              !open && "scale-0"
-            }`}
-          >
-            IEC
-          </h1>
-        </div>
+        <Link href={"/"}>
+          <div className="flex items-center gap-x-4">
+            <img
+              src="/homelogo.jpeg"
+              className={`cursor-pointer duration-500 h-[42px] w-[42px] ${
+                open && "rotate-[360deg]"
+              }`}
+              onClick={() => setOpen(!open)}
+            />
+            <h1
+              className={`text-black origin-left font-medium text-xl duration-200 ${
+                !open && "scale-0"
+              }`}
+            >
+              IEC
+            </h1>
+          </div>
+        </Link>
 
         {open && <hr className="mt-8" />}
         <ul className="pt-6">
@@ -79,7 +82,7 @@ const SideBar = () => {
               mt-2 ${index === 0 && "bg-light-white"} `}
               >
                 {/* <img src={`./src/assets/${Menu.src}.png`} /> */}
-                <span className="text-black text-lg">{Menu.icon}</span>
+                <span className="text-lg text-black">{Menu.icon}</span>
                 <span
                   className={`${!open && "hidden"} origin-left duration-1000`}
                 >

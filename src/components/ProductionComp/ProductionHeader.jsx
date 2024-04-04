@@ -30,24 +30,25 @@ const ProductionHeader = () => {
   ];
 
   const isCurrentPath = (href) => {
-    return href === pathName ? "underline text-blue-500" : "";
+    return href === pathName ? "text-[#0093FD] border-b-2 border-b-blue-500" : "";
   };
 
   return (
-    // <Container>
-    <div className="flex items-center justify-start gap-4 mx-4 py-4 bg-white">
-      {links.map((link, index) => (
-        <Link
-          key={index}
-          href={link.href}
-          className={`mx-2 ${isCurrentPath(link.href)}`}
-          onClick={() => selectLink(link)}
-        >
-          {link.text}
-        </Link>
-      ))}
+    <div className="py-2 bg-white mx-4">
+      <div className="flex items-center justify-start mx-4 ">
+        {links.map((link, index) => (
+          <Link
+            key={index}
+            href={link.href}
+            className={`${isCurrentPath(link.href)} lg:text-[10px] xl:text-[16px] font-semibold pb-2 px-4`}
+            onClick={() => selectLink(link)}
+          >
+            {link.text}
+          </Link>
+        ))}
+      </div>
+      <hr className="border-b-2 border-b-gray-200 -mt-0.5" />
     </div>
-    //  </Container>
   );
 };
 
