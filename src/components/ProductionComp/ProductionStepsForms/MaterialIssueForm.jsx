@@ -1,7 +1,7 @@
 "use client";
 import Container from "@/components/common/Container";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiArrowLeft, FiFile } from "react-icons/fi";
 
 const MaterialIssueForm = () => {
@@ -10,10 +10,11 @@ const MaterialIssueForm = () => {
     "Default Material Slip"
   );
   const [itemDescription, setItemDescription] = useState(
-    "Default Item Description"
+    ""
   );
   const [materialGrade, setMaterialGrade] = useState("Default Material Grade");
-  const [size, setSize] = useState("Default Size");
+  const [diameter, setDiameter] = useState("");
+  const [length, setLength] = useState("");
   const [quantityRequired, setQuantityRequired] = useState(
     "Default Quantity Required"
   );
@@ -22,12 +23,23 @@ const MaterialIssueForm = () => {
   );
   const [selectedFile, setSelectedFile] = useState(null);
 
+  useEffect(() => {
+    const selectedCustomerPOData = JSON.parse(
+      localStorage.getItem("selectedCustomerPO")
+    );
+    if (selectedCustomerPOData) {
+      // setProductionSheetName(selectedCustomerPOData.poNo || "");
+      setItemDescription(selectedCustomerPOData.itemDescription || "");
+      setMaterialGrade(selectedCustomerPOData.itemGrade || "");
+      // Set other fields accordingly
+    }
+  }, []);
+
   const handleFileSelection = (e) => {
     const file = e.target.files[0];
     if (file && file.type === "application/pdf") {
       setSelectedFile(file);
     } else {
-      // Optionally, you can display an error message or perform other actions here
       setSelectedFile(null);
       alert("Please select a PDF file.");
     }
@@ -70,6 +82,8 @@ const MaterialIssueForm = () => {
           <label className="relative cursor-pointer App">
             <input
               type="text"
+              value={itemDescription}
+              onChange={(e) => setItemDescription(e.target.value)}
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -83,6 +97,8 @@ const MaterialIssueForm = () => {
           <label className="relative cursor-pointer App">
             <input
               type="text"
+              value={materialGrade}
+              onChange={(e) => setMaterialGrade(e.target.value)}
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -92,16 +108,61 @@ const MaterialIssueForm = () => {
           </label>
         </div>
 
-        <div className="flex items-center my-4">
+        <div className="flex items-center my-4 gap-2">
+          <label htmlFor="size" className="text-[16px] mr-4">
+            Size:
+          </label>
+          {/* Diameter */}
           <label className="relative cursor-pointer App">
             <input
+              id="sizeFirstPart"
               type="text"
+              value={diameter}
+              onChange={(e) => setDiameter(e.target.value)}
               placeholder="Input"
-              className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+              className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              Size
+              Diameter
             </span>
+          </label>
+          <label
+            htmlFor="unit"
+            className="relative cursor-pointer App flex items-center"
+          >
+            <select
+              id="unit"
+              className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
+            >
+              <option value="inch">Inch</option>
+              <option value="mm">MM</option>
+            </select>
+          </label>
+          {/* Unit */}
+          <label className="relative cursor-pointer App">
+            <input
+              id="sizeFirstPart"
+              type="text"
+              value={length}
+              onChange={(e) => setLength(e.target.value)}
+              placeholder="Input"
+              className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+            />
+            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+              Length
+            </span>
+          </label>
+          <label
+            htmlFor="unit"
+            className="relative cursor-pointer App flex items-center"
+          >
+            <select
+              id="unit"
+              className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
+            >
+              <option value="inch">Inch</option>
+              <option value="mm">MM</option>
+            </select>
           </label>
         </div>
 

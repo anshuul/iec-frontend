@@ -17,9 +17,11 @@ const ProductionForm = () => {
   const [materialCode, setMaterialCode] = useState("");
   const [itemDescription, setItemDescription] = useState("");
   const [itemGrade, setItemGrade] = useState("");
-  const [sizeFirstPart, setSizeFirstPart] = useState("");
-  const [sizeSecondPart, setSizeSecondPart] = useState("");
-  const [sizeThirdPart, setSizeThirdPart] = useState("");
+  const [diameter, setDiameter] = useState("");
+  const [diameterDimension, setDiameterDimension] = useState("");
+  const [thread, setThread] = useState("");
+  const [length, setLength] = useState("");
+  const [lengthDimension, setLengthDimension] = useState("");
   const [quantity, setQuantity] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -71,13 +73,13 @@ const ProductionForm = () => {
           size: {
             diameter: sizeFirstPart,
             thread: sizeSecondPart,
-            unit: sizeThirdPart, 
+            unit: sizeThirdPart,
           },
           quantity,
         }
       );
       console.log("response ", response);
-      router.push("/production")
+      router.push("/production");
     } catch (error) {
       console.log(error);
     }
@@ -144,7 +146,7 @@ const ProductionForm = () => {
           </label>
         </div>
 
-        <div className="flex items-center my-4">
+        <div className="flex items-center my-4 gap-2">
           <label className="relative cursor-pointer App">
             <input
               id="itemDescription"
@@ -158,6 +160,17 @@ const ProductionForm = () => {
               Item Description
             </span>
           </label>
+          <select
+            id="unit"
+            className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
+          >
+            <option value="inch">stud</option>
+            <option value="studwithnuts">stud X 1 Nuts</option>
+            <option value="studwith2nuts">stud X 2 Nuts</option>
+            <option value="studwith3nuts">stud X 3 Nuts</option>
+            <option value="studwith4nuts">stud X 4 Nuts</option>
+            <option value="nuts">Nuts</option>
+          </select>
         </div>
 
         <div className="flex items-center my-4">
@@ -171,23 +184,23 @@ const ProductionForm = () => {
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              Item Grade
+              Material Grade
             </span>
           </label>
         </div>
 
-        {/* Size input divided into three parts */}
+        {/* Size input */}
         <div className="flex items-center my-4 gap-2">
           <label htmlFor="size" className="text-[16px] mr-4">
             Size:
           </label>
-          {/* Diameter */}
+          {/* Diameter with dimension */}
           <label className="relative cursor-pointer App">
             <input
               id="sizeFirstPart"
               type="text"
-              value={sizeFirstPart}
-              onChange={(e) => setSizeFirstPart(e.target.value)}
+              value={diameter}
+              onChange={(e) => setDiameter(e.target.value)}
               placeholder="Input"
               className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -195,13 +208,26 @@ const ProductionForm = () => {
               Diameter
             </span>
           </label>
+          {/* Diameter dimension */}
+          <label
+            htmlFor="dimension"
+            className="relative cursor-pointer App flex items-center"
+          >
+            <select
+              id="unit"
+              className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
+            >
+              <option value="inch">Inch</option>
+              <option value="mm">MM</option>
+            </select>
+          </label>
           {/* Thread */}
           <label className="relative cursor-pointer App">
             <input
               id="sizeFirstPart"
               type="text"
-              value={sizeSecondPart}
-              onChange={(e) => setSizeSecondPart(e.target.value)}
+              value={thread}
+              onChange={(e) => setThread(e.target.value)}
               placeholder="Input"
               className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -209,13 +235,13 @@ const ProductionForm = () => {
               Pitch
             </span>
           </label>
-          {/* Unit */}
+          {/* Length */}
           <label className="relative cursor-pointer App">
             <input
               id="sizeFirstPart"
               type="text"
-              value={sizeThirdPart}
-              onChange={(e) => setSizeThirdPart(e.target.value)}
+              value={length}
+              onChange={(e) => setLength(e.target.value)}
               placeholder="Input"
               className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -223,8 +249,9 @@ const ProductionForm = () => {
               Length
             </span>
           </label>
+          {/* Length dimension */}
           <label
-            htmlFor="unit"
+            htmlFor="dimension"
             className="relative cursor-pointer App flex items-center"
           >
             <select
