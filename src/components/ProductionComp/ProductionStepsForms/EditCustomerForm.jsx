@@ -17,11 +17,12 @@ const EditCustomerForm = () => {
     poNo: "",
     materialCode: "",
     itemDescription: "",
+    selectedItem: "",
     itemGrade: "",
     size: {
-      diameter: "",
+      diameter: { value: "", dimension: "" },
       thread: "",
-      unit: "",
+      length: { value: "", dimension: "" },
     },
     quantity: "",
   });
@@ -161,6 +162,24 @@ const EditCustomerForm = () => {
               Item Description
             </span>
           </label>
+          <select
+            id="selectedItem"
+            value={customerPO.selectedItem}
+            onChange={(e) =>
+              setCustomerPO({
+                ...customerPO,
+                selectedItem: e.target.value,
+              })
+            }
+            className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
+          >
+            <option value="inch">stud</option>
+            <option value="studwithnuts">stud X 1 Nuts</option>
+            <option value="studwith2nuts">stud X 2 Nuts</option>
+            <option value="studwith3nuts">stud X 3 Nuts</option>
+            <option value="studwith4nuts">stud X 4 Nuts</option>
+            <option value="nuts">Nuts</option>
+          </select>
         </div>
 
         <div className="flex items-center my-4">
@@ -182,7 +201,7 @@ const EditCustomerForm = () => {
         </div>
 
         {/* Size input divided into three parts */}
-        <div className="flex items-center my-4 gap-2">
+        <div className="flex items-center gap-2 my-4">
           <label htmlFor="size" className="text-[16px] mr-4">
             Size:
           </label>
@@ -191,11 +210,18 @@ const EditCustomerForm = () => {
             <input
               id="sizeFirstPart"
               type="text"
-              value={customerPO.size.diameter}
+              // value={customerPO.size.diameter.value || customerPO.size.diameter}
+              value={customerPO.size.diameter.value}
               onChange={(e) =>
                 setCustomerPO({
                   ...customerPO,
-                  size: { ...customerPO.size, diameter: e.target.value },
+                  size: {
+                    ...customerPO.size,
+                    diameter: {
+                      ...customerPO.size.diameter,
+                      value: e.target.value,
+                    },
+                  },
                 })
               }
               placeholder="Input"
@@ -204,6 +230,32 @@ const EditCustomerForm = () => {
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
               Diameter
             </span>
+          </label>
+          {/* Diameter dimension */}
+          <label
+            htmlFor="dimension"
+            className="relative flex items-center cursor-pointer App"
+          >
+            <select
+              id="diameterUnit"
+              value={customerPO.size.diameter.dimension}
+              onChange={(e) =>
+                setCustomerPO({
+                  ...customerPO,
+                  size: {
+                    ...customerPO.size,
+                    diameter: {
+                      ...customerPO.size.diameter,
+                      dimension: e.target.value,
+                    },
+                  },
+                })
+              }
+              className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
+            >
+              <option value="inch">Inch</option>
+              <option value="mm">MM</option>
+            </select>
           </label>
           {/* Thread */}
           <label className="relative cursor-pointer App">
@@ -224,31 +276,51 @@ const EditCustomerForm = () => {
               Thread
             </span>
           </label>
-          {/* Unit */}
+          {/* Length */}
           <label className="relative cursor-pointer App">
             <input
               id="sizeFirstPart"
               type="text"
-              value={customerPO.size.unit}
+              value={customerPO.size.length.value}
               onChange={(e) =>
                 setCustomerPO({
                   ...customerPO,
-                  size: { ...customerPO.size, unit: e.target.value },
+                  size: {
+                    ...customerPO.size,
+                    length: {
+                      ...customerPO.size.length,
+                      value: e.target.value,
+                    },
+                  },
                 })
               }
               placeholder="Input"
               className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              Unit
+              Length
             </span>
           </label>
+          {/* Length dimension */}
           <label
-            htmlFor="unit"
-            className="relative cursor-pointer App flex items-center"
+            htmlFor="dimension"
+            className="relative flex items-center cursor-pointer App"
           >
             <select
-              id="unit"
+              id="lengthUnit"
+              value={customerPO.size.length.dimension}
+              onChange={(e) =>
+                setCustomerPO({
+                  ...customerPO,
+                  size: {
+                    ...customerPO.size,
+                    length: {
+                      ...customerPO.size.length,
+                      dimension: e.target.value,
+                    },
+                  },
+                })
+              }
               className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
             >
               <option value="inch">Inch</option>

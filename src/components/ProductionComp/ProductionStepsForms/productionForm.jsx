@@ -16,12 +16,13 @@ const ProductionForm = () => {
   const [poNo, setPoNo] = useState("");
   const [materialCode, setMaterialCode] = useState("");
   const [itemDescription, setItemDescription] = useState("");
+  const [selectedItem, setSelectedItem] = useState("");
   const [itemGrade, setItemGrade] = useState("");
   const [diameter, setDiameter] = useState("");
-  const [diameterDimension, setDiameterDimension] = useState("");
+  const [diameterDimension, setDiameterDimension] = useState("mm");
   const [thread, setThread] = useState("");
   const [length, setLength] = useState("");
-  const [lengthDimension, setLengthDimension] = useState("");
+  const [lengthDimension, setLengthDimension] = useState("mm");
   const [quantity, setQuantity] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -69,11 +70,18 @@ const ProductionForm = () => {
           poNo,
           materialCode,
           itemDescription,
+          selectedItem,
           itemGrade,
           size: {
-            diameter: sizeFirstPart,
-            thread: sizeSecondPart,
-            unit: sizeThirdPart,
+            diameter: {
+              value: diameter,
+              dimension: diameterDimension,
+            },
+            thread,
+            length: {
+              value: length,
+              dimension: lengthDimension,
+            },
           },
           quantity,
         }
@@ -146,7 +154,7 @@ const ProductionForm = () => {
           </label>
         </div>
 
-        <div className="flex items-center my-4 gap-2">
+        <div className="flex items-center gap-2 my-4">
           <label className="relative cursor-pointer App">
             <input
               id="itemDescription"
@@ -161,7 +169,9 @@ const ProductionForm = () => {
             </span>
           </label>
           <select
-            id="unit"
+            id="selectedItem"
+            value={selectedItem}
+            onChange={(e) => setSelectedItem(e.target.value)}
             className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
           >
             <option value="inch">stud</option>
@@ -190,7 +200,7 @@ const ProductionForm = () => {
         </div>
 
         {/* Size input */}
-        <div className="flex items-center my-4 gap-2">
+        <div className="flex items-center gap-2 my-4">
           <label htmlFor="size" className="text-[16px] mr-4">
             Size:
           </label>
@@ -211,10 +221,12 @@ const ProductionForm = () => {
           {/* Diameter dimension */}
           <label
             htmlFor="dimension"
-            className="relative cursor-pointer App flex items-center"
+            className="relative flex items-center cursor-pointer App"
           >
             <select
-              id="unit"
+              id="diameterUnit"
+              value={diameterDimension}
+              onChange={(e) => setDiameterDimension(e.target.value)}
               className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
             >
               <option value="inch">Inch</option>
@@ -224,7 +236,7 @@ const ProductionForm = () => {
           {/* Thread */}
           <label className="relative cursor-pointer App">
             <input
-              id="sizeFirstPart"
+              id="thread"
               type="text"
               value={thread}
               onChange={(e) => setThread(e.target.value)}
@@ -252,10 +264,12 @@ const ProductionForm = () => {
           {/* Length dimension */}
           <label
             htmlFor="dimension"
-            className="relative cursor-pointer App flex items-center"
+            className="relative flex items-center cursor-pointer App"
           >
             <select
-              id="unit"
+              id="lengthUnit"
+              value={lengthDimension}
+              onChange={(e) => setLengthDimension(e.target.value)}
               className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
             >
               <option value="inch">Inch</option>
@@ -267,6 +281,9 @@ const ProductionForm = () => {
         <div className="flex items-center my-4">
           <label className="relative cursor-pointer App">
             <input
+              id="quantity"
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
               type="text"
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"

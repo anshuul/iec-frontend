@@ -162,7 +162,7 @@ const ProductionSheetForm = () => {
 
         <hr className="my-2 border-t border-gray-300" />
 
-        <div className="grid xl:grid-cols-2 lg:grid-cols-1 md:grid-cols-2 grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2 lg:grid-cols-1 md:grid-cols-2">
           {/* First Column */}
           <div className="flex flex-col items-start">
             <div className="flex items-center my-4">
@@ -207,7 +207,7 @@ const ProductionSheetForm = () => {
                 </span>
               </label>
             </div>
-            <div className="flex items-center mb-4 gap-2">
+            <div className="flex items-center gap-2 mb-4">
               <label className="relative cursor-pointer App">
                 <input
                   type="text"
@@ -221,14 +221,14 @@ const ProductionSheetForm = () => {
                 </span>
               </label>
               <button
-                className="flex items-center justify-center h-10 w-10 bg-gray-500 text-white rounded-lg"
+                className="flex items-center justify-center w-10 h-10 text-white bg-gray-500 rounded-lg"
                 onClick={() => document.getElementById("attachment").click()}
               >
                 <RiAttachmentLine className="text-white" />
               </button>
             </div>
 
-            <div className="flex items-center mb-4 gap-2">
+            <div className="flex items-center gap-2 mb-4">
               <label className="relative cursor-pointer App">
                 <input
                   type="text"
@@ -242,13 +242,13 @@ const ProductionSheetForm = () => {
                 </span>
               </label>
               <button
-                className="flex items-center justify-center h-10 w-10 bg-gray-500 text-white rounded-lg"
+                className="flex items-center justify-center w-10 h-10 text-white bg-gray-500 rounded-lg"
                 onClick={() => document.getElementById("attachment").click()}
               >
                 <RiAttachmentLine className="text-white" />
               </button>
             </div>
-            <div className="flex items-center mb-4 gap-2">
+            <div className="flex items-center gap-2 mb-4">
               <label className="relative cursor-pointer App">
                 <input
                   type="text"
@@ -262,13 +262,13 @@ const ProductionSheetForm = () => {
                 </span>
               </label>
               <button
-                className="flex items-center justify-center h-10 w-10 bg-gray-500 text-white rounded-lg"
+                className="flex items-center justify-center w-10 h-10 text-white bg-gray-500 rounded-lg"
                 onClick={() => document.getElementById("attachment").click()}
               >
                 <RiAttachmentLine className="text-white" />
               </button>
             </div>
-            <div className="flex items-center mb-4 gap-2">
+            <div className="flex items-center gap-2 mb-4">
               <label className="relative cursor-pointer App">
                 <input
                   type="text"
@@ -282,13 +282,13 @@ const ProductionSheetForm = () => {
                 </span>
               </label>
               <button
-                className="flex items-center justify-center h-10 w-10 bg-gray-500 text-white rounded-lg"
+                className="flex items-center justify-center w-10 h-10 text-white bg-gray-500 rounded-lg"
                 onClick={() => document.getElementById("attachment").click()}
               >
                 <RiAttachmentLine className="text-white" />
               </button>
             </div>
-            <div className="flex items-center mb-4 gap-2">
+            <div className="flex items-center gap-2 mb-4">
               <label className="relative cursor-pointer App">
                 <input
                   type="text"
@@ -302,7 +302,7 @@ const ProductionSheetForm = () => {
                 </span>
               </label>
               <button
-                className="flex items-center justify-center h-10 w-10 bg-gray-500 text-white rounded-lg"
+                className="flex items-center justify-center w-10 h-10 text-white bg-gray-500 rounded-lg"
                 onClick={() => document.getElementById("attachment").click()}
               >
                 <RiAttachmentLine className="text-white" />
@@ -312,7 +312,7 @@ const ProductionSheetForm = () => {
 
           {/* Second Column */}
           <div className="flex flex-col items-start">
-            <div className="flex items-center my-4 gap-2">
+            <div className="flex items-center gap-2 my-4">
               <label className="relative cursor-pointer App">
                 <input
                   type="text"
@@ -326,13 +326,13 @@ const ProductionSheetForm = () => {
                 </span>
               </label>
               <button
-                className="flex items-center justify-center h-10 w-10 bg-gray-500 text-white rounded-lg"
+                className="flex items-center justify-center w-10 h-10 text-white bg-gray-500 rounded-lg"
                 onClick={() => document.getElementById("attachment").click()}
               >
                 <RiAttachmentLine className="text-white" />
               </button>
             </div>
-            <div className="flex items-center mb-4 gap-2">
+            <div className="flex items-center gap-2 mb-4">
               <label className="relative cursor-pointer App">
                 <input
                   type="text"
@@ -346,13 +346,13 @@ const ProductionSheetForm = () => {
                 </span>
               </label>
               <button
-                className="flex items-center justify-center h-10 w-10 bg-gray-500 text-white rounded-lg"
+                className="flex items-center justify-center w-10 h-10 text-white bg-gray-500 rounded-lg"
                 onClick={() => document.getElementById("attachment").click()}
               >
                 <RiAttachmentLine className="text-white" />
               </button>
             </div>
-            <div className="flex items-center mb-4 gap-2">
+            <div className="flex items-center gap-2 mb-4">
               <label className="relative cursor-pointer App">
                 <input
                   type="text"
@@ -366,13 +366,13 @@ const ProductionSheetForm = () => {
                 </span>
               </label>
               <button
-                className="flex items-center justify-center h-10 w-10 bg-gray-500 text-white rounded-lg"
+                className="flex items-center justify-center w-10 h-10 text-white bg-gray-500 rounded-lg"
                 onClick={() => document.getElementById("attachment").click()}
               >
                 <RiAttachmentLine className="text-white" />
               </button>
             </div>
-            <div className="flex items-center mb-4 gap-2">
+            <div className="flex items-center gap-2 mb-4">
               <label className="relative cursor-pointer App">
                 <input
                   type="text"
@@ -386,13 +386,13 @@ const ProductionSheetForm = () => {
                 </span>
               </label>
               <button
-                className="flex items-center justify-center h-10 w-10 bg-gray-500 text-white rounded-lg"
+                className="flex items-center justify-center w-10 h-10 text-white bg-gray-500 rounded-lg"
                 onClick={() => document.getElementById("attachment").click()}
               >
                 <RiAttachmentLine className="text-white" />
               </button>
             </div>
-            <div className="flex items-center mb-4 gap-2">
+            <div className="flex items-center gap-2 mb-4">
               <label className="relative cursor-pointer App">
                 <input
                   type="text"
@@ -406,13 +406,13 @@ const ProductionSheetForm = () => {
                 </span>
               </label>
               <button
-                className="flex items-center justify-center h-10 w-10 bg-gray-500 text-white rounded-lg"
+                className="flex items-center justify-center w-10 h-10 text-white bg-gray-500 rounded-lg"
                 onClick={() => document.getElementById("attachment").click()}
               >
                 <RiAttachmentLine className="text-white" />
               </button>
             </div>
-            <div className="flex items-center mb-4 gap-2">
+            <div className="flex items-center gap-2 mb-4">
               <label className="relative cursor-pointer App">
                 <input
                   type="text"
@@ -426,7 +426,7 @@ const ProductionSheetForm = () => {
                 </span>
               </label>
               <button
-                className="flex items-center justify-center h-10 w-10 bg-gray-500 text-white rounded-lg"
+                className="flex items-center justify-center w-10 h-10 text-white bg-gray-500 rounded-lg"
                 onClick={() => document.getElementById("attachment").click()}
               >
                 <RiAttachmentLine className="text-white" />
@@ -464,7 +464,7 @@ const ProductionSheetForm = () => {
 
         {/* Second Form */}
         <div className="w-full ">
-          <div className="grid xl:grid-cols-2 lg:grid-cols-1 md:grid-cols-2 grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2 lg:grid-cols-1 md:grid-cols-2">
             {/* First Column */}
             <div className="flex flex-col items-start">
               <h3 className="mb-4 text-[16px] font-semibold">Planning</h3>
