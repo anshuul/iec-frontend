@@ -43,6 +43,15 @@ const ProductionSheetFormUpdate = () => {
           `http://localhost:8000/api/production/get-planningSheetById/${id}`
         );
         const responseData = response.data;
+        const formattedPlanningDate = new Date(responseData.planningDate)
+          .toISOString()
+          .split("T")[0];
+        const formattedAchievementDate = new Date(responseData.achievementDate)
+          .toISOString()
+          .split("T")[0];
+        console.log("formattedAchievementDate", formattedAchievementDate);
+
+        console.log("responseData.planningQuantity", responseData.planningDate);
         setPlanningSheetForm({
           productionSheetName: responseData.productionSheetName,
           itemDescription: responseData.itemDescription,
@@ -59,9 +68,9 @@ const ProductionSheetFormUpdate = () => {
           management: responseData.management,
           recordsEvidence: responseData.recordsEvidence,
           planningQuantity: responseData.planningQuantity,
-          planningDate: responseData.planningDate,
+          planningDate: formattedPlanningDate,
           achievementQuantity: responseData.achievementQuantity,
-          achievementDate: responseData.achievementDate,
+          achievementDate: formattedAchievementDate,
           attachment: responseData.attachment,
           poNo: responseData.poNo,
         }); // Set the customer PO data in state
@@ -542,6 +551,12 @@ const ProductionSheetFormUpdate = () => {
               <div className="flex items-center mb-4">
                 <label
                   htmlFor="achievementDate"
+                  className="w-32 mr-2 text-[16px]"
+                >
+                  Date:
+                </label>
+                <input
+                  type="date"
                   id="achievementDate"
                   value={planningSheetForm.achievementDate}
                   onChange={(e) =>
@@ -550,13 +565,6 @@ const ProductionSheetFormUpdate = () => {
                       achievementDate: e.target.value,
                     })
                   }
-                  className="w-32 mr-2 text-[16px]"
-                >
-                  Date:
-                </label>
-                <input
-                  type="date"
-                  id="achievementDate"
                   className="w-full px-3 py-2 border border-gray-300 rounded"
                 />
               </div>

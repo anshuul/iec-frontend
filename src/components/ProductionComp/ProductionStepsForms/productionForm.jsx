@@ -174,12 +174,13 @@ const ProductionForm = () => {
             onChange={(e) => setSelectedItem(e.target.value)}
             className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
           >
-            <option value="inch">stud</option>
+            <option value="stud">stud</option>
+            <option value="stud">stud</option>
             <option value="studwithnuts">stud X 1 Nuts</option>
             <option value="studwith2nuts">stud X 2 Nuts</option>
             <option value="studwith3nuts">stud X 3 Nuts</option>
             <option value="studwith4nuts">stud X 4 Nuts</option>
-            <option value="nuts">Nuts</option>
+            <option value="nut">Nut</option>
           </select>
         </div>
 

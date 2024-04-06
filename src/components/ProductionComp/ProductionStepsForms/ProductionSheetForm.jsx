@@ -35,9 +35,6 @@ const ProductionSheetForm = () => {
   const [planningDate, setPlanningDate] = useState("");
   const [achievementQuantity, setAchievementQuantity] = useState("");
   const [achievementDate, setAchievementDate] = useState("");
-  // const [achievementDate, setAchievementDate] = useState(
-  //   "2024-04-10T08:00:00.000Z"
-  // );
 
   useEffect(() => {
     const selectedCustomerPOData = JSON.parse(
@@ -48,7 +45,7 @@ const ProductionSheetForm = () => {
       setItemDescription(selectedCustomerPOData.itemDescription || "");
       setMaterialIssue(selectedCustomerPOData.materialCode || "");
       setProductAndCustomer(
-        `Size: ${selectedCustomerPOData.size.diameter} ${selectedCustomerPOData.size.unit}, Thread: ${selectedCustomerPOData.size.thread}` ||
+        `Size: ${selectedCustomerPOData.size.diameter.value} ${selectedCustomerPOData.size.diameter.dimension}, Length: ${selectedCustomerPOData.size.length.value} ${selectedCustomerPOData.size.length.dimension}, Thread: ${selectedCustomerPOData.size.thread}, Quantity: ${selectedCustomerPOData.quantity}` ||
           ""
       );
       setPlanningQuantity(selectedCustomerPOData.quantity || "");

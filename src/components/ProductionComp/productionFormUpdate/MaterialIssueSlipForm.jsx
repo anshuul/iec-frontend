@@ -1,86 +1,64 @@
 "use client";
-import Container from "@/components/common/Container";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { FiArrowLeft, FiFile, FiPrinter, FiSave } from "react-icons/fi";
 import axios from "axios";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { FiArrowLeft, FiFile } from "react-icons/fi";
+import Container from "@/components/common/Container";
 
-const MaterialIssueForm = () => {
+const MaterialIssueSlipForm = () => {
   const router = useRouter();
-  const [materialSlipName, setMaterialSlipName] = useState(
-    "Default Material Slip"
-  );
-  const [itemDescription, setItemDescription] = useState("");
-  const [materialGrade, setMaterialGrade] = useState("Default Material Grade");
-  const [diameter, setDiameter] = useState("");
-  const [length, setLength] = useState("");
-  const [size, setSize] = useState("");
-  const [quantityRequired, setQuantityRequired] = useState(
-    "Default Quantity Required"
-  );
-  const [quantityIssued, setQuantityIssued] = useState(
-    "Default Quantity Issued"
-  );
+  const searchParams = useSearchParams();
+
+  const id = searchParams.get("id");
+  console.log("first", id);
+
+  const [materialIssueForm, setMaterialIssueForm] = useState({
+    materialSlipName: "",
+    itemDescription: "",
+    materialGrade: "",
+    diameter: "",
+    length: "",
+    quantityRequired: "",
+    quantityIssued: "",
+  });
+
   const [selectedFile, setSelectedFile] = useState(null);
+
   useEffect(() => {
-    handleCalculate();
-  }, [diameter, length]);
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8000/api/production/get-materialIssueSlipByID/${id}`
+        );
+        const responseData = response.data;
 
-  const handleCalculate  = () => {
-    if (diameter && length) {
-      const calculatedSize =
-        (parseFloat(diameter) * parseFloat(diameter) * parseFloat(length)) /
-        162000;
-      setSize(calculatedSize.toFixed(3));
-    } else {
-      setSize("");
-    }
-  };
-  console.log("size", size);
-  useEffect(() => {
-    const selectedCustomerPOData = JSON.parse(
-      localStorage.getItem("selectedCustomerPO")
-    );
-    if (selectedCustomerPOData) {
-      // setProductionSheetName(selectedCustomerPOData.poNo || "");
-      setItemDescription(selectedCustomerPOData.itemDescription || "");
-      setMaterialGrade(selectedCustomerPOData.itemGrade || "");
-      // Set other fields accordingly
-    }
-  }, []);
+        setMaterialIssueForm({
+          poNo: responseData.poNo,
+          materialSlipName: responseData.materialSlipName,
+          itemDescription: responseData.itemDescription,
+          materialGrade: responseData.materialGrade,
+          diameter: responseData.diameter,
+          length: responseData.length,
+          quantityRequired: responseData.quantityRequired,
+          quantityIssued: responseData.quantityIssued,
+          attachment: responseData.attachment,
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
 
-  const saveFormData = async () => {
-    const selectedCustomerPODataForpoNo = JSON.parse(
-      localStorage.getItem("selectedCustomerPO")
-    );
-    try {
-      const response = await axios.post(
-        "http://localhost:8000/api/materialissueslip/createMaterialIssueSlip",
-        {
-          poNo: selectedCustomerPODataForpoNo.poNo,
-          materialSlipName,
-          itemDescription,
-          materialGrade,
-          diameter,
-          length,
-          quantityRequired,
-          quantityIssued,
-        }
-      );
-
-      console.log("response", response);
-      // Optionally, handle success response, e.g., show a success message to the user
-    } catch (error) {
-      console.error("Error occurred while saving form data:", error);
-      // Optionally, handle error, e.g., show an error message to the user
+    if (id) {
+      fetchData(); // Fetch customer PO data when CustomerPO is available
     }
-  };
+  }, [id]);
 
   const handleFileSelection = (e) => {
     const file = e.target.files[0];
     if (file && file.type === "application/pdf") {
       setSelectedFile(file);
     } else {
+      // Optionally, you can display an error message or perform other actions here
       setSelectedFile(null);
       alert("Please select a PDF file.");
     }
@@ -90,7 +68,9 @@ const MaterialIssueForm = () => {
     router.back();
   };
 
-  const handlecalculate = () => {};
+  const handlecalculate = () => {
+    
+  }
 
   return (
     <Container>
@@ -111,8 +91,13 @@ const MaterialIssueForm = () => {
               id="materialSlipName"
               type="text"
               placeholder="Input"
-              value={materialSlipName}
-              onChange={(e) => setMaterialSlipName(e.target.value)}
+              value={materialIssueForm.materialSlipName}
+              onChange={(e) =>
+                setMaterialSlipName({
+                  ...materialSlipName,
+                  materialSlipName: e.target.value,
+                })
+              }
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
@@ -125,8 +110,13 @@ const MaterialIssueForm = () => {
           <label className="relative cursor-pointer App">
             <input
               type="text"
-              value={itemDescription}
-              onChange={(e) => setItemDescription(e.target.value)}
+              value={materialIssueForm.itemDescription}
+              onChange={(e) =>
+                setMaterialSlipName({
+                  ...itemDescription,
+                  itemDescription: e.target.value,
+                })
+              }
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -140,8 +130,13 @@ const MaterialIssueForm = () => {
           <label className="relative cursor-pointer App">
             <input
               type="text"
-              value={materialGrade}
-              onChange={(e) => setMaterialGrade(e.target.value)}
+              value={materialIssueForm.materialGrade}
+              onChange={(e) =>
+                setMaterialSlipName({
+                  ...materialGrade,
+                  materialGrade: e.target.value,
+                })
+              }
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -160,8 +155,13 @@ const MaterialIssueForm = () => {
             <input
               id="sizeFirstPart"
               type="text"
-              value={diameter}
-              onChange={(e) => setDiameter(e.target.value)}
+              value={materialIssueForm.diameter}
+              onChange={(e) =>
+                setMaterialSlipName({
+                  ...diameter,
+                  diameter: e.target.value,
+                })
+              }
               placeholder="Input"
               className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -181,13 +181,18 @@ const MaterialIssueForm = () => {
               <option value="mm">MM</option>
             </select>
           </label>
-          {/* Unit */}
+          {/* Length */}
           <label className="relative cursor-pointer App">
             <input
               id="sizeFirstPart"
               type="text"
-              value={length}
-              onChange={(e) => setLength(e.target.value)}
+              value={materialIssueForm.length}
+              onChange={(e) =>
+                setMaterialSlipName({
+                  ...length,
+                  length: e.target.value,
+                })
+              }
               placeholder="Input"
               className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -210,31 +215,24 @@ const MaterialIssueForm = () => {
 
           {/* Calculate button */}
           <button
-            onClick={handleCalculate}
+            onClick={handlecalculate}
             className="flex items-center px-4 py-2 ml-2 text-black bg-gray-300 rounded"
           >
             Calculation
           </button>
         </div>
-        <div className="flex items-center my-4">
-          <label className="relative cursor-pointer App">
-            <input
-              id="sizeFirstPart"
-              type="text"
-              value={size}
-              onChange={(e) => setSize(e.target.value)}
-              placeholder="Input"
-              className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
-            />
-            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              size
-            </span>
-          </label>
-        </div>
+
         <div className="flex items-center my-4">
           <label className="relative cursor-pointer App">
             <input
               type="text"
+              value={materialIssueForm.quantityRequired}
+              onChange={(e) =>
+                setMaterialSlipName({
+                  ...quantityRequired,
+                  quantityRequired: e.target.value,
+                })
+              }
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -248,6 +246,13 @@ const MaterialIssueForm = () => {
           <label className="relative cursor-pointer App">
             <input
               type="text"
+              value={materialIssueForm.quantityIssued}
+              onChange={(e) =>
+                setMaterialSlipName({
+                  ...quantityIssued,
+                  quantityIssued: e.target.value,
+                })
+              }
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -280,24 +285,9 @@ const MaterialIssueForm = () => {
         <p className="ml-2 text-sm text-red-600">
           Only PDF files are allowed and only one file can be selected.
         </p>
-
-        <hr className="my-4 border-t border-gray-300" />
-        <div className="flex justify-end">
-          <button
-            onClick={saveFormData}
-            className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded"
-          >
-            Save
-            <FiSave className="ml-2" />
-          </button>
-          <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
-            Print
-            <FiPrinter className="ml-2" />
-          </button>
-        </div>
       </div>
     </Container>
   );
 };
 
-export default MaterialIssueForm;
+export default MaterialIssueSlipForm;

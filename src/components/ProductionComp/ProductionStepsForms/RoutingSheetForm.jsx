@@ -1,10 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import { FiArrowLeft, FiPrinter, FiSave } from "react-icons/fi";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 const RoutingSheetForm = () => {
   const router = useRouter();
@@ -13,36 +14,39 @@ const RoutingSheetForm = () => {
     router.back();
   };
 
-  const [rowData, setRowData] = useState([
-    {
-      srNo: 1,
-      date: "2024-04-03",
-      operatorName: "John Doe",
-      machineNo: "M123",
-      processDescription: "Some description",
-      procedureNo: "PROC123",
-      orderQty: 10,
-      processQty: 8,
-      startTime: "08:00 AM",
-      endTime: "12:00 PM",
-      optSign: "Signed",
-      remarks: "Some remarks",
-    },
-    {
-      srNo: 2,
-      date: "2024-04-04",
-      operatorName: "Jane Smith",
-      machineNo: "M456",
-      processDescription: "Another description",
-      procedureNo: "PROC456",
-      orderQty: 15,
-      processQty: 12,
-      startTime: "09:00 AM",
-      endTime: "01:00 PM",
-      optSign: "Not signed",
-      remarks: "Additional remarks",
-    },
-  ]);
+  const [rowData, setRowData] = useState([]);
+  const [newRow, setNewRow] = useState({
+    date: "",
+    operatorName: "",
+    machineNo: "",
+    processDescription: "",
+    procedureNo: "",
+    orderQty: 0,
+    processQty: 0,
+    startTime: "",
+    endTime: "",
+    optSign: "",
+    remarks: "",
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8000/api/routingSheet"
+        );
+        const dataWithSrNo = response.data.map((row, index) => ({
+          ...row,
+          srNo: index + 1, // Add srNo starting from 1
+        }));
+        setRowData(dataWithSrNo);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleCellValueChanged = (event) => {
     const updatedRowData = [...rowData];
@@ -50,12 +54,38 @@ const RoutingSheetForm = () => {
     setRowData(updatedRowData);
   };
 
-  const handleSave = () => {
-    console.log("Updated Row Data:", rowData);
+  const handleAddRow = () => {
+    const newRowData = {
+      ...newRow,
+      srNo: rowData.length + 1,
+      remarks: "-",
+    };
+    console.log("newRowData", newRowData)
+    setRowData([...rowData, newRowData]);
+    setNewRow(newRowData);
+  };
+  
+
+  const saveData = async () => {
+    try {
+      await axios.post(
+        "http://localhost:8000/api/routingSheet/create-routingSheet",
+        newRow // Send only the newly added row data
+      );
+      console.log("Data saved successfully");
+    } catch (error) {
+      console.error("Error saving data:", error);
+    }
   };
 
   const columnDefs = [
-    { headerName: "Sr No", field: "srNo", editable: false, minWidth: 50, maxWidth: 80 },
+    {
+      headerName: "Sr No",
+      field: "srNo",
+      editable: false,
+      minWidth: 50,
+      maxWidth: 80,
+    },
     { headerName: "Date", field: "date", editable: true },
     {
       headerName: "Operator Name/Supplier",
@@ -94,6 +124,13 @@ const RoutingSheetForm = () => {
         <FiArrowLeft className="mr-2" />
         Back
       </button>
+      <button
+        onClick={handleAddRow}
+        className="flex items-center mb-2 px-4 py-2 text-lg font-bold text-black"
+      >
+        <FiArrowLeft className="mr-2" />
+        Add
+      </button>
       <div className="ag-theme-alpine px-4 w-full h-[75vh]">
         <AgGridReact
           columnDefs={columnDefs}
@@ -107,7 +144,7 @@ const RoutingSheetForm = () => {
       {/* <Container> */}
       <div className="flex justify-end max-w-screen-full mx-4">
         <button
-          onClick={handleSave}
+          onClick={saveData}
           className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded"
         >
           Save
