@@ -174,9 +174,9 @@ const ProductionForm = () => {
             onChange={(e) => setSelectedItem(e.target.value)}
             className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
           >
-            <option value="stud">stud</option>
-            <option value="stud">stud</option>
-            <option value="studwithnuts">stud X 1 Nuts</option>
+            <option value="select">--select--</option>
+            <option value="stud">Stud</option>
+            <option value="studwith1nuts">stud X 1 Nuts</option>
             <option value="studwith2nuts">stud X 2 Nuts</option>
             <option value="studwith3nuts">stud X 3 Nuts</option>
             <option value="studwith4nuts">stud X 4 Nuts</option>
@@ -201,7 +201,7 @@ const ProductionForm = () => {
         </div>
 
         {/* Size input */}
-        <div className="flex items-center gap-2 my-4">
+        <div className="flex flex-col items-start gap-2 my-4 md:items-center md:flex-row">
           <label htmlFor="size" className="text-[16px] mr-4">
             Size:
           </label>

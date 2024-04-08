@@ -7,12 +7,16 @@ import { RiDeleteBin5Line } from "react-icons/ri";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { BsInfoCircle } from "react-icons/bs";
+import { IoSearch } from "react-icons/io5";
 
 const MaterialIssueSlipTable = ({ productionStep }) => {
   console.log("productionStep", productionStep);
   const router = useRouter();
   const [rowData, setRowData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [historyRowData, setHistoryRowData] = useState([]);
+  const [showHistoryTable, setShowHistoryTable] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,15 +45,15 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
         const formattedData = materialIssueSlips.map((issueSlip, index) => {
           let size = "N/A";
           if (issueSlip.size && issueSlip.size.diameter) {
-            size = `${JSON.parse(issueSlip.size.diameter).value}x${
-              JSON.parse(issueSlip.size.length).value
-            }`;
+            size = `${JSON.parse(issueSlip.size.diameter).value}x${JSON.parse(issueSlip.size.length).value
+              }`;
           }
 
           return {
             srNo: index + 1,
             _id: issueSlip._id,
             PONumber: issueSlip.poNo,
+            MaterialSlipName: issueSlip.materialSlipName,
             ItemDesc: issueSlip.itemDescription,
             MaterialGrade: issueSlip.materialGrade,
             Size: size,
@@ -76,26 +80,90 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
 
   const handleEditClick = (_id) => {
     router.push(
-      `/production/production-planning-sheets/materialIssueFormUpdate?id=${_id}`
+      `/production/material-issue-slip/materialIssueFormUpdate?id=${_id}`
     );
   };
 
+  const handleHistoryClick = async (poNo) => {
+    console.log("objectpono", poNo)
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `http://localhost:8000/api/materialissueslip/materialIssueSlipHistory/${poNo}`
+      );
+      const historyData = response.data.historyRecords.map((record, index) => ({
+        srNo: index + 1,
+        CustomerPO: record.poNo,
+        CustomerName: record.previousData.customerName,
+        PONumber: record.previousData.poNo,
+        MaterialSlipName: record.previousData.materialSlipName,
+        ItemDescription: record.previousData.itemDescription,
+        MaterialGrade: record.previousData.materialGrade,
+        Size: record.previousData.size,
+        QuantityRequired: record.previousData.quantityRequired,
+        QuantityIssued: record.previousData.quantityIssued,
+        CreatedAt: new Date(record.previousData.createdAt).toLocaleString(
+          undefined,
+          { dateStyle: "long", timeStyle: "medium" }
+        ), // Convert to pretty format
+        UpdatedAt: new Date(record.previousData.updatedAt).toLocaleString(
+          undefined,
+          { dateStyle: "long", timeStyle: "medium" }
+        ), // Convert to pretty format
+        historyId: record._id,
+      }));
+      console.log("historyData", historyData)
+      setHistoryRowData(historyData);
+      setShowHistoryTable(true);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching history data:", error);
+      setLoading(false);
+    }
+  }
+
   const CustomButtonComponent = (props) => {
     const data = props.data;
+
     console.log("MaterialData", data);
     return (
-      <div className="ag-theme-alpine flex flex-row gap-2 items-center pt-1">
+      <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
         <button
           onClick={() => handleEditClick(data._id)}
-          className="p-2 bg-green-200 rounded-lg text-green-600"
+          className="p-2 text-green-600 bg-green-200 rounded-lg"
         >
           <MdModeEdit />
         </button>
         <button
           onClick={() => window.alert("clicked")}
-          className="p-2 bg-red-200 rounded-lg text-red-600"
+          className="p-2 text-red-600 bg-red-200 rounded-lg"
         >
           <RiDeleteBin5Line />
+        </button>
+        {/* History Button */}
+        <button
+          onClick={() => handleHistoryClick(data.PONumber)}
+          className="p-2 text-red-600 bg-yellow-200 rounded-lg"
+        >
+          <BsInfoCircle />
+        </button>
+      </div>
+    );
+  };
+
+  const HistoryButton = (props) => {
+    const data = props.data;
+    console.log("HistoryButton", data);
+    return (
+      <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
+        {/* View Button */}
+        <button
+          // onClick={() => {
+          //   handleViewClick(data.CustomerPO, data.historyId);
+          // }}
+          className="p-2 text-red-600 bg-yellow-200 rounded-lg"
+        >
+          <IoSearch />
         </button>
       </div>
     );
@@ -104,6 +172,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
   const columnDefs = [
     { headerName: "Sr No", field: "srNo", maxWidth: 80 },
     { headerName: "PO Number", field: "PONumber" },
+    { headerName: "MaterialSlip Name", field: "MaterialSlipName" },
     { headerName: "Item Desc", field: "ItemDesc" },
     { headerName: "Material Grade", field: "MaterialGrade" },
     { headerName: "Size", field: "Size" },
@@ -113,120 +182,35 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
     { headerName: "Action", cellRenderer: CustomButtonComponent },
   ];
 
-  // const rowData = [
-  // {
-  //   srNo: 1,
-  //   PONumber: "PO123",
-  //   ItemDesc: "Item 1",
-  //   MaterialGrade: "Grade A",
-  //   Size: "10x10",
-  //   QuantityRequired: 100,
-  //   QuantityIssued: 90,
-  //   Remarks: "-",
-  // },
-  //   {
-  //     srNo: 2,
-  //     PONumber: "PO456",
-  //     ItemDesc: "Item 2",
-  //     MaterialGrade: "Grade B",
-  //     Size: "20x20",
-  //     QuantityRequired: 150,
-  //     QuantityIssued: 120,
-  //     Remarks: "-",
-  //   },
-  //   {
-  //     srNo: 3,
-  //     PONumber: "PO789",
-  //     ItemDesc: "Item 3",
-  //     MaterialGrade: "Grade C",
-  //     Size: "30x30",
-  //     QuantityRequired: 200,
-  //     QuantityIssued: 180,
-  //     Remarks: "-",
-  //   },
-  //   {
-  //     srNo: 4,
-  //     PONumber: "PO101112",
-  //     ItemDesc: "Item 4",
-  //     MaterialGrade: "Grade D",
-  //     Size: "40x40",
-  //     QuantityRequired: 250,
-  //     QuantityIssued: 200,
-  //     Remarks: "-",
-  //   },
-  //   {
-  //     srNo: 5,
-  //     PONumber: "PO131415",
-  //     ItemDesc: "Item 5",
-  //     MaterialGrade: "Grade E",
-  //     Size: "50x50",
-  //     QuantityRequired: 300,
-  //     QuantityIssued: 250,
-  //     Remarks: "-",
-  //   },
-  //   {
-  //     srNo: 6,
-  //     PONumber: "PO161718",
-  //     ItemDesc: "Item 6",
-  //     MaterialGrade: "Grade F",
-  //     Size: "60x60",
-  //     QuantityRequired: 350,
-  //     QuantityIssued: 300,
-  //     Remarks: "-",
-  //   },
-  //   {
-  //     srNo: 7,
-  //     PONumber: "PO192021",
-  //     ItemDesc: "Item 7",
-  //     MaterialGrade: "Grade G",
-  //     Size: "70x70",
-  //     QuantityRequired: 400,
-  //     QuantityIssued: 350,
-  //     Remarks: "-",
-  //   },
-  //   {
-  //     srNo: 8,
-  //     PONumber: "PO222324",
-  //     ItemDesc: "Item 8",
-  //     MaterialGrade: "Grade H",
-  //     Size: "80x80",
-  //     QuantityRequired: 450,
-  //     QuantityIssued: 400,
-  //     Remarks: "-",
-  //   },
-  //   {
-  //     srNo: 9,
-  //     PONumber: "PO252627",
-  //     ItemDesc: "Item 9",
-  //     MaterialGrade: "Grade I",
-  //     Size: "90x90",
-  //     QuantityRequired: 500,
-  //     QuantityIssued: 450,
-  //     Remarks: "-",
-  //   },
-  //   {
-  //     srNo: 10,
-  //     PONumber: "PO282930",
-  //     ItemDesc: "Item 10",
-  //     MaterialGrade: "Grade J",
-  //     Size: "100x100",
-  //     QuantityRequired: 550,
-  //     QuantityIssued: 500,
-  //     Remarks: "-",
-  //   },
-  // ];
+  const HistoryColumnDefs = [
+    { headerName: "Sr No", field: "srNo", maxWidth: 80 },
+    { headerName: "PO Number", field: "PONumber" },
+    { headerName: "MaterialSlip Name", field: "MaterialSlipName" },
+    { headerName: "Item Desc", field: "ItemDesc" },
+    { headerName: "Material Grade", field: "MaterialGrade" },
+    { headerName: "Size", field: "Size" },
+    { headerName: "Quantity Required", field: "QuantityRequired" },
+    { headerName: "Quantity Issued", field: "QuantityIssued" },
+    { headerName: "Remarks", field: "Remarks" },
+    {
+      headerName: "Action",
+      cellRenderer: HistoryButton,
+      minWidth: 150,
+      maxWidth: 200,
+    }
+  ];
 
   return (
-    // <div className="flex flex-col justify-center items-center">
-    <div className="flex flex-col mx-4 bg-white">
+    // <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col h-screen mx-4 bg-white">
       {/* Button positioned at the top right corner */}
       <button
-        className="self-end m-4 bg-gray-400 px-4 py-2 rounded-lg"
+        className="self-end px-4 py-2 m-4 bg-gray-400 rounded-lg"
         onClick={handleClick}
       >
         Create
       </button>
-      <div className="ag-theme-alpine px-4 w-full h-[75vh]">
+      <div className="ag-theme-alpine px-4 w-full h-[45vh]">
         <AgGridReact
           columnDefs={columnDefs}
           rowData={rowData}
@@ -234,6 +218,20 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
           paginationPageSize={10}
         />
       </div>
+      {showHistoryTable ? (
+        <>
+          <hr className="mx-4 mt-12 mb-6 border-t border-gray-300" />
+          <div className="ag-theme-alpine px-4 w-full h-[30vh]">
+            <p className="mb-2 text-xl font-bold text-start">History</p>
+            <AgGridReact
+              columnDefs={HistoryColumnDefs}
+              rowData={historyRowData}
+              pagination={true}
+              paginationPageSize={10}
+            />
+          </div>
+        </>
+      ) : null}
     </div>
   );
 };

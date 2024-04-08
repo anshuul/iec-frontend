@@ -13,7 +13,9 @@ const MaterialIssueForm = () => {
   const [itemDescription, setItemDescription] = useState("");
   const [materialGrade, setMaterialGrade] = useState("Default Material Grade");
   const [diameter, setDiameter] = useState("");
+  const [diameterDimension, setDiameterDimension] = useState("mm");
   const [length, setLength] = useState("");
+  const [lengthDimension, setLengthDimension] = useState("mm");
   const [size, setSize] = useState("");
   const [quantityRequired, setQuantityRequired] = useState(
     "Default Quantity Required"
@@ -26,7 +28,7 @@ const MaterialIssueForm = () => {
     handleCalculate();
   }, [diameter, length]);
 
-  const handleCalculate  = () => {
+  const handleCalculate = () => {
     if (diameter && length) {
       const calculatedSize =
         (parseFloat(diameter) * parseFloat(diameter) * parseFloat(length)) /
@@ -61,8 +63,11 @@ const MaterialIssueForm = () => {
           materialSlipName,
           itemDescription,
           materialGrade,
-          diameter,
-          length,
+          size: size,
+          diameterValue: diameter,
+          diameterDimension: diameterDimension,
+          lengthValue: length,
+          lengthDimension: lengthDimension,
           quantityRequired,
           quantityIssued,
         }
@@ -73,6 +78,27 @@ const MaterialIssueForm = () => {
     } catch (error) {
       console.error("Error occurred while saving form data:", error);
       // Optionally, handle error, e.g., show an error message to the user
+    }
+  };
+
+  // Function to convert inches to millimeters
+  const convertToMillimeters = (value) => {
+    return (parseFloat(value) * 25.4).toFixed(3);
+  };
+
+  // Event handler for diameter dimension change
+  const handleDiameterDimensionChange = (e) => {
+    setDiameterDimension(e.target.value);
+    if (e.target.value === 'inch') {
+      setDiameter(convertToMillimeters(diameter));
+    }
+  };
+
+  // Event handler for length dimension change
+  const handleLengthDimensionChange = (e) => {
+    setLengthDimension(e.target.value);
+    if (e.target.value === 'inch') {
+      setLength(convertToMillimeters(length));
     }
   };
 
@@ -89,8 +115,6 @@ const MaterialIssueForm = () => {
   const handleGoBack = () => {
     router.back();
   };
-
-  const handlecalculate = () => {};
 
   return (
     <Container>
@@ -151,7 +175,7 @@ const MaterialIssueForm = () => {
           </label>
         </div>
 
-        <div className="flex items-center my-4 gap-2">
+        <div className="flex items-center gap-2 my-4">
           <label htmlFor="size" className="text-[16px] mr-4">
             Size:
           </label>
@@ -171,11 +195,14 @@ const MaterialIssueForm = () => {
           </label>
           <label
             htmlFor="unit"
-            className="relative cursor-pointer App flex items-center"
+            className="relative flex items-center cursor-pointer App"
           >
             <select
               id="unit"
               className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
+              value={diameterDimension}
+              onChange={(e) => setDiameterDimension(e.target.value)}
+            // onChange={handleDiameterDimensionChange}
             >
               <option value="inch">Inch</option>
               <option value="mm">MM</option>
@@ -197,11 +224,14 @@ const MaterialIssueForm = () => {
           </label>
           <label
             htmlFor="unit"
-            className="relative cursor-pointer App flex items-center"
+            className="relative flex items-center cursor-pointer App"
           >
             <select
               id="unit"
               className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
+              value={lengthDimension}
+              onChange={(e) => setLengthDimension(e.target.value)}
+            // onChange={handleLengthDimensionChange}
             >
               <option value="inch">Inch</option>
               <option value="mm">MM</option>
@@ -216,7 +246,7 @@ const MaterialIssueForm = () => {
             Calculation
           </button>
         </div>
-        <div className="flex items-center my-4">
+        {/* <div className="flex items-center my-4">
           <label className="relative cursor-pointer App">
             <input
               id="sizeFirstPart"
@@ -227,19 +257,20 @@ const MaterialIssueForm = () => {
               className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              size
+              size in KG
             </span>
           </label>
-        </div>
+        </div> */}
         <div className="flex items-center my-4">
           <label className="relative cursor-pointer App">
             <input
               type="text"
+              value={size}
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              Quantity Required
+              Quantity Required in KG
             </span>
           </label>
         </div>
@@ -248,11 +279,12 @@ const MaterialIssueForm = () => {
           <label className="relative cursor-pointer App">
             <input
               type="text"
+              value={size}
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              Quantity Issued
+              Quantity Issued in KG
             </span>
           </label>
         </div>
