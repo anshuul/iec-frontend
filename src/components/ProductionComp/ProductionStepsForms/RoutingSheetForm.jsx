@@ -4,6 +4,8 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import { FiArrowLeft, FiPrinter, FiSave } from "react-icons/fi";
+import { TiPlus } from "react-icons/ti";
+
 import { useRouter } from "next/navigation";
 import axios from "axios";
 
@@ -128,7 +130,7 @@ const RoutingSheetForm = () => {
         onClick={handleAddRow}
         className="flex items-center mb-2 px-4 py-2 text-lg font-bold text-black"
       >
-        <FiArrowLeft className="mr-2" />
+        <TiPlus className="mr-2" />
         Add
       </button>
       <div className="ag-theme-alpine px-4 w-full h-[75vh]">

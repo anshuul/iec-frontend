@@ -108,7 +108,7 @@ const ProductionSheetTable = ({ productionStep }) => {
           ), // Convert to pretty format
           attachment: record.attachment,
           poNo: record.poNo,
-          CreatedAt: new Date(record.createdAt).toLocaleString(
+          CreatedAt: new Date(record.previousData.createdAt).toLocaleString(
             undefined,
             { dateStyle: "long", timeStyle: "medium" }
           ), // Convert to pretty format
