@@ -5,7 +5,7 @@ import "ag-grid-community/styles/ag-theme-alpine.css";
 import { MdModeEdit } from "react-icons/md";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
 const RoutingSheetTable = ({ productionStep }) => {
@@ -13,8 +13,7 @@ const RoutingSheetTable = ({ productionStep }) => {
   const router = useRouter();
   const [rowData, setRowData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [historyRowData, setHistoryRowData] = useState([]);
-  const [showHistoryTable, setShowHistoryTable] = useState(false);
+  const gridApiRef = useRef(null);
 
   const handleClick = () => {
     router.push(`/production/${productionStep}/routingSheetForm`);
@@ -32,10 +31,8 @@ const RoutingSheetTable = ({ productionStep }) => {
           const parsedCustomerPO = JSON.parse(selectedCustomerPO);
           console.log("poNo", parsedCustomerPO.poNo);
           response = await axios.get(
-          `http://localhost:8000/api/routingSheet/get-routingSheet/${parsedCustomerPO.poNo}`
-          // `http://localhost:8000/api/routingSheet/get-routingSheetById/${parsedCustomerPO.poNo}`
+            `http://localhost:8000/api/routingSheet/get-routingSheet/${parsedCustomerPO.poNo}`
           );
-          // response = await axios.get("http://localhost:8000/api/routingSheet");
         } else {
           response = await axios.get("http://localhost:8000/api/routingSheet");
         }
@@ -45,7 +42,7 @@ const RoutingSheetTable = ({ productionStep }) => {
           response.data.map((item, index) => ({
             srNo: index + 1,
             _id: item._id,
-            RoutingSheets: item.operatorName||"R010",
+            RoutingSheets: item.processRows[0].routingSheetNo,
             CreatedData: item.processDescription || "DATA",
             CreatedBy: item.operatorName || "Vishal",
           }))
@@ -83,10 +80,10 @@ const RoutingSheetTable = ({ productionStep }) => {
     const data = props.data;
 
     return (
-      <div className="ag-theme-alpine flex flex-row gap-2 items-center pt-1">
+      <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
         <button
           onClick={() => handleEditClick(data._id)}
-          className="p-2 bg-green-200 rounded-lg text-green-600"
+          className="p-2 text-green-600 bg-green-200 rounded-lg"
         >
           <MdModeEdit />
         </button>
@@ -113,12 +110,20 @@ const RoutingSheetTable = ({ productionStep }) => {
     },
   ];
 
+  const onRowClicked = (event) => {
+    const selectedRoutingSheet = event.data; // Access the clicked row data
+    localStorage.setItem(
+      "selectedRoutingSheet",
+      JSON.stringify(selectedRoutingSheet)
+    );
+  };
+
   return (
-    // <div className="flex flex-col justify-center items-center">
+    // <div className="flex flex-col items-center justify-center">
     <div className="flex flex-col mx-4 bg-white">
       {/* Button positioned at the top right corner */}
       <button
-        className="self-end m-4 bg-gray-400 px-4 py-2 rounded-lg"
+        className="self-end px-4 py-2 m-4 bg-gray-400 rounded-lg"
         onClick={handleClick}
       >
         Create
@@ -129,6 +134,8 @@ const RoutingSheetTable = ({ productionStep }) => {
           rowData={rowData}
           pagination={true}
           paginationPageSize={10}
+          onRowClicked={onRowClicked}
+          rowSelection="single"
         />
       </div>
     </div>

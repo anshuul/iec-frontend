@@ -28,6 +28,7 @@ const RoutingSheetFormUpdate = () => {
         const responseData = Array.isArray(response.data)
           ? response.data
           : [response.data];
+
         setRowData(responseData[0]?.processRows || []); // Update rowData with processRows data
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -60,31 +61,31 @@ const RoutingSheetFormUpdate = () => {
 
   const columnDefs = [
     { headerName: "Sr No", field: "processRowNumber" },
-    { headerName: "Date", field: "date" },
-    { headerName: "Operator Name/Supplier", field: "operatorName" },
-    { headerName: "Machine No/Instrument No", field: "machineNo" },
-    { headerName: "PROCESS DESCRIPTION", field: "processDescription" },
-    { headerName: "PROCEDURE NO/DRAWING NO/REPORT NO.", field: "procedureNo" },
-    { headerName: "ORDER QTY", field: "orderQty" },
-    { headerName: "PROCESS QTY", field: "processQty" },
-    { headerName: "START TIME", field: "startTime" },
-    { headerName: "END TIME", field: "endTime" },
-    { headerName: "OPT SIGN", field: "optSign" },
-    { headerName: "REMARKS", field: "remarks" },
+    { headerName: "Date", field: "date", editable: true },
+    { headerName: "Operator Name/Supplier", field: "operatorName", editable: true },
+    { headerName: "Machine No/Instrument No", field: "machineNo", editable: true },
+    { headerName: "PROCESS DESCRIPTION", field: "processDescription", editable: true },
+    { headerName: "PROCEDURE NO/DRAWING NO/REPORT NO.", field: "procedureNo", editable: true },
+    { headerName: "ORDER QTY", field: "orderQty", editable: true },
+    { headerName: "PROCESS QTY", field: "processQty", editable: true },
+    { headerName: "START TIME", field: "startTime", editable: true },
+    { headerName: "END TIME", field: "endTime", editable: true },
+    { headerName: "OPT SIGN", field: "optSign", editable: true },
+    { headerName: "REMARKS", field: "remarks", editable: true },
   ];
 
   return (
     <div className="flex flex-col mx-4 bg-white">
       <button
         onClick={handleGoBack}
-        className="flex items-center mb-2 px-4 py-2 text-lg font-bold text-black"
+        className="flex items-center px-4 py-2 mb-2 text-lg font-bold text-black"
       >
         <FiArrowLeft className="mr-2" />
         Back
       </button>
       <button
         onClick={handleAddRow}
-        className="flex items-center mb-2 px-4 py-2 text-lg font-bold text-black"
+        className="flex items-center px-4 py-2 mb-2 text-lg font-bold text-black"
       >
         <TiPlus className="mr-2" />
         Add Row
@@ -94,11 +95,11 @@ const RoutingSheetFormUpdate = () => {
           columnDefs={columnDefs}
           rowData={rowData}
           pagination={true}
-          paginationPageSize={10}
+          paginationPageSize={15}
         />
       </div>
       <hr className="my-4 border-t border-gray-300" />
-      <div className="flex justify-end max-w-screen-full mx-4">
+      <div className="flex justify-end mx-4 max-w-screen-full">
         <button className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded">
           Save
           <FiSave className="ml-2" />

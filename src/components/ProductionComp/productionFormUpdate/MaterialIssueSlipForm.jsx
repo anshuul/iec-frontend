@@ -316,7 +316,7 @@ const MaterialIssueSlipForm = () => {
               //     quantityRequired: e.target.value,
               //   })
               // }
-              value={materialIssueForm.size}
+              value={materialIssueForm.size || materialIssueForm.quantityRequired}
               onChange={(e) => handleInputChange(e, 'size')}
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
@@ -338,7 +338,7 @@ const MaterialIssueSlipForm = () => {
               //     quantityIssued: e.target.value,
               //   })
               // }
-              value={materialIssueForm.size}
+              value={materialIssueForm.size || materialIssueForm.quantityIssued}
               onChange={(e) => handleInputChange(e, 'size')}
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
