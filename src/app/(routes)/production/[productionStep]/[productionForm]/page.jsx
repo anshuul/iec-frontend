@@ -7,12 +7,20 @@ import RoutingSheetForm from "@/components/ProductionComp/ProductionStepsForms/R
 import CutomerPoHistoryForm from "@/components/ProductionComp/ProductionStepsForms/CutomerPoHistoryForm";
 import ProductionForm from "@/components/ProductionComp/ProductionStepsForms/productionForm";
 import ProductionSheetFormUpdate from "@/components/ProductionComp/productionFormUpdate/ProductionSheetFormUpdate";
+import MaterialIssueSlipForm from "@/components/ProductionComp/productionFormUpdate/MaterialIssueSlipForm";
+import RoutingSheetFormUpdate from "@/components/ProductionComp/productionFormUpdate/RoutingSheetFormUpdate";
 
 const productionForm = ({ params }) => {
   const { productionForm } = params;
   console.log("productionStep", productionForm);
   return (
     <div className="bg-gray-300">
+      {productionForm === "routingSheetFormUpdate" && (
+        <RoutingSheetFormUpdate productionForm={productionForm} />
+      )}
+      {productionForm === "materialIssueFormUpdate" && (
+        <MaterialIssueSlipForm productionForm={productionForm} />
+      )}
       {productionForm === "productionSheetFormUpdate" && (
         <ProductionSheetFormUpdate productionForm={productionForm} />
       )}

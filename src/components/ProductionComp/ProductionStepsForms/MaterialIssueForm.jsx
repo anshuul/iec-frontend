@@ -1,19 +1,22 @@
 "use client";
 import Container from "@/components/common/Container";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { FiArrowLeft, FiFile } from "react-icons/fi";
+import { useEffect, useState } from "react";
+import { FiArrowLeft, FiFile, FiPrinter, FiSave } from "react-icons/fi";
+import axios from "axios";
 
 const MaterialIssueForm = () => {
   const router = useRouter();
   const [materialSlipName, setMaterialSlipName] = useState(
     "Default Material Slip"
   );
-  const [itemDescription, setItemDescription] = useState(
-    "Default Item Description"
-  );
+  const [itemDescription, setItemDescription] = useState("");
   const [materialGrade, setMaterialGrade] = useState("Default Material Grade");
-  const [size, setSize] = useState("Default Size");
+  const [diameter, setDiameter] = useState("");
+  const [diameterDimension, setDiameterDimension] = useState("mm");
+  const [length, setLength] = useState("");
+  const [lengthDimension, setLengthDimension] = useState("mm");
+  const [size, setSize] = useState("");
   const [quantityRequired, setQuantityRequired] = useState(
     "Default Quantity Required"
   );
@@ -21,13 +24,89 @@ const MaterialIssueForm = () => {
     "Default Quantity Issued"
   );
   const [selectedFile, setSelectedFile] = useState(null);
+  useEffect(() => {
+    handleCalculate();
+  }, [diameter, length]);
+
+  const handleCalculate = () => {
+    if (diameter && length) {
+      const calculatedSize =
+        (parseFloat(diameter) * parseFloat(diameter) * parseFloat(length)) /
+        162000;
+      setSize(calculatedSize.toFixed(3));
+    } else {
+      setSize("");
+    }
+  };
+  console.log("size", size);
+  useEffect(() => {
+    const selectedCustomerPOData = JSON.parse(
+      localStorage.getItem("selectedCustomerPO")
+    );
+    if (selectedCustomerPOData) {
+      // setProductionSheetName(selectedCustomerPOData.poNo || "");
+      setItemDescription(selectedCustomerPOData.itemDescription || "");
+      setMaterialGrade(selectedCustomerPOData.itemGrade || "");
+      // Set other fields accordingly
+    }
+  }, []);
+
+  const saveFormData = async () => {
+    const selectedCustomerPODataForpoNo = JSON.parse(
+      localStorage.getItem("selectedCustomerPO")
+    );
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/materialissueslip/createMaterialIssueSlip",
+        {
+          poNo: selectedCustomerPODataForpoNo.poNo,
+          materialSlipName,
+          itemDescription,
+          materialGrade,
+          size: size,
+          diameterValue: diameter,
+          diameterDimension: diameterDimension,
+          lengthValue: length,
+          lengthDimension: lengthDimension,
+          quantityRequired,
+          quantityIssued,
+        }
+      );
+
+      console.log("response", response);
+      // Optionally, handle success response, e.g., show a success message to the user
+    } catch (error) {
+      console.error("Error occurred while saving form data:", error);
+      // Optionally, handle error, e.g., show an error message to the user
+    }
+  };
+
+  // Function to convert inches to millimeters
+  const convertToMillimeters = (value) => {
+    return (parseFloat(value) * 25.4).toFixed(3);
+  };
+
+  // Event handler for diameter dimension change
+  const handleDiameterDimensionChange = (e) => {
+    setDiameterDimension(e.target.value);
+    if (e.target.value === 'inch') {
+      setDiameter(convertToMillimeters(diameter));
+    }
+  };
+
+  // Event handler for length dimension change
+  const handleLengthDimensionChange = (e) => {
+    setLengthDimension(e.target.value);
+    if (e.target.value === 'inch') {
+      setLength(convertToMillimeters(length));
+    }
+  };
 
   const handleFileSelection = (e) => {
     const file = e.target.files[0];
     if (file && file.type === "application/pdf") {
       setSelectedFile(file);
     } else {
-      // Optionally, you can display an error message or perform other actions here
       setSelectedFile(null);
       alert("Please select a PDF file.");
     }
@@ -70,6 +149,8 @@ const MaterialIssueForm = () => {
           <label className="relative cursor-pointer App">
             <input
               type="text"
+              value={itemDescription}
+              onChange={(e) => setItemDescription(e.target.value)}
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -83,6 +164,8 @@ const MaterialIssueForm = () => {
           <label className="relative cursor-pointer App">
             <input
               type="text"
+              value={materialGrade}
+              onChange={(e) => setMaterialGrade(e.target.value)}
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -92,15 +175,102 @@ const MaterialIssueForm = () => {
           </label>
         </div>
 
+        <div className="flex items-center gap-2 my-4">
+          <label htmlFor="size" className="text-[16px] mr-4">
+            Size:
+          </label>
+          {/* Diameter */}
+          <label className="relative cursor-pointer App">
+            <input
+              id="sizeFirstPart"
+              type="text"
+              value={diameter}
+              onChange={(e) => setDiameter(e.target.value)}
+              placeholder="Input"
+              className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+            />
+            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+              Diameter
+            </span>
+          </label>
+          <label
+            htmlFor="unit"
+            className="relative flex items-center cursor-pointer App"
+          >
+            <select
+              id="unit"
+              className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
+              value={diameterDimension}
+              onChange={(e) => setDiameterDimension(e.target.value)}
+            // onChange={handleDiameterDimensionChange}
+            >
+              <option value="inch">Inch</option>
+              <option value="mm">MM</option>
+            </select>
+          </label>
+          {/* Unit */}
+          <label className="relative cursor-pointer App">
+            <input
+              id="sizeFirstPart"
+              type="text"
+              value={length}
+              onChange={(e) => setLength(e.target.value)}
+              placeholder="Input"
+              className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+            />
+            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+              Length
+            </span>
+          </label>
+          <label
+            htmlFor="unit"
+            className="relative flex items-center cursor-pointer App"
+          >
+            <select
+              id="unit"
+              className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
+              value={lengthDimension}
+              onChange={(e) => setLengthDimension(e.target.value)}
+            // onChange={handleLengthDimensionChange}
+            >
+              <option value="inch">Inch</option>
+              <option value="mm">MM</option>
+            </select>
+          </label>
+
+          {/* Calculate button */}
+          <button
+            onClick={handleCalculate}
+            className="flex items-center px-4 py-2 ml-2 text-black bg-gray-300 rounded"
+          >
+            Calculation
+          </button>
+        </div>
+        {/* <div className="flex items-center my-4">
+          <label className="relative cursor-pointer App">
+            <input
+              id="sizeFirstPart"
+              type="text"
+              value={size}
+              onChange={(e) => setSize(e.target.value)}
+              placeholder="Input"
+              className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+            />
+            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+              size in KG
+            </span>
+          </label>
+        </div> */}
         <div className="flex items-center my-4">
           <label className="relative cursor-pointer App">
             <input
               type="text"
+              value={size}
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              Size
+              Quantity Required in KG
             </span>
           </label>
         </div>
@@ -109,24 +279,12 @@ const MaterialIssueForm = () => {
           <label className="relative cursor-pointer App">
             <input
               type="text"
+              value={size}
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              Quantity Required
-            </span>
-          </label>
-        </div>
-
-        <div className="flex items-center my-4">
-          <label className="relative cursor-pointer App">
-            <input
-              type="text"
-              placeholder="Input"
-              className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
-            />
-            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              Quantity Issued
+              Quantity Issued in KG
             </span>
           </label>
         </div>
@@ -154,6 +312,21 @@ const MaterialIssueForm = () => {
         <p className="ml-2 text-sm text-red-600">
           Only PDF files are allowed and only one file can be selected.
         </p>
+
+        <hr className="my-4 border-t border-gray-300" />
+        <div className="flex justify-end">
+          <button
+            onClick={saveFormData}
+            className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded"
+          >
+            Save
+            <FiSave className="ml-2" />
+          </button>
+          <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
+            Print
+            <FiPrinter className="ml-2" />
+          </button>
+        </div>
       </div>
     </Container>
   );

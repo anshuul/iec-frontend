@@ -1,50 +1,66 @@
 "use client";
-import Container from "@/components/common/Container";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import axios from "axios";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiArrowLeft, FiFile, FiPrinter, FiSave } from "react-icons/fi";
-import axios from "axios";
+import Container from "@/components/common/Container";
 
-const EditCustomerForm = () => {
+const MaterialIssueSlipForm = () => {
+  const router = useRouter();
   const searchParams = useSearchParams();
 
-  const poNo = searchParams.get("CustomerPO");
-  console.log("first", poNo);
+  const id = searchParams.get("id");
+  console.log("first", id);
 
-  const router = useRouter();
-  const [customerPO, setCustomerPO] = useState({
-    customerName: "",
-    poNo: "",
-    materialCode: "",
+  const [materialIssueForm, setMaterialIssueForm] = useState({
+    materialSlipName: "",
     itemDescription: "",
-    selectedItem: "",
-    itemGrade: "",
-    size: {
-      diameter: { value: "", dimension: "" },
-      thread: "",
-      length: { value: "", dimension: "" },
-    },
-    quantity: "",
+    materialGrade: "",
+    diameter: "",
+    diameterDimension: "",
+    length: "",
+    lengthDimension: "",
+    quantityRequired: "",
+    quantityIssued: "",
+    size: "",
+    id: ""
   });
+
   const [selectedFile, setSelectedFile] = useState(null);
-  console.log("customerPO: ", customerPO);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/customerPO/${poNo}`
+          `http://localhost:8000/api/materialissueslip/get-materialIssueSlipByID/${id}`
         );
-        setCustomerPO(response.data.customerPO); // Set the customer PO data in state
+        const responseData = response.data;
+        console.log("responseData", responseData.diameter.value)
+
+        setMaterialIssueForm({
+          ...materialIssueForm, // Spread previous state
+          materialSlipName: responseData.materialSlipName,
+          itemDescription: responseData.itemDescription,
+          materialGrade: responseData.materialGrade,
+          diameter: responseData.diameter.value, // Access the nested value
+          diameterDimension: responseData.diameter.dimension,
+          length: responseData.length.value, // Access the nested value
+          lengthDimension: responseData.length.dimension,
+          quantityRequired: responseData.quantityRequired,
+          quantityIssued: responseData.quantityIssued,
+          size: responseData.size,
+          id: responseData._id // Update id if needed
+        });
+
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
-    if (poNo) {
+    if (id) {
       fetchData(); // Fetch customer PO data when CustomerPO is available
     }
-  }, [poNo]);
+  }, [id]);
 
   const handleFileSelection = (e) => {
     const file = e.target.files[0];
@@ -64,16 +80,40 @@ const EditCustomerForm = () => {
   const saveFormData = async () => {
     try {
       const response = await axios.put(
-        `http://localhost:8000/api/customerPO/update/${poNo}`,
-        customerPO // Send the updated customer PO data
+        `http://localhost:8000/api/materialissueslip/update-materialIssueSlip/${id}`,
+        materialIssueForm
       );
       console.log("response ", response);
-      router.push("/production");
-      // Optionally, you can handle success response here
+      router.push("/production/material-issue-slip");
     } catch (error) {
       console.log(error);
-      // Optionally, you can handle error here
     }
+  };
+
+  const handleCalculate = () => {
+    const { diameter, length } = materialIssueForm;
+    if (diameter && length) {
+      const calculatedSize =
+        (parseFloat(diameter) * parseFloat(diameter) * parseFloat(length)) /
+        162000;
+      setMaterialIssueForm(prevState => ({
+        ...prevState,
+        size: calculatedSize.toFixed(3)
+      }));
+    } else {
+      setMaterialIssueForm(prevState => ({
+        ...prevState,
+        size: ""
+      }));
+    }
+  };
+
+  const handleInputChange = (e, field) => {
+    const value = e.target.value;
+    setMaterialIssueForm(prevState => ({
+      ...prevState,
+      [field]: value
+    }));
   };
 
   return (
@@ -92,17 +132,20 @@ const EditCustomerForm = () => {
         <div className="flex items-center my-4">
           <label className="relative cursor-pointer App">
             <input
-              id="poNo"
+              id="materialSlipName"
               type="text"
-              value={customerPO.poNo}
-              onChange={(e) =>
-                setCustomerPO({ ...customerPO, poNo: e.target.value })
-              }
               placeholder="Input"
+              value={materialIssueForm.materialSlipName}
+              onChange={(e) =>
+                setMaterialIssueForm({
+                  ...materialIssueForm,
+                  materialSlipName: e.target.value,
+                })
+              }
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              PO No
+              Material Slip Name
             </span>
           </label>
         </div>
@@ -110,48 +153,11 @@ const EditCustomerForm = () => {
         <div className="flex items-center my-4">
           <label className="relative cursor-pointer App">
             <input
-              id="ProductionName"
               type="text"
-              placeholder="Input"
-              value={customerPO.customerName}
+              value={materialIssueForm.itemDescription}
               onChange={(e) =>
-                setCustomerPO({ ...customerPO, customerName: e.target.value })
-              }
-              className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
-            />
-            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              Customer Name
-            </span>
-          </label>
-        </div>
-
-        <div className="flex items-center my-4">
-          <label className="relative cursor-pointer App">
-            <input
-              id="materialCode"
-              type="text"
-              value={customerPO.materialCode}
-              onChange={(e) =>
-                setCustomerPO({ ...customerPO, materialCode: e.target.value })
-              }
-              placeholder="Input"
-              className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
-            />
-            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              Material Code
-            </span>
-          </label>
-        </div>
-
-        <div className="flex items-center my-4">
-          <label className="relative cursor-pointer App">
-            <input
-              id="itemDescription"
-              type="text"
-              value={customerPO.itemDescription}
-              onChange={(e) =>
-                setCustomerPO({
-                  ...customerPO,
+                setMaterialIssueForm({
+                  ...materialIssueForm,
                   itemDescription: e.target.value,
                 })
               }
@@ -162,45 +168,28 @@ const EditCustomerForm = () => {
               Item Description
             </span>
           </label>
-          <select
-            id="selectedItem"
-            value={customerPO.selectedItem}
-            onChange={(e) =>
-              setCustomerPO({
-                ...customerPO,
-                selectedItem: e.target.value,
-              })
-            }
-            className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
-          >
-            <option value="inch">stud</option>
-            <option value="studwithnuts">stud X 1 Nuts</option>
-            <option value="studwith2nuts">stud X 2 Nuts</option>
-            <option value="studwith3nuts">stud X 3 Nuts</option>
-            <option value="studwith4nuts">stud X 4 Nuts</option>
-            <option value="nuts">Nuts</option>
-          </select>
         </div>
 
         <div className="flex items-center my-4">
           <label className="relative cursor-pointer App">
             <input
-              id="itemGrade"
               type="text"
-              value={customerPO.itemGrade}
+              value={materialIssueForm.materialGrade}
               onChange={(e) =>
-                setCustomerPO({ ...customerPO, itemGrade: e.target.value })
+                setMaterialIssueForm({
+                  ...materialIssueForm,
+                  materialGrade: e.target.value,
+                })
               }
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              Item Grade
+              Material Grade
             </span>
           </label>
         </div>
 
-        {/* Size input divided into three parts */}
         <div className="flex items-center gap-2 my-4">
           <label htmlFor="size" className="text-[16px] mr-4">
             Size:
@@ -210,20 +199,14 @@ const EditCustomerForm = () => {
             <input
               id="sizeFirstPart"
               type="text"
-              // value={customerPO.size.diameter.value || customerPO.size.diameter}
-              value={customerPO.size.diameter.value}
-              onChange={(e) =>
-                setCustomerPO({
-                  ...customerPO,
-                  size: {
-                    ...customerPO.size,
-                    diameter: {
-                      ...customerPO.size.diameter,
-                      value: e.target.value,
-                    },
-                  },
-                })
-              }
+              value={materialIssueForm.diameter}
+              // onChange={(e) =>
+              //   setMaterialIssueForm({
+              //     ...materialIssueForm,
+              //     diameter: e.target.value,
+              //   })
+              // }
+              onChange={(e) => handleInputChange(e, 'diameter')}
               placeholder="Input"
               className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -231,69 +214,39 @@ const EditCustomerForm = () => {
               Diameter
             </span>
           </label>
-          {/* Diameter dimension */}
           <label
-            htmlFor="dimension"
+            htmlFor="diameterDimension"
             className="relative flex items-center cursor-pointer App"
           >
             <select
-              id="diameterUnit"
-              value={customerPO.size.diameter.dimension}
-              onChange={(e) =>
-                setCustomerPO({
-                  ...customerPO,
-                  size: {
-                    ...customerPO.size,
-                    diameter: {
-                      ...customerPO.size.diameter,
-                      dimension: e.target.value,
-                    },
-                  },
-                })
-              }
+              id="diameterDimension"
+              value={materialIssueForm.diameterDimension}
+              // onChange={(e) =>
+              //   setMaterialIssueForm({
+              //     ...materialIssueForm,
+              //     diameterDimension: e.target.value,
+              //   })
+              // }
+              onChange={(e) => handleInputChange(e, 'diameterDimension')}
               className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
             >
               <option value="inch">Inch</option>
               <option value="mm">MM</option>
             </select>
           </label>
-          {/* Thread */}
-          <label className="relative cursor-pointer App">
-            <input
-              id="sizeFirstPart"
-              type="text"
-              value={customerPO.size.thread}
-              onChange={(e) =>
-                setCustomerPO({
-                  ...customerPO,
-                  size: { ...customerPO.size, thread: e.target.value },
-                })
-              }
-              placeholder="Input"
-              className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
-            />
-            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              Thread
-            </span>
-          </label>
           {/* Length */}
           <label className="relative cursor-pointer App">
             <input
               id="sizeFirstPart"
               type="text"
-              value={customerPO.size.length.value}
-              onChange={(e) =>
-                setCustomerPO({
-                  ...customerPO,
-                  size: {
-                    ...customerPO.size,
-                    length: {
-                      ...customerPO.size.length,
-                      value: e.target.value,
-                    },
-                  },
-                })
-              }
+              value={materialIssueForm.length}
+              // onChange={(e) =>
+              //   setMaterialIssueForm({
+              //     ...materialIssueForm,
+              //     length: e.target.value,
+              //   })
+              // }
+              onChange={(e) => handleInputChange(e, 'length')}
               placeholder="Input"
               className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -301,31 +254,76 @@ const EditCustomerForm = () => {
               Length
             </span>
           </label>
-          {/* Length dimension */}
           <label
-            htmlFor="dimension"
+            htmlFor="lengthDimension"
             className="relative flex items-center cursor-pointer App"
           >
             <select
-              id="lengthUnit"
-              value={customerPO.size.length.dimension}
-              onChange={(e) =>
-                setCustomerPO({
-                  ...customerPO,
-                  size: {
-                    ...customerPO.size,
-                    length: {
-                      ...customerPO.size.length,
-                      dimension: e.target.value,
-                    },
-                  },
-                })
-              }
+              id="lengthDimension"
+              value={materialIssueForm.lengthDimension}
+              // onChange={(e) =>
+              //   setMaterialIssueForm({
+              //     ...materialIssueForm,
+              //     lengthDimension: e.target.value,
+              //   })
+              // }
+              onChange={(e) => handleInputChange(e, 'lengthDimension')}
               className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
             >
               <option value="inch">Inch</option>
               <option value="mm">MM</option>
             </select>
+          </label>
+
+          {/* Calculate button */}
+          <button
+            onClick={handleCalculate}
+            className="flex items-center px-4 py-2 ml-2 text-black bg-gray-300 rounded"
+          >
+            Calculation
+          </button>
+        </div>
+        {/* <div className="flex items-center my-4">
+          <label className="relative cursor-pointer App">
+            <input
+              id="sizeFirstPart"
+              type="text"
+              value={materialIssueForm.size}
+              // onChange={(e) =>
+              //   setMaterialIssueForm({
+              //     ...materialIssueForm,
+              //     size: e.target.value,
+              //   })
+              // } 
+              onChange={(e) => handleInputChange(e, 'size')}
+              placeholder="Input"
+              className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+            />
+            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+              size in KG
+            </span>
+          </label>
+        </div> */}
+
+        <div className="flex items-center my-4">
+          <label className="relative cursor-pointer App">
+            <input
+              type="text"
+              // value={materialIssueForm.quantityRequired}
+              // onChange={(e) =>
+              //   setMaterialIssueForm({
+              //     ...materialIssueForm,
+              //     quantityRequired: e.target.value,
+              //   })
+              // }
+              value={materialIssueForm.size || materialIssueForm.quantityRequired}
+              onChange={(e) => handleInputChange(e, 'size')}
+              placeholder="Input"
+              className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+            />
+            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+              Quantity Required in KG
+            </span>
           </label>
         </div>
 
@@ -333,15 +331,20 @@ const EditCustomerForm = () => {
           <label className="relative cursor-pointer App">
             <input
               type="text"
+              // value={materialIssueForm.quantityIssued}
+              // onChange={(e) =>
+              //   setMaterialIssueForm({
+              //     ...materialIssueForm,
+              //     quantityIssued: e.target.value,
+              //   })
+              // }
+              value={materialIssueForm.size || materialIssueForm.quantityIssued}
+              onChange={(e) => handleInputChange(e, 'size')}
               placeholder="Input"
-              value={customerPO.quantity}
-              onChange={(e) =>
-                setCustomerPO({ ...customerPO, quantity: e.target.value })
-              }
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              Quantity
+              Quantity Issued in KG
             </span>
           </label>
         </div>
@@ -366,11 +369,9 @@ const EditCustomerForm = () => {
           </button>
           {selectedFile && <span className="ml-2">{selectedFile.name}</span>}
         </div>
-
         <p className="ml-2 text-sm text-red-600">
           Only PDF files are allowed and only one file can be selected.
         </p>
-
         <hr className="my-4 border-t border-gray-300" />
         <div className="flex justify-end">
           <button
@@ -390,4 +391,4 @@ const EditCustomerForm = () => {
   );
 };
 
-export default EditCustomerForm;
+export default MaterialIssueSlipForm;
