@@ -16,12 +16,22 @@ const ProductionForm = () => {
   const [poNo, setPoNo] = useState("");
   const [materialCode, setMaterialCode] = useState("");
   const [itemDescription, setItemDescription] = useState("");
+  const [studItemDescription, setStudItemDescription] = useState("");
+  const [nutItemDescription, setNutItemDescription] = useState("");
+
   const [selectedItem, setSelectedItem] = useState("");
+
   const [itemGrade, setItemGrade] = useState("");
+  const [studGrade, setStudGrade] = useState("");
+  const [nutGrade, setNutGrade] = useState("");
+
   const [diameter, setDiameter] = useState("");
+  const [cuttingDiameter, setCuttingDiameter] = useState("");
   const [diameterDimension, setDiameterDimension] = useState("mm");
   const [thread, setThread] = useState("");
+  const [cuttingthread, setCuttingThread] = useState("");
   const [length, setLength] = useState("");
+  const [cuttingLength, setCuttingLength] = useState("");
   const [lengthDimension, setLengthDimension] = useState("mm");
   const [quantity, setQuantity] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
@@ -69,10 +79,12 @@ const ProductionForm = () => {
           customerName,
           poNo,
           materialCode,
-          itemDescription,
+          studItemDescription,
+          nutItemDescription,
           selectedItem,
-          itemGrade,
-          size: {
+          studGrade,
+          nutGrade,
+          POsize: {
             diameter: {
               value: diameter,
               dimension: diameterDimension,
@@ -81,6 +93,16 @@ const ProductionForm = () => {
             length: {
               value: length,
               dimension: lengthDimension,
+            },
+          },
+
+          Cuttingsize: {
+            cuttingdiameter: {
+              value: cuttingDiameter,
+            },
+            cuttingthread,
+            cuttinglength: {
+              value: cuttingLength,
             },
           },
           quantity,
@@ -92,6 +114,79 @@ const ProductionForm = () => {
       console.log(error);
     }
   };
+
+  // Function to convert inches to millimeters
+  const inchToMm = (inches) => {
+    const mmPerInch = 25.4;
+    return inches * mmPerInch;
+  };
+
+  const getRawMaterialDia = async () => {
+    try {
+      let adjustedLength;
+
+      if (lengthDimension === "mm") {
+        // If length dimension is in mm, simply add 5 to the length
+        adjustedLength = parseFloat(length) + 5;
+      } else if (lengthDimension === "inch") {
+        // Handle potential format "X.Y/Z inch"
+        const parts = length.split("/");
+        if (parts.length === 2) {
+          const numerator = parseFloat(parts[0]);
+          console.log("numerator", numerator)
+          const denominator = parseFloat(parts[1]);
+          console.log("denominator", denominator)
+          const lengthInInch = numerator / denominator;
+          console.log("lengthInInch", lengthInInch)
+          adjustedLength = lengthInInch * 25.4 + 5;
+          console.log("adjustedLength", adjustedLength)
+        } else {
+          // If not in the format "X.Y/Z inch", assume plain inch value
+          adjustedLength = parseFloat(length) * 25.4 + 5;
+        }
+      } else {
+        // Raise an error for invalid dimension
+        throw new ValueError("Invalid length dimension. Must be 'mm' or 'inch'.");
+      }
+
+      // Set the adjusted length to the cuttingLength state
+      setCuttingLength(adjustedLength.toString());
+
+      let response;
+      if (diameterDimension === "mm") {
+        response = await axios.get(
+          `http://localhost:8000/api/helperRoutes/cuttingRawDataMM`,
+          {
+            params: {
+              diameter: `${diameter}`,
+              thread: `${thread}`,
+            },
+          }
+        );
+      } else if (diameterDimension === "inch") {
+        response = await axios.get(
+          `http://localhost:8000/api/helperRoutes/cuttingRawDataInch`,
+          {
+            params: {
+              diameter: `${diameter}`,
+              thread: `${thread}`,
+            },
+          }
+        );
+      }
+
+      const matchingObject = response.data.matchingObject;
+      if (matchingObject) {
+        setCuttingDiameter(matchingObject.RAW_MATERIAL_DIA.toString());
+        setCuttingThread(matchingObject.PITCH.toString());
+      } else {
+        console.log("No matching object found.");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
 
   return (
     <Container>
@@ -154,56 +249,94 @@ const ProductionForm = () => {
           </label>
         </div>
 
-        <div className="flex items-center gap-2 my-4">
-          <label className="relative cursor-pointer App">
-            <input
-              id="itemDescription"
-              type="text"
-              value={itemDescription}
-              onChange={(e) => setItemDescription(e.target.value)}
-              placeholder="Input"
-              className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
-            />
-            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              Item Description
-            </span>
-          </label>
-          <select
-            id="selectedItem"
-            value={selectedItem}
-            onChange={(e) => setSelectedItem(e.target.value)}
-            className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
-          >
-            <option value="select">--select--</option>
-            <option value="stud">Stud</option>
-            <option value="studwith1nuts">stud X 1 Nuts</option>
-            <option value="studwith2nuts">stud X 2 Nuts</option>
-            <option value="studwith3nuts">stud X 3 Nuts</option>
-            <option value="studwith4nuts">stud X 4 Nuts</option>
-            <option value="nut">Nut</option>
-          </select>
+        <div className="flex flex-col items-center gap-4 my-4 md:flex-row">
+          {/* Stud Item Description */}
+          <div className="flex flex-col items-center gap-2 md:flex-row">
+            <label className="relative cursor-pointer App">
+              <input
+                id="studItemDescription"
+                type="text"
+                value={studItemDescription}
+                onChange={(e) => setStudItemDescription(e.target.value)}
+                placeholder="Input"
+                className="h-10 w-96 xl:w-[400px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+              />
+              <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+                Stud Description
+              </span>
+            </label>
+          </div>
+
+          {/* Nut Item Description */}
+          <div className="flex flex-col items-center gap-2 md:flex-row">
+            <label className="relative cursor-pointer App">
+              <input
+                id="nutItemDescription2"
+                type="text"
+                value={nutItemDescription}
+                onChange={(e) => setNutItemDescription(e.target.value)}
+                placeholder="Input"
+                className="h-10 w-96 xl:w-[400px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+              />
+              <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+                Nut Description
+              </span>
+            </label>
+            <select
+              id="selectedItem"
+              value={selectedItem}
+              onChange={(e) => setSelectedItem(e.target.value)}
+              className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
+            >
+              <option value="select">--select--</option>
+              <option value="stud">Stud</option>
+              <option value="studwith1nuts">stud X 1 Nuts</option>
+              <option value="studwith2nuts">stud X 2 Nuts</option>
+              <option value="studwith3nuts">stud X 3 Nuts</option>
+              <option value="studwith4nuts">stud X 4 Nuts</option>
+              <option value="nut">Nut</option>
+            </select>
+          </div>
         </div>
 
-        <div className="flex items-center my-4">
-          <label className="relative cursor-pointer App">
+
+        <div className="flex flex-col items-center my-4 md:flex-row">
+          {/* Stud Material Grade */}
+          <label className="relative mb-4 cursor-pointer App md:mr-4 md:mb-0">
             <input
-              id="itemGrade"
+              id="StudGrade"
               type="text"
-              value={itemGrade}
-              onChange={(e) => setItemGrade(e.target.value)}
+              value={studGrade}
+              onChange={(e) => setStudGrade(e.target.value)}
               placeholder="Input"
-              className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+              className="h-10 w-48 xl:w-[400px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              Material Grade
+              Stud Grade
+            </span>
+          </label>
+
+          {/* Nut Material Grade */}
+          <label className="relative cursor-pointer">
+            <input
+              id="itemGrade2"
+              type="text"
+              value={nutGrade}
+              onChange={(e) => setNutGrade(e.target.value)}
+              placeholder="Input"
+              className="h-10 w-48 xl:w-[400px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+            />
+            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+              Nut Grade
             </span>
           </label>
         </div>
 
-        {/* Size input */}
+
+        {/* PO Size input */}
         <div className="flex flex-col items-start gap-2 my-4 md:items-center md:flex-row">
           <label htmlFor="size" className="text-[16px] mr-4">
-            Size:
+            PO Size:
           </label>
           {/* Diameter with dimension */}
           <label className="relative cursor-pointer App">
@@ -230,11 +363,12 @@ const ProductionForm = () => {
               onChange={(e) => setDiameterDimension(e.target.value)}
               className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
             >
+              {/* <option value="">-select-</option> */}
               <option value="inch">Inch</option>
               <option value="mm">MM</option>
             </select>
           </label>
-          {/* Thread */}
+          {/* Pitch */}
           <label className="relative cursor-pointer App">
             <input
               id="thread"
@@ -276,6 +410,63 @@ const ProductionForm = () => {
               <option value="inch">Inch</option>
               <option value="mm">MM</option>
             </select>
+          </label>
+        </div>
+
+        <button
+          onClick={getRawMaterialDia}
+          className="px-4 py-2 text-white bg-blue-500 rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+        >
+          Get Cutting Size
+        </button>
+
+        {/* Cutting Size input */}
+        <div className="flex flex-col items-start gap-2 my-4 md:items-center md:flex-row">
+          <label htmlFor="size" className="text-[16px] mr-4">
+            Cutting Size:
+          </label>
+          {/* Diameter with dimension */}
+          <label className="relative cursor-pointer App">
+            <input
+              id="sizeFirstPart"
+              type="text"
+              value={cuttingDiameter}
+              onChange={(e) => setCuttingDiameter(e.target.value)}
+              placeholder="Input"
+              className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+            />
+            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+              Diameter
+            </span>
+          </label>
+
+          {/* Pitch */}
+          <label className="relative cursor-pointer App">
+            <input
+              id="thread"
+              type="text"
+              value={cuttingthread}
+              onChange={(e) => setCuttingThread(e.target.value)}
+              placeholder="Input"
+              className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+            />
+            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+              Pitch
+            </span>
+          </label>
+          {/* Length */}
+          <label className="relative cursor-pointer App">
+            <input
+              id="sizeFirstPart"
+              type="text"
+              value={cuttingLength}
+              onChange={(e) => setCuttingLength(e.target.value)}
+              placeholder="Input"
+              className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+            />
+            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+              Length
+            </span>
           </label>
         </div>
 

@@ -46,7 +46,7 @@ const ProductionSheetForm = () => {
       setMaterialIssue(selectedCustomerPOData.materialCode || "");
       setProductAndCustomer(
         `Size: ${selectedCustomerPOData.size.diameter.value} ${selectedCustomerPOData.size.diameter.dimension}, Length: ${selectedCustomerPOData.size.length.value} ${selectedCustomerPOData.size.length.dimension}, Thread: ${selectedCustomerPOData.size.thread}, Quantity: ${selectedCustomerPOData.quantity}` ||
-          ""
+        ""
       );
       setPlanningQuantity(selectedCustomerPOData.quantity || "");
       setAchievementQuantity(selectedCustomerPOData.quantity || "");
@@ -186,7 +186,21 @@ const ProductionSheetForm = () => {
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
                 <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-                  Item Description
+                  Stud Description
+                </span>
+              </label>
+            </div>
+            <div className="flex items-center mb-4">
+              <label className="relative cursor-pointer App">
+                <input
+                  type="text"
+                  placeholder="Input"
+                  value={itemDescription}
+                  onChange={(e) => setItemDescription(e.target.value)}
+                  className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+                />
+                <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+                  Nut Description
                 </span>
               </label>
             </div>
@@ -200,7 +214,21 @@ const ProductionSheetForm = () => {
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
                 <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-                  Material Issue
+                  Stud Material Grade
+                </span>
+              </label>
+            </div>
+            <div className="flex items-center mb-4">
+              <label className="relative cursor-pointer App">
+                <input
+                  type="text"
+                  placeholder="Input"
+                  value={materialIssue}
+                  onChange={(e) => setMaterialIssue(e.target.value)}
+                  className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+                />
+                <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+                  Nut Material Grade
                 </span>
               </label>
             </div>
@@ -265,6 +293,10 @@ const ProductionSheetForm = () => {
                 <RiAttachmentLine className="text-white" />
               </button>
             </div>
+          </div>
+
+          {/* Second Column */}
+          <div className="flex flex-col items-start">
             <div className="flex items-center gap-2 mb-4">
               <label className="relative cursor-pointer App">
                 <input
@@ -285,7 +317,7 @@ const ProductionSheetForm = () => {
                 <RiAttachmentLine className="text-white" />
               </button>
             </div>
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2">
               <label className="relative cursor-pointer App">
                 <input
                   type="text"
@@ -305,10 +337,6 @@ const ProductionSheetForm = () => {
                 <RiAttachmentLine className="text-white" />
               </button>
             </div>
-          </div>
-
-          {/* Second Column */}
-          <div className="flex flex-col items-start">
             <div className="flex items-center gap-2 my-4">
               <label className="relative cursor-pointer App">
                 <input

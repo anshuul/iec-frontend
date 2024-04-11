@@ -45,8 +45,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
         const formattedData = materialIssueSlips.map((issueSlip, index) => {
           let size = "N/A";
           if (issueSlip.size && issueSlip.size.diameter) {
-            size = `${JSON.parse(issueSlip.size.diameter).value}x${JSON.parse(issueSlip.size.length).value
-              }`;
+            size = `${issueSlip.size.diameter.value}x${issueSlip.size.length.value}`;
           }
 
           return {
@@ -62,6 +61,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
             Remarks: "-",
           };
         });
+
 
         setRowData(formattedData);
       } catch (error) {
