@@ -16,10 +16,12 @@ const MaterialIssueSlipForm = () => {
     materialSlipName: "",
     itemDescription: "",
     materialGrade: "",
-    diameter: "",
-    diameterDimension: "",
-    length: "",
-    lengthDimension: "",
+    // diameter: "",
+    // diameterDimension: "",
+    // length: "",
+    // lengthDimension: "",
+    diameter: { value: "", dimension: "" }, // Set as an object with 'value' and 'dimension' fields
+    length: { value: "", dimension: "" },
     quantityRequired: "",
     quantityIssued: "",
     studquantity: "",
@@ -44,9 +46,9 @@ const MaterialIssueSlipForm = () => {
           materialSlipName: responseData.materialSlipName,
           itemDescription: responseData.itemDescription,
           materialGrade: responseData.materialGrade,
-          diameter: responseData.size.diameter ? responseData.size.diameter.value : "", // Check if diameter is defined
+          diameter: responseData.size.diameter ? responseData.size.diameter.value : "",
           diameterDimension: responseData.size.diameter ? responseData.size.diameter.dimension : "",
-          length: responseData.size.length ? responseData.size.length.value : "", // Check if length is defined
+          length: responseData.size.length ? responseData.size.length.value : "",
           lengthDimension: responseData.size.length ? responseData.size.length.dimension : "",
           quantityRequired: responseData.quantityRequired,
           quantityIssued: responseData.quantityIssued,
@@ -294,8 +296,8 @@ const MaterialIssueSlipForm = () => {
           <label className="relative cursor-pointer App">
             <input
               type="text"
-              value={materialIssueForm.quantityIssued}
-              // value={materialIssueForm.size || materialIssueForm.quantityIssued}
+              // value={materialIssueForm.quantityIssued}
+              value={typeof materialIssueForm.size === 'number' ? materialIssueForm.size.toFixed(3) : materialIssueForm.quantityRequired}
               onChange={(e) => handleInputChange(e, 'size')}
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
