@@ -36,6 +36,15 @@ const ProductionSheetFormUpdate = () => {
 
   const [selectedFile, setSelectedFile] = useState(null);
 
+  // Function to format date in ISO format (yyyy-mm-dd)
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -43,13 +52,12 @@ const ProductionSheetFormUpdate = () => {
           `http://localhost:8000/api/production/get-planningSheetById/${id}`
         );
         const responseData = response.data;
-        console.log("responseData", responseData)
-        const formattedPlanningDate = new Date(responseData.planningDate)
-          .toISOString()
-          .split("T")[0];
-        const formattedAchievementDate = new Date(responseData.achievementDate)
-          .toISOString()
-          .split("T")[0];
+        console.log("responseData", responseData);
+        const formattedPlanningDate = formatDate(responseData.planningDate);
+        const formattedAchievementDate = formatDate(
+          responseData.achievementDate
+        );
+        console.log("formattedPlanningDate", formattedPlanningDate);
         console.log("formattedAchievementDate", formattedAchievementDate);
 
         console.log("responseData.planningQuantity", responseData.planningDate);
@@ -591,7 +599,8 @@ const ProductionSheetFormUpdate = () => {
         <div className="flex justify-end">
           <button
             onClick={saveFormData}
-            className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded">
+            className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded"
+          >
             Save
             <FiSave className="ml-2" />
           </button>

@@ -16,13 +16,20 @@ const EditCustomerForm = () => {
     customerName: "",
     poNo: "",
     materialCode: "",
-    itemDescription: "",
+    studItemDescription: "",
+    nutItemDescription: "",
     selectedItem: "",
-    itemGrade: "",
-    size: {
+    studGrade: "",
+    nutGrade: "",
+    POsize: {
       diameter: { value: "", dimension: "" },
       thread: "",
       length: { value: "", dimension: "" },
+    },
+    Cuttingsize: {
+      cuttingdiameter: { value: "" },
+      cuttingthread: "",
+      cuttinglength: { value: "" },
     },
     quantity: "",
   });
@@ -35,6 +42,7 @@ const EditCustomerForm = () => {
         const response = await axios.get(
           `http://localhost:8000/api/customerPO/${poNo}`
         );
+        console.log("response", response.data.customerPO);
         setCustomerPO(response.data.customerPO); // Set the customer PO data in state
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -73,6 +81,84 @@ const EditCustomerForm = () => {
     } catch (error) {
       console.log(error);
       // Optionally, you can handle error here
+    }
+  };
+
+  const getRawMaterialDia = async () => {
+    try {
+      let adjustedLength;
+
+      const { POsize } = customerPO;
+
+      if (POsize.length.dimension === "mm") {
+        // If length dimension is in mm, simply add 5 to the length
+        adjustedLength = parseFloat(POsize.length.value) + 5;
+      } else if (POsize.length.dimension === "inch") {
+        // Handle potential format "X.Y/Z inch"
+        const parts = POsize.length.value.split("/");
+        if (parts.length === 2) {
+          const numerator = parseFloat(parts[0]);
+          const denominator = parseFloat(parts[1]);
+          const lengthInInch = numerator / denominator;
+          adjustedLength = lengthInInch * 25.4 + 5;
+        } else {
+          // If not in the format "X.Y/Z inch", assume plain inch value
+          adjustedLength = parseFloat(POsize.length.value) * 25.4 + 5;
+        }
+      } else {
+        // Raise an error for invalid dimension
+        throw new Error("Invalid length dimension. Must be 'mm' or 'inch'.");
+      }
+
+      // Set the adjusted length to the cuttingLength state
+      setCustomerPO((prevState) => ({
+        ...prevState,
+        Cuttingsize: {
+          ...prevState.Cuttingsize,
+          cuttinglength: { value: adjustedLength.toString() },
+        },
+      }));
+
+      let response;
+      if (POsize.diameter.dimension === "mm") {
+        response = await axios.get(
+          `http://localhost:8000/api/helperRoutes/cuttingRawDataMM`,
+          {
+            params: {
+              diameter: `${POsize.diameter.value}`,
+              thread: `${POsize.thread}`,
+            },
+          }
+        );
+      } else if (POsize.diameter.dimension === "inch") {
+        response = await axios.get(
+          `http://localhost:8000/api/helperRoutes/cuttingRawDataInch`,
+          {
+            params: {
+              diameter: `${POsize.diameter.value}`,
+              thread: `${POsize.thread}`,
+            },
+          }
+        );
+      }
+
+      const matchingObject = response.data.matchingObject;
+      if (matchingObject) {
+        setCustomerPO((prevState) => ({
+          ...prevState,
+          Cuttingsize: {
+            ...prevState.Cuttingsize,
+            cuttingdiameter: {
+              value: matchingObject.RAW_MATERIAL_DIA.toString(),
+            },
+            cuttingthread: { value: matchingObject.PITCH.toString() },
+          },
+        }));
+      } else {
+        console.log("No matching object found.");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
   };
 
@@ -143,67 +229,109 @@ const EditCustomerForm = () => {
           </label>
         </div>
 
-        <div className="flex items-center my-4">
-          <label className="relative cursor-pointer App">
-            <input
-              id="itemDescription"
-              type="text"
-              value={customerPO.itemDescription}
+        <div className="flex flex-col items-center gap-4 my-4 md:flex-row">
+          {/* Stud Item Description */}
+          <div className="flex flex-col items-center gap-2 md:flex-row">
+            <label className="relative cursor-pointer App">
+              <input
+                id="itemDescription"
+                type="text"
+                value={customerPO.studItemDescription}
+                onChange={(e) =>
+                  setCustomerPO({
+                    ...customerPO,
+                    studItemDescription: e.target.value,
+                  })
+                }
+                placeholder="Input"
+                className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+              />
+              <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+                Item Description
+              </span>
+            </label>
+          </div>
+          {/* Nut Item Description */}
+          <div className="flex flex-col items-center gap-2 md:flex-row">
+            <label className="relative cursor-pointer App">
+              <input
+                id="nutItemDescription2"
+                type="text"
+                value={customerPO.nutItemDescription}
+                onChange={(e) =>
+                  setCustomerPO({
+                    ...customerPO,
+                    nutItemDescription: e.target.value,
+                  })
+                }
+                placeholder="Input"
+                className="h-10 w-96 xl:w-[400px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+              />
+              <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+                Nut Description
+              </span>
+            </label>
+            <select
+              id="selectedItem"
+              value={customerPO.selectedItem}
               onChange={(e) =>
                 setCustomerPO({
                   ...customerPO,
-                  itemDescription: e.target.value,
+                  selectedItem: e.target.value,
                 })
               }
-              placeholder="Input"
-              className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
-            />
-            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              Item Description
-            </span>
-          </label>
-          <select
-            id="selectedItem"
-            value={customerPO.selectedItem}
-            onChange={(e) =>
-              setCustomerPO({
-                ...customerPO,
-                selectedItem: e.target.value,
-              })
-            }
-            className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
-          >
-            <option value="inch">stud</option>
-            <option value="studwithnuts">stud X 1 Nuts</option>
-            <option value="studwith2nuts">stud X 2 Nuts</option>
-            <option value="studwith3nuts">stud X 3 Nuts</option>
-            <option value="studwith4nuts">stud X 4 Nuts</option>
-            <option value="nuts">Nuts</option>
-          </select>
+              className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
+            >
+              <option value="inch">stud</option>
+              <option value="studwithnuts">stud X 1 Nuts</option>
+              <option value="studwith2nuts">stud X 2 Nuts</option>
+              <option value="studwith3nuts">stud X 3 Nuts</option>
+              <option value="studwith4nuts">stud X 4 Nuts</option>
+              <option value="nuts">Nuts</option>
+            </select>
+          </div>
         </div>
 
-        <div className="flex items-center my-4">
+        <div className="flex flex-col items-center my-4 md:flex-row">
+          {/* Stud Material Grade */}
           <label className="relative cursor-pointer App">
             <input
-              id="itemGrade"
+              id="studGrade"
               type="text"
-              value={customerPO.itemGrade}
+              value={customerPO.studGrade}
               onChange={(e) =>
-                setCustomerPO({ ...customerPO, itemGrade: e.target.value })
+                setCustomerPO({ ...customerPO, studGrade: e.target.value })
               }
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              Item Grade
+              Stud Grade
+            </span>
+          </label>
+
+          {/* Nut Material Grade */}
+          <label className="relative cursor-pointer App">
+            <input
+              id="nutGrade"
+              type="text"
+              value={customerPO.nutGrade}
+              onChange={(e) =>
+                setCustomerPO({ ...customerPO, nutGrade: e.target.value })
+              }
+              placeholder="Input"
+              className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+            />
+            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+              Nut Grade
             </span>
           </label>
         </div>
 
-        {/* Size input divided into three parts */}
-        <div className="flex items-center gap-2 my-4">
+        {/* PO Size input */}
+        <div className="flex flex-col items-start gap-2 my-4 md:items-center md:flex-row">
           <label htmlFor="size" className="text-[16px] mr-4">
-            Size:
+            Po Size:
           </label>
           {/* Diameter */}
           <label className="relative cursor-pointer App">
@@ -211,14 +339,14 @@ const EditCustomerForm = () => {
               id="sizeFirstPart"
               type="text"
               // value={customerPO.size.diameter.value || customerPO.size.diameter}
-              value={customerPO.size.diameter.value}
+              value={customerPO.POsize.diameter.value}
               onChange={(e) =>
                 setCustomerPO({
                   ...customerPO,
-                  size: {
-                    ...customerPO.size,
+                  POsize: {
+                    ...customerPO.POsize,
                     diameter: {
-                      ...customerPO.size.diameter,
+                      ...customerPO.POsize.diameter,
                       value: e.target.value,
                     },
                   },
@@ -238,14 +366,14 @@ const EditCustomerForm = () => {
           >
             <select
               id="diameterUnit"
-              value={customerPO.size.diameter.dimension}
+              value={customerPO.POsize.diameter.dimension}
               onChange={(e) =>
                 setCustomerPO({
                   ...customerPO,
-                  size: {
-                    ...customerPO.size,
+                  POsize: {
+                    ...customerPO.POsize,
                     diameter: {
-                      ...customerPO.size.diameter,
+                      ...customerPO.POsize.diameter,
                       dimension: e.target.value,
                     },
                   },
@@ -262,11 +390,11 @@ const EditCustomerForm = () => {
             <input
               id="sizeFirstPart"
               type="text"
-              value={customerPO.size.thread}
+              value={customerPO.POsize.thread}
               onChange={(e) =>
                 setCustomerPO({
                   ...customerPO,
-                  size: { ...customerPO.size, thread: e.target.value },
+                  POsize: { ...customerPO.POsize, thread: e.target.value },
                 })
               }
               placeholder="Input"
@@ -281,14 +409,14 @@ const EditCustomerForm = () => {
             <input
               id="sizeFirstPart"
               type="text"
-              value={customerPO.size.length.value}
+              value={customerPO.POsize.length.value}
               onChange={(e) =>
                 setCustomerPO({
                   ...customerPO,
-                  size: {
-                    ...customerPO.size,
+                  POsize: {
+                    ...customerPO.POsize,
                     length: {
-                      ...customerPO.size.length,
+                      ...customerPO.POsize.length,
                       value: e.target.value,
                     },
                   },
@@ -308,14 +436,14 @@ const EditCustomerForm = () => {
           >
             <select
               id="lengthUnit"
-              value={customerPO.size.length.dimension}
+              value={customerPO.POsize.length.dimension}
               onChange={(e) =>
                 setCustomerPO({
                   ...customerPO,
-                  size: {
-                    ...customerPO.size,
+                  POsize: {
+                    ...customerPO.POsize,
                     length: {
-                      ...customerPO.size.length,
+                      ...customerPO.POsize.length,
                       dimension: e.target.value,
                     },
                   },
@@ -326,6 +454,93 @@ const EditCustomerForm = () => {
               <option value="inch">Inch</option>
               <option value="mm">MM</option>
             </select>
+          </label>
+        </div>
+
+        <button
+          onClick={getRawMaterialDia}
+          className="px-4 py-2 text-white bg-blue-500 rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+        >
+          Get Cutting Size
+        </button>
+
+        {/* Cutting Size input */}
+        <div className="flex flex-col items-start gap-2 my-4 md:items-center md:flex-row">
+          <label htmlFor="size" className="text-[16px] mr-4">
+            Cutting Size:
+          </label>
+          {/* Diameter */}
+          <label className="relative cursor-pointer App">
+            <input
+              id="sizeFirstPart"
+              type="text"
+              // value={customerPO.size.diameter.value || customerPO.size.diameter}
+              value={customerPO.Cuttingsize.cuttingdiameter.value}
+              onChange={(e) =>
+                setCustomerPO({
+                  ...customerPO,
+                  Cuttingsize: {
+                    ...customerPO.Cuttingsize,
+                    diameter: {
+                      ...customerPO.Cuttingsize.cuttingdiameter,
+                      value: e.target.value,
+                    },
+                  },
+                })
+              }
+              placeholder="Input"
+              className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+            />
+            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+              Diameter
+            </span>
+          </label>
+
+          {/* cuttingthread */}
+          <input
+            id="cuttingthread"
+            type="text"
+            value={customerPO.Cuttingsize.cuttingthread.value}
+            onChange={(e) =>
+              setCustomerPO({
+                ...customerPO,
+                Cuttingsize: {
+                  ...customerPO.Cuttingsize,
+                  cuttingthread: {
+                    ...customerPO.Cuttingsize.cuttingthread,
+                    value: e.target.value,
+                  },
+                },
+              })
+            }
+            placeholder="Input"
+            className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+          />
+
+          {/* Length */}
+          <label className="relative cursor-pointer App">
+            <input
+              id="cuttinglength"
+              type="text"
+              value={customerPO.Cuttingsize.cuttinglength.value}
+              onChange={(e) =>
+                setCustomerPO({
+                  ...customerPO,
+                  Cuttingsize: {
+                    ...customerPO.Cuttingsize,
+                    length: {
+                      ...customerPO.Cuttingsize.cuttinglength,
+                      value: e.target.value,
+                    },
+                  },
+                })
+              }
+              placeholder="Input"
+              className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+            />
+            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+              Length
+            </span>
           </label>
         </div>
 

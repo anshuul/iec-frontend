@@ -69,25 +69,20 @@ const ProductionReportForm = () => {
       editable: true,
     },
     {
-      headerName: "Machine No/Instrument No",
-      field: "machineNo",
-      editable: true,
-    },
-    {
-      headerName: "PROCESS DESCRIPTION",
+      headerName: "Job DESCRIPTION",
       field: "processDescription",
       editable: true,
     },
-    {
-      headerName: "PROCEDURE NO/DRAWING NO/REPORT NO.",
-      field: "procedureNo",
-      editable: true,
-    },
-    { headerName: "ORDER QTY", field: "orderQty", editable: true },
-    { headerName: "PROCESS QTY", field: "processQty", editable: true },
+    // {
+    //   headerName: "PROCEDURE NO/DRAWING NO/REPORT NO.",
+    //   field: "procedureNo",
+    //   editable: true,
+    // },
+    // { headerName: "ORDER QTY", field: "orderQty", editable: true },
+    // { headerName: "PROCESS QTY", field: "processQty", editable: true },
     { headerName: "START TIME", field: "startTime", editable: true },
     { headerName: "END TIME", field: "endTime", editable: true },
-    { headerName: "OPT SIGN", field: "optSign", editable: true },
+    // { headerName: "OPT SIGN", field: "optSign", editable: true },
     { headerName: "REMARKS", field: "remarks", editable: true },
   ];
 
