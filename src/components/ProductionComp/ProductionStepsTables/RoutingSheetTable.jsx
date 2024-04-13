@@ -110,6 +110,29 @@ const RoutingSheetTable = ({ productionStep }) => {
     },
   ];
 
+  const onSelectionChanged = async () => {
+    const selectedRows = gridApiRef.current.getSelectedRows(); // Access gridApi using ref
+
+    if (selectedRows.length > 0) {
+      const selectedRoutingSheet = selectedRows[0]._id;
+      try {
+        setLoading(true);
+        const response = await axios.get(
+          `http://localhost:8000/api/routingSheet/get-routingSheetById/${selectedRoutingSheet}`
+        );
+        const RoutingData = response.data; // No need for extra property
+        localStorage.setItem(
+          "selectedRoutingSheet",
+          JSON.stringify(RoutingData)
+        );
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching routing sheet data:", error);
+        setLoading(false);
+      }
+    }
+  };
+
   const onRowClicked = (event) => {
     const selectedRoutingSheet = event.data; // Access the clicked row data
     localStorage.setItem(
@@ -136,6 +159,8 @@ const RoutingSheetTable = ({ productionStep }) => {
           paginationPageSize={10}
           onRowClicked={onRowClicked}
           rowSelection="single"
+          // onSelectionChanged={onSelectionChanged}
+          // onGridReady={(params) => (gridApiRef.current = params.api)}
         />
       </div>
     </div>

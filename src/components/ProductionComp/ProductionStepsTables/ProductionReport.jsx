@@ -5,14 +5,68 @@ import "ag-grid-community/styles/ag-theme-alpine.css";
 import { MdModeEdit } from "react-icons/md";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const ProductionReport = ({ productionStep }) => {
   console.log("productionStep", productionStep);
   const router = useRouter();
+  const [rowData, setRowData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const handleClick = () => {
     router.push(`/production/${productionStep}/productionReportForm`);
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        let response;
+
+        // Check if there's a selected customer PO in localStorage
+        const selectedRoutingSheet = localStorage.getItem(
+          "selectedRoutingSheet"
+        );
+        console.log("selectedRoutingSheet", selectedRoutingSheet);
+        if (selectedRoutingSheet) {
+          const parsedRoutingSheet = JSON.parse(selectedRoutingSheet);
+          console.log("_id", parsedRoutingSheet._id);
+          // Fetch material issue slips based on the selected customer PO
+          response = await axios.get(
+            `http://localhost:8000/api/productionReport/get-production-report-by-routing-sheet/${parsedRoutingSheet._id}`
+          );
+          console.log("responsebyid", selectedRoutingSheet);
+        } else {
+          // Fetch all material issue slips if no customer PO is selected
+          response = await axios.get(
+            "http://localhost:8000/api/productionReport/get-all-production-report"
+          );
+        }
+
+        const productionReports = response.data;
+        const formattedData = productionReports.map((issueSlip, index) => {
+          const processRow = issueSlip.processRows[0];
+          let size = "N/A";
+          if (issueSlip.size && issueSlip.size.diameter) {
+            size = `${issueSlip.size.diameter.value}x${issueSlip.size.length.value}`;
+          }
+          console.log("issueSlip", issueSlip);
+          return {
+            srNo: index + 1,
+            _id: issueSlip._id,
+            ProductionPlanning: issueSlip.poNo,
+            CreatedData: processRow.jobDescription,
+            CreatedBy: processRow.operatorName,
+          };
+        });
+        setRowData(formattedData);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const CustomButtonComponent = (props) => {
     return (
@@ -43,57 +97,6 @@ const ProductionReport = ({ productionStep }) => {
       cellRenderer: CustomButtonComponent,
       minWidth: 150,
       maxWidth: 200,
-    },
-  ];
-
-  const rowData = [
-    {
-      srNo: 1,
-      ProductionPlanning: "F-PR-01",
-      CreatedData: "12 Apr 2024",
-      CreatedBy: "Vishal Doshi",
-    },
-    {
-      srNo: 2,
-      ProductionPlanning: "F-PR-02",
-      CreatedData: "13 Apr 2024",
-      CreatedBy: "Vishal Doshi",
-    },
-    {
-      srNo: 3,
-      ProductionPlanning: "F-PR-03",
-      CreatedData: "14 Apr 2024",
-      CreatedBy: "Vishal Doshi",
-    },
-    {
-      srNo: 4,
-      ProductionPlanning: "F-PR-04",
-      CreatedData: "15 Apr 2024",
-      CreatedBy: "Vishal Doshi",
-    },
-    {
-      srNo: 5,
-      ProductionPlanning: "F-PR-05",
-      CreatedData: "16 Apr 2024",
-      CreatedBy: "Vishal Doshi",
-    },
-    {
-      srNo: 6,
-      ProductionPlanning: "F-PR-06",
-      CreatedData: "17 Apr 2024",
-      CreatedBy: "Vishal Doshi",
-    },
-    {
-      srNo: 7,
-      ProductionPlanning: "F-PR-07",
-      CreatedData: "18 Apr 2024",
-      CreatedBy: "Vishal Doshi",
-    },
-    {
-      srNo: 8,
-      ProductionPlanning: "F-PR-08",
-      CreatedData: "19 Apr 2024",
-      CreatedBy: "Vishal Doshi",
     },
   ];
 
