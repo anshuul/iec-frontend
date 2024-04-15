@@ -16,10 +16,6 @@ const MaterialIssueSlipForm = () => {
     materialSlipName: "",
     itemDescription: "",
     materialGrade: "",
-    // diameter: "",
-    // diameterDimension: "",
-    // length: "",
-    // lengthDimension: "",
     diameter: { value: "", dimension: "" }, // Set as an object with 'value' and 'dimension' fields
     length: { value: "", dimension: "" },
     quantityRequired: "",
