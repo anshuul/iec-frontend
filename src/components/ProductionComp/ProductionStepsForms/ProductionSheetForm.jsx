@@ -35,6 +35,7 @@ const ProductionSheetForm = () => {
   const [planningDate, setPlanningDate] = useState("");
   const [achievementQuantity, setAchievementQuantity] = useState("");
   const [achievementDate, setAchievementDate] = useState("");
+  const [deliveryDate, setDeliveryDate] = useState("");
 
   useEffect(() => {
     const selectedCustomerPOData = JSON.parse(
@@ -44,12 +45,14 @@ const ProductionSheetForm = () => {
       // setProductionSheetName(selectedCustomerPOData.poNo || "");
       setItemDescription(selectedCustomerPOData.itemDescription || "");
       setMaterialIssue(selectedCustomerPOData.materialCode || "");
-      setProductAndCustomer(
-        `Size: ${selectedCustomerPOData.size.diameter.value} ${selectedCustomerPOData.size.diameter.dimension}, Length: ${selectedCustomerPOData.size.length.value} ${selectedCustomerPOData.size.length.dimension}, Thread: ${selectedCustomerPOData.size.thread}, Quantity: ${selectedCustomerPOData.quantity}` ||
-        ""
-      );
-      setPlanningQuantity(selectedCustomerPOData.quantity || "");
-      setAchievementQuantity(selectedCustomerPOData.quantity || "");
+      if (selectedCustomerPOData.size) {
+        const { diameter, length, thread } = selectedCustomerPOData.size;
+        setProductAndCustomer(
+          `Size: ${diameter?.value || ''} ${diameter?.dimension || ''}, Length: ${length?.value || ''} ${length?.dimension || ''}, Thread: ${thread || ''}, Quantity: ${selectedCustomerPOData.quantity}` || ""
+        );
+        setPlanningQuantity(selectedCustomerPOData.quantity || "");
+        setAchievementQuantity(selectedCustomerPOData.quantity || "");
+      }
       // Set other fields accordingly
     }
   }, []);
@@ -83,6 +86,7 @@ const ProductionSheetForm = () => {
       planningDate,
       achievementQuantity,
       achievementDate,
+      deliveryDate,
     };
 
     try {
@@ -129,6 +133,10 @@ const ProductionSheetForm = () => {
   const handleAchievementDateChange = (e) => {
     const formattedDate = new Date(e.target.value).toISOString(); // Convert date to ISO format
     setAchievementDate(formattedDate);
+  };
+  const handleDeliveryDateDateChange = (e) => {
+    const formattedDate = new Date(e.target.value).toISOString(); // Convert date to ISO format
+    setDeliveryDate(formattedDate);
   };
 
   const handleFileSelection = (e) => {
@@ -186,11 +194,11 @@ const ProductionSheetForm = () => {
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
                 <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-                  Stud Description
+                  Item Description
                 </span>
               </label>
             </div>
-            <div className="flex items-center mb-4">
+            {/* <div className="flex items-center mb-4">
               <label className="relative cursor-pointer App">
                 <input
                   type="text"
@@ -203,7 +211,7 @@ const ProductionSheetForm = () => {
                   Nut Description
                 </span>
               </label>
-            </div>
+            </div> */}
             <div className="flex items-center mb-4">
               <label className="relative cursor-pointer App">
                 <input
@@ -550,6 +558,21 @@ const ProductionSheetForm = () => {
                   id="achievementDate"
                   value={achievementDate}
                   onChange={handleAchievementDateChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded"
+                />
+              </div>
+              <div className="flex items-center mb-4">
+                <label
+                  htmlFor="deliveryDate"
+                  className="w-32 mr-2 text-[16px]"
+                >
+                  Date:
+                </label>
+                <input
+                  type="date"
+                  id="deliveryDate"
+                  value={deliveryDate}
+                  onChange={handleDeliveryDateDateChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded"
                 />
               </div>

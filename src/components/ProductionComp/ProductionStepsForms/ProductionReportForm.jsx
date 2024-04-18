@@ -31,10 +31,19 @@ const ProductionReportForm = () => {
         if (selectedRoutingSheet) {
           const parsedRoutingSheet = JSON.parse(selectedRoutingSheet);
           console.log("_id", parsedRoutingSheet._id);
-          response = await axios.get(
+          const routingSheetIdData = await axios.get(
             `http://localhost:8000/api/productionReport/get-production-report-by-routing-sheet/${parsedRoutingSheet._id}`
           );
-          console.log("responsebyid", selectedRoutingSheet);
+          console.log("routingSheetIdData", routingSheetIdData.data)
+
+          // Extract the _id from the response
+          const firstReportId = routingSheetIdData.data.productionReports[0]?._id;
+          console.log("firstReportId", firstReportId)
+
+          response = await axios.get(
+            `http://localhost:8000/api/productionReport/get-production-reportById/${firstReportId}`
+          )
+          console.log("responsebyid", response.data);
         } else {
           // Fetch all material issue slips if no customer PO is selected
           response = await axios.get(
@@ -42,26 +51,27 @@ const ProductionReportForm = () => {
           );
         }
 
-        const productionReports = response.data.productionReports;
-        const formattedData = productionReports
-          .map((report) => {
-            return report.processRows.map((processRow) => {
-              return {
-                _id: report._id,
-                date: new Date(report.date).toLocaleDateString(),
-                operatorName: processRow.operatorName,
-                processDescription: processRow.jobDescription,
-                procedures: processRow.procedures || "-",
-                orderQty: report.poNo || "-",
-                processQty: report.processQty || "-",
-                startTime: processRow.startTime || "-",
-                endTime: processRow.endTime || "-",
-                optSign: processRow.optSign || "-",
-                remarks: processRow.remarks || "-",
-              };
-            });
-          })
-          .flat();
+        const formattedData = response.data.processRows.map((processRow, index) => {
+          // Extract date and time parts from startTime
+          const startTimeParts = processRow.startTime ? processRow.startTime.split(", ") : ["", ""];
+          const datePart = startTimeParts[0];
+          const timePart = startTimeParts[1];
+
+          return {
+            srNo: index + 1,
+            _id: processRow._id,
+            date: datePart,
+            operatorName: processRow.operatorName,
+            processDescription: processRow.jobDescription,
+            procedures: processRow.procedures || "-",
+            orderQty: processRow.orderQty || "-",
+            processQty: processRow.processQty || "-",
+            startTime: timePart || "-",
+            endTime: processRow.endTime || "-",
+            optSign: processRow.optSign || "-",
+            remarks: processRow.remarks || "-",
+          };
+        });
 
         setRowData(formattedData);
       } catch (error) {
@@ -117,7 +127,7 @@ const ProductionReportForm = () => {
     <div className="flex flex-col mx-4 bg-white">
       <button
         onClick={handleGoBack}
-        className="flex items-center mb-2 px-4 py-2 text-lg font-bold text-black"
+        className="flex items-center px-4 py-2 mb-2 text-lg font-bold text-black"
       >
         <FiArrowLeft className="mr-2" />
         Back
@@ -133,7 +143,7 @@ const ProductionReportForm = () => {
       </div>
       <hr className="my-4 border-t border-gray-300" />
       {/* <Container> */}
-      <div className="flex justify-end max-w-screen-full mx-4">
+      <div className="flex justify-end mx-4 max-w-screen-full">
         <button
           onClick={handleSave}
           className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded"
