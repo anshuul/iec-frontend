@@ -32,7 +32,6 @@ const ProductionReport = ({ productionStep }) => {
         if (selectedRoutingSheet) {
           const parsedRoutingSheet = JSON.parse(selectedRoutingSheet);
           console.log("_id", parsedRoutingSheet._id);
-          // Fetch material issue slips based on the selected customer PO
           response = await axios.get(
             `http://localhost:8000/api/productionReport/get-production-report-by-routing-sheet/${parsedRoutingSheet._id}`
           );
@@ -43,6 +42,8 @@ const ProductionReport = ({ productionStep }) => {
             "http://localhost:8000/api/productionReport/get-all-production-report"
           );
         }
+
+        // http://localhost:8000/api/productionReport/get-production-reportById/66212e4726e3bdaf230b6636
 
         const productionReports = response.data;
         const formattedData = productionReports.map((issueSlip, index) => {

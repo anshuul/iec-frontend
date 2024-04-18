@@ -1,10 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import { FiArrowLeft, FiPrinter, FiSave } from "react-icons/fi";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 const ProductionReportForm = () => {
   const router = useRouter();
@@ -13,36 +14,62 @@ const ProductionReportForm = () => {
     router.back();
   };
 
-  const [rowData, setRowData] = useState([
-    {
-      srNo: 1,
-      date: "2024-04-03",
-      operatorName: "John Doe",
-      machineNo: "M123",
-      processDescription: "Some description",
-      procedureNo: "PROC123",
-      orderQty: 10,
-      processQty: 8,
-      startTime: "08:00 AM",
-      endTime: "12:00 PM",
-      optSign: "Signed",
-      remarks: "Some remarks",
-    },
-    {
-      srNo: 2,
-      date: "2024-04-04",
-      operatorName: "Jane Smith",
-      machineNo: "M456",
-      processDescription: "Another description",
-      procedureNo: "PROC456",
-      orderQty: 15,
-      processQty: 12,
-      startTime: "09:00 AM",
-      endTime: "01:00 PM",
-      optSign: "Not signed",
-      remarks: "Additional remarks",
-    },
-  ]);
+  const [rowData, setRowData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        let response;
+
+        // Check if there's a selected customer PO in localStorage
+        const selectedRoutingSheet = localStorage.getItem(
+          "selectedRoutingSheet"
+        );
+        console.log("selectedRoutingSheet", selectedRoutingSheet);
+        if (selectedRoutingSheet) {
+          const parsedRoutingSheet = JSON.parse(selectedRoutingSheet);
+          console.log("_id", parsedRoutingSheet._id);
+          response = await axios.get(
+            `http://localhost:8000/api/productionReport/get-production-report-by-routing-sheet/${parsedRoutingSheet._id}`
+          );
+          console.log("responsebyid", selectedRoutingSheet);
+        } else {
+          // Fetch all material issue slips if no customer PO is selected
+          response = await axios.get(
+            "http://localhost:8000/api/productionReport/get-all-production-report"
+          );
+        }
+
+        const productionReports = response.data.productionReports;
+        const formattedData = productionReports
+          .map((report) => {
+            return report.processRows.map((processRow) => {
+              return {
+                _id: report._id,
+                date: new Date(report.date).toLocaleDateString(),
+                operatorName: processRow.operatorName,
+                processDescription: processRow.jobDescription,
+                procedures: processRow.procedures || "-",
+                orderQty: report.poNo || "-",
+                processQty: report.processQty || "-",
+                startTime: processRow.startTime || "-",
+                endTime: processRow.endTime || "-",
+                optSign: processRow.optSign || "-",
+                remarks: processRow.remarks || "-",
+              };
+            });
+          })
+          .flat();
+
+        setRowData(formattedData);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleCellValueChanged = (event) => {
     const updatedRowData = [...rowData];
@@ -73,16 +100,16 @@ const ProductionReportForm = () => {
       field: "processDescription",
       editable: true,
     },
-    // {
-    //   headerName: "PROCEDURE NO/DRAWING NO/REPORT NO.",
-    //   field: "procedureNo",
-    //   editable: true,
-    // },
-    // { headerName: "ORDER QTY", field: "orderQty", editable: true },
-    // { headerName: "PROCESS QTY", field: "processQty", editable: true },
+    {
+      headerName: "PROCEDURE NO/DRAWING NO/REPORT NO.",
+      field: "procedures",
+      editable: true,
+    },
+    { headerName: "ORDER QTY", field: "orderQty", editable: true },
+    { headerName: "PROCESS QTY", field: "processQty", editable: true },
     { headerName: "START TIME", field: "startTime", editable: true },
     { headerName: "END TIME", field: "endTime", editable: true },
-    // { headerName: "OPT SIGN", field: "optSign", editable: true },
+    { headerName: "OPT SIGN", field: "optSign", editable: true },
     { headerName: "REMARKS", field: "remarks", editable: true },
   ];
 
