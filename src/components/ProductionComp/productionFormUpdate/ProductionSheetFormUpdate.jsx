@@ -32,6 +32,8 @@ const ProductionSheetFormUpdate = () => {
     planningDate: "",
     achievementQuantity: "",
     achievementDate: "",
+    deliveryDate: "",
+    orderDate: "",
   });
 
   const [selectedFile, setSelectedFile] = useState(null);
@@ -54,11 +56,19 @@ const ProductionSheetFormUpdate = () => {
         const responseData = response.data;
         console.log("responseData", responseData);
         const formattedPlanningDate = formatDate(responseData.planningDate);
+        console.log("formattedPlanningDate", formattedPlanningDate);
         const formattedAchievementDate = formatDate(
           responseData.achievementDate
         );
-        console.log("formattedPlanningDate", formattedPlanningDate);
         console.log("formattedAchievementDate", formattedAchievementDate);
+        const formattedDeliveryDate = formatDate(
+          responseData.deliveryDate
+        );
+        console.log("formattedDeliveryDate", formattedDeliveryDate);
+        const formattedOrderDate = formatDate(
+          responseData.orderDate
+        );
+        console.log("formattedOrderDate", formattedOrderDate);
 
         console.log("responseData.planningQuantity", responseData.planningDate);
         setPlanningSheetForm({
@@ -81,6 +91,8 @@ const ProductionSheetFormUpdate = () => {
           planningDate: formattedPlanningDate,
           achievementQuantity: responseData.achievementQuantity,
           achievementDate: formattedAchievementDate,
+          deliveryDate: formattedDeliveryDate,
+          orderDate: formattedOrderDate,
           attachment: responseData.attachment,
           poNo: responseData.poNo,
         }); // Set the customer PO data in state
@@ -586,6 +598,60 @@ const ProductionSheetFormUpdate = () => {
                     setPlanningSheetForm({
                       ...planningSheetForm,
                       achievementDate: e.target.value,
+                    })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr className="my-4 border-t border-gray-300" />
+
+        <div className="w-full ">
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2 lg:grid-cols-1 md:grid-cols-2">
+            {/* First Column */}
+            <div className="flex flex-col items-start">
+              <h3 className="mb-4 text-[16px] font-semibold">Order Date</h3>
+              <div className="flex items-center mb-4">
+                <label htmlFor="orderDate" className="w-40 mr-2 text-[16px]">
+                  Order Date:
+                </label>
+                <input
+                  type="date"
+                  id="orderDate"
+                  value={planningSheetForm.orderDate}
+                  onChange={(e) =>
+                    setPlanningSheetForm({
+                      ...planningSheetForm,
+                      orderDate: e.target.value,
+                    })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded"
+                />
+              </div>
+            </div>
+
+            {/* Second Column */}
+            <div className="flex flex-col items-start">
+              <h3 className="mb-4 text-[16px] font-semibold">Delivery Date</h3>
+
+              <div className="flex items-center mb-4">
+                <label
+                  htmlFor="deliveryDate"
+                  className="w-40 mr-2 text-[16px]"
+                >
+                  Delivery Date:
+                </label>
+                <input
+                  type="date"
+                  id="achievementDate"
+                  value={planningSheetForm.deliveryDate}
+                  onChange={(e) =>
+                    setPlanningSheetForm({
+                      ...planningSheetForm,
+                      deliveryDate: e.target.value,
                     })
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded"
