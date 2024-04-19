@@ -5,6 +5,8 @@ import { FiFile, FiSave, FiPrinter, FiArrowLeft } from "react-icons/fi";
 import { useRouter, useSearchParams } from "next/navigation";
 import { RiAttachmentLine } from "react-icons/ri";
 import axios from "axios";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const ProductionSheetFormUpdate = () => {
   const router = useRouter();
@@ -45,6 +47,7 @@ const ProductionSheetFormUpdate = () => {
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const day = date.getDate().toString().padStart(2, "0");
     return `${year}-${month}-${day}`;
+    // return `${day}-${month}-${year}`;
   };
 
   useEffect(() => {
@@ -61,13 +64,9 @@ const ProductionSheetFormUpdate = () => {
           responseData.achievementDate
         );
         console.log("formattedAchievementDate", formattedAchievementDate);
-        const formattedDeliveryDate = formatDate(
-          responseData.deliveryDate
-        );
+        const formattedDeliveryDate = formatDate(responseData.deliveryDate);
         console.log("formattedDeliveryDate", formattedDeliveryDate);
-        const formattedOrderDate = formatDate(
-          responseData.orderDate
-        );
+        const formattedOrderDate = formatDate(responseData.orderDate);
         console.log("formattedOrderDate", formattedOrderDate);
 
         console.log("responseData.planningQuantity", responseData.planningDate);
@@ -546,16 +545,15 @@ const ProductionSheetFormUpdate = () => {
                 <label htmlFor="planningDate" className="w-32 mr-2 text-[16px]">
                   Date:
                 </label>
-                <input
-                  type="date"
-                  id="planningDate"
-                  value={planningSheetForm.planningDate}
-                  onChange={(e) =>
+                 <DatePicker
+                  selected={planningSheetForm.planningDate}
+                  onChange={(date) =>
                     setPlanningSheetForm({
                       ...planningSheetForm,
-                      planningDate: e.target.value,
+                      planningDate: date,
                     })
                   }
+                  dateFormat="dd/MM/yyyy"
                   className="w-full px-3 py-2 border border-gray-300 rounded"
                 />
               </div>
@@ -590,16 +588,15 @@ const ProductionSheetFormUpdate = () => {
                 >
                   Date:
                 </label>
-                <input
-                  type="date"
-                  id="achievementDate"
-                  value={planningSheetForm.achievementDate}
-                  onChange={(e) =>
+                <DatePicker
+                  selected={planningSheetForm.achievementDate}
+                  onChange={(date) =>
                     setPlanningSheetForm({
                       ...planningSheetForm,
-                      achievementDate: e.target.value,
+                      achievementDate: date,
                     })
                   }
+                  dateFormat="dd/MM/yyyy"
                   className="w-full px-3 py-2 border border-gray-300 rounded"
                 />
               </div>
@@ -615,19 +612,18 @@ const ProductionSheetFormUpdate = () => {
             <div className="flex flex-col items-start">
               <h3 className="mb-4 text-[16px] font-semibold">Order Date</h3>
               <div className="flex items-center mb-4">
-                <label htmlFor="orderDate" className="w-40 mr-2 text-[16px]">
+                <label htmlFor="orderDate" className="w-32 mr-2 text-[16px]">
                   Order Date:
                 </label>
-                <input
-                  type="date"
-                  id="orderDate"
-                  value={planningSheetForm.orderDate}
-                  onChange={(e) =>
+                <DatePicker
+                  selected={planningSheetForm.orderDate}
+                  onChange={(date) =>
                     setPlanningSheetForm({
                       ...planningSheetForm,
-                      orderDate: e.target.value,
+                      orderDate: date,
                     })
                   }
+                  dateFormat="dd/MM/yyyy"
                   className="w-full px-3 py-2 border border-gray-300 rounded"
                 />
               </div>
@@ -638,22 +634,18 @@ const ProductionSheetFormUpdate = () => {
               <h3 className="mb-4 text-[16px] font-semibold">Delivery Date</h3>
 
               <div className="flex items-center mb-4">
-                <label
-                  htmlFor="deliveryDate"
-                  className="w-40 mr-2 text-[16px]"
-                >
+                <label htmlFor="deliveryDate" className="w-32 mr-2 text-[16px]">
                   Delivery Date:
                 </label>
-                <input
-                  type="date"
-                  id="achievementDate"
-                  value={planningSheetForm.deliveryDate}
-                  onChange={(e) =>
+                <DatePicker
+                  selected={planningSheetForm.deliveryDate}
+                  onChange={(date) =>
                     setPlanningSheetForm({
                       ...planningSheetForm,
-                      deliveryDate: e.target.value,
+                      deliveryDate: date,
                     })
                   }
+                  dateFormat="dd/MM/yyyy"
                   className="w-full px-3 py-2 border border-gray-300 rounded"
                 />
               </div>
