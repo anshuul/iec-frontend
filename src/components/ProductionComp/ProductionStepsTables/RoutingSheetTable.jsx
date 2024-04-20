@@ -56,7 +56,7 @@ const RoutingSheetTable = ({ productionStep }) => {
     fetchData();
   }, []);
 
-  console.log("rowData2", rowData)
+  console.log("rowData2", rowData);
   useEffect(() => {
     const fetchProductionReports = async () => {
       try {
@@ -65,10 +65,10 @@ const RoutingSheetTable = ({ productionStep }) => {
           const response = await axios.get(
             `http://localhost:8000/api/productionReport/get-production-report-by-routing-sheet/${item._id}`
           );
-          console.log("response.data", response.data)
+          console.log("response.data", response.data);
           return response.data;
         });
-        
+
         const productionReports = await Promise.all(promises);
         console.log("Production Reports:", productionReports);
 
@@ -204,8 +204,8 @@ const RoutingSheetTable = ({ productionStep }) => {
           paginationPageSize={10}
           onRowClicked={onRowClicked}
           rowSelection="single"
-        // onSelectionChanged={onSelectionChanged}
-        // onGridReady={(params) => (gridApiRef.current = params.api)}
+          // onSelectionChanged={onSelectionChanged}
+          // onGridReady={(params) => (gridApiRef.current = params.api)}
         />
       </div>
     </div>

@@ -9,14 +9,43 @@ import { BsInfoCircle } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { setCustomerPOData } from "@/slice/customerPOSlice";
+import { setRoutingSheetData } from "@/slice/routingSheetSlice";
+import { setProductionReportData } from "@/slice/productionReportSlice";
 
 const ProductionTable = () => {
+  const dispatch = useDispatch();
   const router = useRouter();
   const [rowData, setRowData] = useState([]);
   const [historyRowData, setHistoryRowData] = useState([]);
   const [showHistoryTable, setShowHistoryTable] = useState(false);
   const [loading, setLoading] = useState(false);
   const gridApiRef = useRef(null);
+
+  // Retrieve customerPOData from Redux store
+  const customerPODataForRouting = useSelector(
+    (state) => state.customerPO.data
+  );
+  console.log("customerPODataForRouting", customerPODataForRouting);
+
+  // Retrieve routingSheetSlice from Redux store
+  const routingSheetSliceDataForRouting = useSelector(
+    (state) => state.routingSheetData.data
+  );
+  console.log(
+    "routingSheetSliceDataForRouting",
+    routingSheetSliceDataForRouting
+  );
+
+  // // Retrieve production report from Redux store
+  // const productionReportSliceDataForRouting = useSelector(
+  //   (state) => state.productionReport.data
+  // );
+  // console.log(
+  //   "productionReportSliceDataForRouting",
+  //   productionReportSliceDataForRouting
+  // );
 
   useEffect(() => {
     try {
@@ -203,6 +232,7 @@ const ProductionTable = () => {
           "selectedCustomerPO",
           JSON.stringify(customerPOData)
         );
+        dispatch(setCustomerPOData(customerPOData));
         setLoading(false);
       } catch (error) {
         console.error("Error fetching customer PO data:", error);
@@ -210,6 +240,66 @@ const ProductionTable = () => {
       }
     }
   };
+
+  const userData = JSON.parse(localStorage.getItem("selectedCustomerPO"));
+  console.log("userData", userData);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+
+        // Fetch routing sheet data only if customerPODataForRouting is available
+        if (customerPODataForRouting) {
+          const poNo = customerPODataForRouting.poNo;
+          console.log("poNo", poNo);
+          const response = await axios.get(
+            `http://localhost:8000/api/routingSheet/get-routingSheet/${poNo}`
+          );
+
+          console.log("response", response.data);
+          const routingSheetResponse = response.data;
+          dispatch(setRoutingSheetData(routingSheetResponse));
+          console.log("routingSheetResponse", routingSheetResponse);
+
+          // Fetch production report data for each routing sheet ID
+          if (routingSheetResponse && Array.isArray(routingSheetResponse)) {
+            const reportResponses = await Promise.all(
+              routingSheetResponse.map(async (routingSheet) => {
+                if (routingSheet && routingSheet._id) {
+                  const id = routingSheet._id;
+                  console.log("routing sheet id:", id);
+                  const reportResponse = await axios.get(
+                    `http://localhost:8000/api/productionReport/get-production-report-by-routing-sheet/${id}`
+                  );
+                  console.log(
+                    "report response for routing sheet id:",
+                    id,
+                    reportResponse
+                  );
+                  dispatch(setProductionReportData(reportResponse.data)); 
+                  return reportResponse;
+                } else {
+                  console.log("Invalid routing sheet data:", routingSheet);
+                  return null;
+                }
+              })
+            );
+            // Dispatch action to update production report data in Redux store if needed
+            console.log("reportResponses", reportResponses);
+          }
+        } else {
+          console.log("No data found in localStorage for selectedCustomerPO");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [customerPODataForRouting]);
 
   return (
     <div className="flex flex-col mx-4 h-screen bg-white">
