@@ -8,9 +8,11 @@ import {
 import { BsPencilSquare } from "react-icons/bs";
 import { CiGrid32 } from "react-icons/ci";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const SideBar = () => {
   const [open, setOpen] = useState(true);
+  const pathname = usePathname();
   const Menus = [
     {
       title: "Sales & Marketing",
@@ -74,23 +76,28 @@ const SideBar = () => {
 
         {open && <hr className="mt-8" />}
         <ul className="pt-6">
-          {Menus.map((Menu, index) => (
-            <Link href={Menu.href}>
-              <li
-                key={index}
-                className={`flex rounded-md p-2 cursor-pointer hover:bg-gray-200 text-gray-900 text-lg items-center gap-x-4 
-              mt-2 ${index === 0 && "bg-light-white"} `}
-              >
-                {/* <img src={`./src/assets/${Menu.src}.png`} /> */}
-                <span className="text-lg text-black">{Menu.icon}</span>
-                <span
-                  className={`${!open && "hidden"} origin-left duration-1000`}
+          {Menus.map((Menu, index) => {
+            const isActive = pathname === Menu.href;
+            return (
+              <Link href={Menu.href}>
+                <li
+                  key={index}
+                  className={`flex rounded-md p-2 cursor-pointer text-gray-900 text-lg items-center gap-x-4 
+              mt-2 ${index === 0 && "bg-light-white"} ${
+                    isActive ? "bg-gray-300" : "hover:bg-gray-200"
+                  }`}
                 >
-                  {Menu.title}
-                </span>
-              </li>
-            </Link>
-          ))}
+                  {/* <img src={`./src/assets/${Menu.src}.png`} /> */}
+                  <span className="text-lg text-black">{Menu.icon}</span>
+                  <span
+                    className={`${!open && "hidden"} origin-left duration-1000`}
+                  >
+                    {Menu.title}
+                  </span>
+                </li>
+              </Link>
+            );
+          })}
         </ul>
       </div>
     </div>

@@ -34,15 +34,16 @@ const ProductionReportForm = () => {
           const routingSheetIdData = await axios.get(
             `http://localhost:8000/api/productionReport/get-production-report-by-routing-sheet/${parsedRoutingSheet._id}`
           );
-          console.log("routingSheetIdData", routingSheetIdData.data)
+          console.log("routingSheetIdData", routingSheetIdData.data);
 
           // Extract the _id from the response
-          const firstReportId = routingSheetIdData.data.productionReports[0]?._id;
-          console.log("firstReportId", firstReportId)
+          const firstReportId =
+            routingSheetIdData.data.productionReports[0]?._id;
+          console.log("firstReportId", firstReportId);
 
           response = await axios.get(
             `http://localhost:8000/api/productionReport/get-production-reportById/${firstReportId}`
-          )
+          );
           console.log("responsebyid", response.data);
         } else {
           // Fetch all material issue slips if no customer PO is selected
@@ -51,27 +52,58 @@ const ProductionReportForm = () => {
           );
         }
 
-        const formattedData = response.data.processRows.map((processRow, index) => {
-          // Extract date and time parts from startTime
-          const startTimeParts = processRow.startTime ? processRow.startTime.split(", ") : ["", ""];
-          const datePart = startTimeParts[0];
-          const timePart = startTimeParts[1];
+        const formattedData = response.data.processRows.map(
+          (processRow, index) => {
+            // Extract date and time parts from startTime
+            console.log("processRow.startTime", processRow.startTime);
+            const startTimeParts = processRow.startTime
+              ? processRow.startTime.split(", ")
+              : ["", ""];
+            const datePart = startTimeParts[0];
+            const timePart = startTimeParts[1];
+            console.log("datePart", datePart);
 
-          return {
-            srNo: index + 1,
-            _id: processRow._id,
-            date: datePart,
-            operatorName: processRow.operatorName,
-            processDescription: processRow.jobDescription,
-            procedures: processRow.procedures || "-",
-            orderQty: processRow.orderQty || "-",
-            processQty: processRow.processQty || "-",
-            startTime: timePart || "-",
-            endTime: processRow.endTime || "-",
-            optSign: processRow.optSign || "-",
-            remarks: processRow.remarks || "-",
-          };
-        });
+            // Split the date into parts and rearrange them to format as dd/mm/yyyy if datePart exists
+            const formattedDate = datePart
+              ? (() => {
+                  const parts = datePart.split("/");
+                  return `${parts[1]}/${parts[0]}/${parts[2]}`;
+                })()
+              : "";
+
+            // Extract Date and Time parts from endTime
+            const endTimeParts = processRow.endTime
+              ? processRow.endTime.split(", ")
+              : ["", ""];
+            const datePartForEnd = endTimeParts[0];
+            const timePartForEnd = endTimeParts[1];
+            console.log("datePartForEnd", datePartForEnd);
+
+            // Split the date into parts and rearrange them to format as dd/mm/yyyy if datePart exists
+            const formattedDateForEndTime = datePartForEnd
+              ? (() => {
+                  const parts = datePartForEnd.split("/");
+                  return `${parts[1]}/${parts[0]}/${parts[2]}`;
+                })()
+              : "";
+            console.log("formattedDateForEndTime", formattedDateForEndTime);
+
+            return {
+              srNo: index + 1,
+              _id: processRow._id,
+              date: formattedDate,
+              operatorName: processRow.operatorName,
+              processDescription: processRow.jobDescription,
+              procedures: processRow.procedures || "-",
+              orderQty: processRow.orderQty || "-",
+              processQty: processRow.processQty || "-",
+              startTime: timePart || "-",
+              endTime: `${formattedDateForEndTime}, ${timePartForEnd}`,
+              optSign: processRow.optSign || "-",
+              remarks: processRow.remarks || "-",
+            };
+          }
+        );
 
         setRowData(formattedData);
       } catch (error) {

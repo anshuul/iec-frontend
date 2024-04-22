@@ -37,32 +37,38 @@ const RoutingSheetFormUpdate = () => {
         const responseData = Array.isArray(response.data)
           ? response.data
           : [response.data];
+        console.log("responseData", responseData);
 
-        const newRows = responseData[0]?.processRows.map((row, index) => ({
-          ...row,
-          srNo: index + 1,
-          startTime:
-            productionReportSliceDataForRouting.productionReports &&
-            productionReportSliceDataForRouting.productionReports[0] &&
-            productionReportSliceDataForRouting.productionReports[0]
-              .processRows &&
-            productionReportSliceDataForRouting.productionReports[0]
-              .processRows[index]
-              ? productionReportSliceDataForRouting.productionReports[0]
-                  .processRows[index].startTime
-              : "",
-          endTime:
-            productionReportSliceDataForRouting.productionReports &&
-            productionReportSliceDataForRouting.productionReports[0] &&
-            productionReportSliceDataForRouting.productionReports[0]
-              .processRows &&
-            productionReportSliceDataForRouting.productionReports[0]
-              .processRows[index]
-              ? productionReportSliceDataForRouting.productionReports[0]
-                  .processRows[index].endTime
-              : "",
-          processRowNumber: index + 1,
-        }));
+        const newRows = responseData[0]?.processRows.map((row, index) => {
+          // Set default values for startTime and endTime
+          let startTime = "";
+          let endTime = "";
+
+          // Check if routingSheetNo starts with "Stud" or "Nut"
+          if (row.routingSheetNo.startsWith("Stud")) {
+            startTime =
+              productionReportSliceDataForRouting.productionReports[0]
+                ?.processRows[index]?.startTime || "";
+            endTime =
+              productionReportSliceDataForRouting.productionReports[0]
+                ?.processRows[index]?.endTime || "";
+          } else if (row.routingSheetNo.startsWith("Nut")) {
+            startTime =
+              productionReportSliceDataForRouting.productionReports[1]
+                ?.processRows[index]?.startTime || "";
+            endTime =
+              productionReportSliceDataForRouting.productionReports[1]
+                ?.processRows[index]?.endTime || "";
+          }
+
+          return {
+            ...row,
+            srNo: index + 1,
+            startTime,
+            endTime,
+            processRowNumber: index + 1,
+          };
+        });
 
         setRowData(newRows || []);
       } catch (error) {
