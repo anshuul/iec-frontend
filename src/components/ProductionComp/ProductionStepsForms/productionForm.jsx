@@ -20,6 +20,7 @@ const ProductionForm = () => {
   const [nutItemDescription, setNutItemDescription] = useState("");
 
   const [selectedItem, setSelectedItem] = useState("");
+  const [selectedSurface, setSelectedSurface] = useState("");
 
   const [itemGrade, setItemGrade] = useState("");
   const [studGrade, setStudGrade] = useState("");
@@ -82,6 +83,7 @@ const ProductionForm = () => {
           studItemDescription,
           nutItemDescription,
           selectedItem,
+          selectedSurface,
           studGrade,
           nutGrade,
           POsize: {
@@ -133,20 +135,22 @@ const ProductionForm = () => {
         const parts = length.split("/");
         if (parts.length === 2) {
           const numerator = parseFloat(parts[0]);
-          console.log("numerator", numerator)
+          console.log("numerator", numerator);
           const denominator = parseFloat(parts[1]);
-          console.log("denominator", denominator)
+          console.log("denominator", denominator);
           const lengthInInch = numerator / denominator;
-          console.log("lengthInInch", lengthInInch)
+          console.log("lengthInInch", lengthInInch);
           adjustedLength = lengthInInch * 25.4 + 5;
-          console.log("adjustedLength", adjustedLength)
+          console.log("adjustedLength", adjustedLength);
         } else {
           // If not in the format "X.Y/Z inch", assume plain inch value
           adjustedLength = parseFloat(length) * 25.4 + 5;
         }
       } else {
         // Raise an error for invalid dimension
-        throw new ValueError("Invalid length dimension. Must be 'mm' or 'inch'.");
+        throw new ValueError(
+          "Invalid length dimension. Must be 'mm' or 'inch'."
+        );
       }
 
       // Set the adjusted length to the cuttingLength state
@@ -186,7 +190,6 @@ const ProductionForm = () => {
       console.error("Error fetching data:", error);
     }
   };
-
 
   return (
     <Container>
@@ -233,7 +236,7 @@ const ProductionForm = () => {
           </label>
         </div>
 
-        <div className="flex items-center my-4">
+        <div className="flex items-center my-4 gap-2">
           <label className="relative cursor-pointer App">
             <input
               id="materialCode"
@@ -247,6 +250,19 @@ const ProductionForm = () => {
               Material Code
             </span>
           </label>
+          <select
+            id="selectedSurface"
+            value={selectedSurface}
+            onChange={(e) => setSelectedSurface(e.target.value)}
+            className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
+          >
+            <option value="select">Surface Finish</option>
+            <option value="PhosphatingBlack">Phosphating(Black)</option>
+            <option value="ZincPlating">Zinc Plating</option>
+            <option value="ZincNickel">Zinc - Nickel</option>
+            <option value="XYLAN1070">Xylan 1070</option>
+            <option value="XYLAR1070">Xylar2 +Xylan 1070.</option>
+          </select>
         </div>
 
         <div className="flex flex-col items-center gap-4 my-4 md:flex-row">
@@ -299,7 +315,6 @@ const ProductionForm = () => {
           </div>
         </div>
 
-
         <div className="flex flex-col items-center my-4 md:flex-row">
           {/* Stud Material Grade */}
           <label className="relative mb-4 cursor-pointer App md:mr-4 md:mb-0">
@@ -331,7 +346,6 @@ const ProductionForm = () => {
             </span>
           </label>
         </div>
-
 
         {/* PO Size input */}
         <div className="flex flex-col items-start gap-2 my-4 md:items-center md:flex-row">
