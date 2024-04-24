@@ -66,9 +66,9 @@ const ProductionReportForm = () => {
             // Split the date into parts and rearrange them to format as dd/mm/yyyy if datePart exists
             const formattedDate = datePart
               ? (() => {
-                const parts = datePart.split("/");
-                return `${parts[1]}/${parts[0]}/${parts[2]}`;
-              })()
+                  const parts = datePart.split("/");
+                  return `${parts[1]}/${parts[0]}/${parts[2]}`;
+                })()
               : "";
 
             // Extract Date and Time parts from endTime
@@ -82,23 +82,24 @@ const ProductionReportForm = () => {
             // Split the date into parts and rearrange them to format as dd/mm/yyyy if datePart exists
             const formattedDateForEndTime = datePartForEnd
               ? (() => {
-                const parts = datePartForEnd.split("/");
-                return `${parts[1]}/${parts[0]}/${parts[2]}`;
-              })()
+                  const parts = datePartForEnd.split("/");
+                  return `${parts[1]}/${parts[0]}/${parts[2]}`;
+                })()
               : "";
             console.log("formattedDateForEndTime", formattedDateForEndTime);
 
             return {
               srNo: index + 1,
               _id: processRow._id,
-              date: datePart,
+              date: formattedDate,
               operatorName: processRow.operatorName,
               processDescription: processRow.jobDescription,
               procedures: processRow.procedures || "-",
               orderQty: processRow.orderQty || "-",
               processQty: processRow.processQty || "-",
               startTime: timePart || "-",
-              endTime: processRow.endTime,
+              // endTime: processRow.endTime,
+              endTime: `${formattedDateForEndTime}, ${timePartForEnd}`,
               optSign: processRow.optSign || "-",
               remarks: processRow.remarks || "-",
             };
