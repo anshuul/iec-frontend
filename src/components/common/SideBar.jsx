@@ -27,7 +27,7 @@ const SideBar = () => {
       href: "/store-purchase",
     },
     {
-      title: "Produciton",
+      title: "Production",
       src: "User",
       icon: <BsPencilSquare />,
       href: "/production",

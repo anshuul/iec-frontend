@@ -23,7 +23,7 @@ const MaterialIssueSlipForm = () => {
     studquantity: "",
     nutquantity: "",
     size: "",
-    id: ""
+    id: "",
   });
 
   const [selectedFile, setSelectedFile] = useState(null);
@@ -35,26 +35,32 @@ const MaterialIssueSlipForm = () => {
           `http://localhost:8000/api/materialissueslip/get-materialIssueSlipByID/${id}`
         );
         const responseData = response.data;
-        console.log("responseData", responseData)
+        console.log("responseData", responseData);
 
-        setMaterialIssueForm(prevState => ({
+        setMaterialIssueForm((prevState) => ({
           ...prevState, // Spread previous state
           materialSlipName: responseData.materialSlipName,
           itemDescription: responseData.itemDescription,
           materialGrade: responseData.materialGrade,
-          diameter: responseData.size.diameter ? responseData.size.diameter.value : "",
-          diameterDimension: responseData.size.diameter ? responseData.size.diameter.dimension : "",
-          length: responseData.size.length ? responseData.size.length.value : "",
-          lengthDimension: responseData.size.length ? responseData.size.length.dimension : "",
+          diameter: responseData.size.diameter
+            ? responseData.size.diameter.value
+            : "",
+          diameterDimension: responseData.size.diameter
+            ? responseData.size.diameter.dimension
+            : "",
+          length: responseData.size.length
+            ? responseData.size.length.value
+            : "",
+          lengthDimension: responseData.size.length
+            ? responseData.size.length.dimension
+            : "",
           quantityRequired: responseData.quantityRequired,
           quantityIssued: responseData.quantityIssued,
           studquantity: responseData.studquantity,
           nutquantity: responseData.nutquantity,
           size: responseData.size,
-          id: responseData._id // Update id if needed
+          id: responseData._id, // Update id if needed
         }));
-
-
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -94,38 +100,43 @@ const MaterialIssueSlipForm = () => {
   };
 
   const handleCalculate = () => {
-    const { diameter, length, studquantity } = materialIssueForm;
+    const { diameter, length, studquantity, nutquantity, materialSlipName } =
+      materialIssueForm;
 
-    if (diameter && length && studquantity) {
+    let quantityToUse = null;
+    if (materialSlipName.startsWith("Nut") && nutquantity) {
+      quantityToUse = nutquantity; // Use nutquantity if materialSlipName starts with "Nut"
+    } else if (materialSlipName.startsWith("Stud") && studquantity) {
+      quantityToUse = studquantity; // Use studquantity if materialSlipName starts with "Stud"
+    }
+
+    if (diameter && length && quantityToUse) {
       // Perform the calculation
-      const calculatedSize = (parseFloat(diameter) * parseFloat(diameter) * parseFloat(length)) / 162000;
-      // Multiply calculatedSize by studquantity
-      const totalSize = calculatedSize * studquantity;
+      const calculatedSize =
+        (parseFloat(diameter) * parseFloat(diameter) * parseFloat(length)) /
+        162000;
+      // Multiply calculatedSize by quantityToUse
+      const totalSize = calculatedSize * quantityToUse;
       // Update the size value in the materialIssueForm state
-      setMaterialIssueForm(prevState => ({
+      setMaterialIssueForm((prevState) => ({
         ...prevState,
-        size: totalSize.toFixed(3) // Update the size
-      }));
-      // Also update the Quantity Required in KG input field value
-      setMaterialIssueForm(prevState => ({
-        ...prevState,
-        quantityRequired: totalSize.toFixed(3) // Update the Quantity Required in KG
+        size: totalSize.toFixed(3), // Update the size
+        quantityRequired: totalSize.toFixed(3), // Update the Quantity Required in KG
       }));
     } else {
       // If any of the required fields are missing, reset the size to the default quantityRequired
-      setMaterialIssueForm(prevState => ({
+      setMaterialIssueForm((prevState) => ({
         ...prevState,
-        size: prevState.quantityRequired // Reset the size to default quantityRequired
+        size: prevState.quantityRequired, // Reset the size to default quantityRequired
       }));
     }
   };
 
-
   const handleInputChange = (e, field) => {
     const value = e.target.value;
-    setMaterialIssueForm(prevState => ({
+    setMaterialIssueForm((prevState) => ({
       ...prevState,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -213,7 +224,7 @@ const MaterialIssueSlipForm = () => {
               id="sizeFirstPart"
               type="text"
               value={materialIssueForm.diameter}
-              onChange={(e) => handleInputChange(e, 'diameter')}
+              onChange={(e) => handleInputChange(e, "diameter")}
               placeholder="Input"
               className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -228,7 +239,7 @@ const MaterialIssueSlipForm = () => {
             <select
               id="diameterDimension"
               value={materialIssueForm.diameterDimension}
-              onChange={(e) => handleInputChange(e, 'diameterDimension')}
+              onChange={(e) => handleInputChange(e, "diameterDimension")}
               className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
             >
               <option value="inch">Inch</option>
@@ -241,7 +252,7 @@ const MaterialIssueSlipForm = () => {
               id="sizeFirstPart"
               type="text"
               value={materialIssueForm.length}
-              onChange={(e) => handleInputChange(e, 'length')}
+              onChange={(e) => handleInputChange(e, "length")}
               placeholder="Input"
               className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -256,7 +267,7 @@ const MaterialIssueSlipForm = () => {
             <select
               id="lengthDimension"
               value={materialIssueForm.lengthDimension}
-              onChange={(e) => handleInputChange(e, 'lengthDimension')}
+              onChange={(e) => handleInputChange(e, "lengthDimension")}
               className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
             >
               <option value="inch">Inch</option>
@@ -277,8 +288,12 @@ const MaterialIssueSlipForm = () => {
           <label className="relative cursor-pointer App">
             <input
               type="text"
-              value={typeof materialIssueForm.size === 'number' ? materialIssueForm.size.toFixed(3) : materialIssueForm.quantityRequired}
-              onChange={(e) => handleInputChange(e, 'size')}
+              value={
+                typeof materialIssueForm.size === "number"
+                  ? materialIssueForm.size.toFixed(3)
+                  : materialIssueForm.quantityRequired
+              }
+              onChange={(e) => handleInputChange(e, "size")}
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -293,8 +308,12 @@ const MaterialIssueSlipForm = () => {
             <input
               type="text"
               // value={materialIssueForm.quantityIssued}
-              value={typeof materialIssueForm.size === 'number' ? materialIssueForm.size.toFixed(3) : materialIssueForm.quantityRequired}
-              onChange={(e) => handleInputChange(e, 'size')}
+              value={
+                typeof materialIssueForm.size === "number"
+                  ? materialIssueForm.size.toFixed(3)
+                  : materialIssueForm.quantityRequired
+              }
+              onChange={(e) => handleInputChange(e, "size")}
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
