@@ -97,7 +97,7 @@ const ProductionReportForm = () => {
               procedures: processRow.procedures || "-",
               orderQty: processRow.orderQty || "-",
               processQty: processRow.processQty || "-",
-              startTime: timePart || "-",
+              startTime: `${formattedDate}, ${timePart}` || "-",
               // endTime: processRow.endTime,
               endTime: `${formattedDateForEndTime}, ${timePartForEnd}`,
               optSign: processRow.optSign || "-",
