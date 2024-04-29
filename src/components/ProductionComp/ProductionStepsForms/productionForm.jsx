@@ -236,7 +236,7 @@ const ProductionForm = () => {
           </label>
         </div>
 
-        <div className="flex items-center my-4 gap-2">
+        <div className="flex items-center gap-2 my-4">
           <label className="relative cursor-pointer App">
             <input
               id="materialCode"
@@ -261,7 +261,7 @@ const ProductionForm = () => {
             <option value="ZincPlating">Zinc Plating</option>
             <option value="ZincNickel">Zinc - Nickel</option>
             <option value="XYLAN1070">Xylan 1070</option>
-            <option value="XYLAR1070">Xylar2 +Xylan 1070.</option>
+            <option value="XYLAR1070">Xylar2 + Xylan 1070.</option>
           </select>
         </div>
 

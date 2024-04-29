@@ -71,16 +71,16 @@ const ProductionReport = ({ productionStep }) => {
 
   const CustomButtonComponent = (props) => {
     return (
-      <div className="ag-theme-alpine flex flex-row gap-2 items-center pt-1">
+      <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
         <button
           onClick={() => window.alert("clicked")}
-          className="p-2 bg-green-200 rounded-lg text-green-600"
+          className="p-2 text-green-600 bg-green-200 rounded-lg"
         >
           <MdModeEdit />
         </button>
         <button
           onClick={() => window.alert("clicked")}
-          className="p-2 bg-red-200 rounded-lg text-red-600"
+          className="p-2 text-red-600 bg-red-200 rounded-lg"
         >
           <RiDeleteBin5Line />
         </button>
@@ -102,11 +102,11 @@ const ProductionReport = ({ productionStep }) => {
   ];
 
   return (
-    // <div className="flex flex-col justify-center items-center">
+    // <div className="flex flex-col items-center justify-center">
     <div className="flex flex-col mx-4 bg-white">
       {/* Button positioned at the top right corner */}
       <button
-        className="self-end m-4 bg-gray-400 px-4 py-2 rounded-lg"
+        className="self-end px-4 py-2 m-4 bg-gray-400 rounded-lg"
         onClick={handleClick}
       >
         Create
