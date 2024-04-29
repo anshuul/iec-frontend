@@ -262,6 +262,9 @@ const ProductionForm = () => {
             <option value="ZincNickel">Zinc - Nickel</option>
             <option value="XYLAN1070">Xylan 1070</option>
             <option value="XYLAR1070">Xylar2 + Xylan 1070.</option>
+            {/* <option value="HDG">HotDip Galvanizing(HDG)</option>
+            <option value="PTFE">PTFE</option> */}
+
           </select>
         </div>
 

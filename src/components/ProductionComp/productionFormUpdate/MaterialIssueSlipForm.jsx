@@ -122,6 +122,7 @@ const MaterialIssueSlipForm = () => {
         ...prevState,
         size: totalSize.toFixed(3), // Update the size
         quantityRequired: totalSize.toFixed(3), // Update the Quantity Required in KG
+        quantityIssued: totalSize.toFixed(3) 
       }));
     } else {
       // If any of the required fields are missing, reset the size to the default quantityRequired
@@ -307,11 +308,10 @@ const MaterialIssueSlipForm = () => {
           <label className="relative cursor-pointer App">
             <input
               type="text"
-              // value={materialIssueForm.quantityIssued}
               value={
                 typeof materialIssueForm.size === "number"
                   ? materialIssueForm.size.toFixed(3)
-                  : materialIssueForm.quantityRequired
+                  : materialIssueForm.quantityIssued
               }
               onChange={(e) => handleInputChange(e, "size")}
               placeholder="Input"
