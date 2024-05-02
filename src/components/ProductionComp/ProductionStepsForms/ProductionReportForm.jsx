@@ -6,6 +6,7 @@ import "ag-grid-community/styles/ag-theme-alpine.css";
 import { FiArrowLeft, FiPrinter, FiSave } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { RiDeleteBin5Line } from "react-icons/ri";
 
 const ProductionReportForm = () => {
   const router = useRouter();
@@ -105,7 +106,8 @@ const ProductionReportForm = () => {
             };
           }
         );
-
+        console.log("formattedData in pr", formattedData);
+        
         setRowData(formattedData);
       } catch (error) {
         console.log(error);
@@ -122,6 +124,35 @@ const ProductionReportForm = () => {
 
   const handleSave = () => {
     console.log("Updated Row Data:", rowData);
+  };
+
+  const handleDelete = async (processRowId, productionReportId) => {
+    try {
+      console.log("Deleting process row:", processRowId);
+      await axios.delete(
+        `http://localhost:8000/api/productionReport/${productionReportId}/${processRowId}`
+      );
+      const updatedRowData = rowData.filter((row) => row._id !== processRowId);
+      setRowData(updatedRowData);
+      console.log("Process row deleted successfully");
+    } catch (error) {
+      console.log("Error deleting process row:", error);
+    }
+  };
+
+  const CustomButtonComponent = (props) => {
+    return (
+      <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
+        <button
+          className="p-2 text-red-600 bg-red-200 rounded-lg"
+          onClick={() =>
+            handleDelete(props.data._id)
+          }
+        >
+          <RiDeleteBin5Line />
+        </button>
+      </div>
+    );
   };
 
   const columnDefs = [
@@ -154,6 +185,7 @@ const ProductionReportForm = () => {
     { headerName: "END TIME", field: "endTime", editable: true },
     { headerName: "OPT SIGN", field: "optSign", editable: true },
     { headerName: "REMARKS", field: "remarks", editable: true },
+    { headerName: "Delete", cellRenderer: CustomButtonComponent },
   ];
 
   return (
