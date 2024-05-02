@@ -19,6 +19,7 @@ const EditCustomerForm = () => {
     studItemDescription: "",
     nutItemDescription: "",
     selectedItem: "",
+    selectedSurface: "",
     studGrade: "",
     nutGrade: "",
     POsize: {
@@ -211,7 +212,7 @@ const EditCustomerForm = () => {
           </label>
         </div>
 
-        <div className="flex items-center my-4">
+        <div className="flex flex-col items-center gap-2 md:flex-row">
           <label className="relative cursor-pointer App">
             <input
               id="materialCode"
@@ -227,6 +228,28 @@ const EditCustomerForm = () => {
               Material Code
             </span>
           </label>
+
+          <select
+            id="selectedSurface"
+            value={customerPO.selectedSurface}
+            onChange={(e) => setCustomerPO(
+              {
+                ...customerPO,
+                selectedSurface: e.target.value
+              }
+            )}
+            className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
+          >
+            <option value="select">Surface Finish</option>
+            <option value="PhosphatingBlack">Phosphating(Black)</option>
+            <option value="ZincPlating">Zinc Plating</option>
+            <option value="ZincNickel">Zinc - Nickel</option>
+            <option value="XYLAN1070">Xylan 1070</option>
+            <option value="XYLAR1070">Xylar2 + Xylan 1070.</option>
+            {/* <option value="HDG">HotDip Galvanizing(HDG)</option>
+            <option value="PTFE">PTFE</option> */}
+
+          </select>
         </div>
 
         <div className="flex flex-col items-center gap-4 my-4 md:flex-row">
@@ -234,7 +257,7 @@ const EditCustomerForm = () => {
           <div className="flex flex-col items-center gap-2 md:flex-row">
             <label className="relative cursor-pointer App">
               <input
-                id="itemDescription"
+                id="studItemDescription"
                 type="text"
                 value={customerPO.studItemDescription}
                 onChange={(e) =>
@@ -247,7 +270,7 @@ const EditCustomerForm = () => {
                 className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
               />
               <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-                Item Description
+                Stud Description
               </span>
             </label>
           </div>
@@ -292,7 +315,7 @@ const EditCustomerForm = () => {
           </div>
         </div>
 
-        <div className="flex flex-col items-center my-4 md:flex-row">
+        <div className="flex flex-col items-center gap-2 my-4 md:flex-row">
           {/* Stud Material Grade */}
           <label className="relative cursor-pointer App">
             <input

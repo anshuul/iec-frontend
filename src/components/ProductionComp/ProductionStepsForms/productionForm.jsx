@@ -15,14 +15,12 @@ const ProductionForm = () => {
   const [customerName, setCustomerName] = useState("Vishal Doshi");
   const [poNo, setPoNo] = useState("");
   const [materialCode, setMaterialCode] = useState("");
-  const [itemDescription, setItemDescription] = useState("");
   const [studItemDescription, setStudItemDescription] = useState("");
   const [nutItemDescription, setNutItemDescription] = useState("");
 
   const [selectedItem, setSelectedItem] = useState("");
   const [selectedSurface, setSelectedSurface] = useState("");
 
-  const [itemGrade, setItemGrade] = useState("");
   const [studGrade, setStudGrade] = useState("");
   const [nutGrade, setNutGrade] = useState("");
 
