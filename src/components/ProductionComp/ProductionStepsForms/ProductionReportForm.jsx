@@ -7,6 +7,7 @@ import { FiArrowLeft, FiPrinter, FiSave } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { RiDeleteBin5Line } from "react-icons/ri";
+import ConfirmPopUp from "@/components/common/ConfirmPopUp";
 
 const ProductionReportForm = () => {
   const router = useRouter();
@@ -17,6 +18,8 @@ const ProductionReportForm = () => {
 
   const [rowData, setRowData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [processRowToDelete, setProcessRowToDelete] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -92,6 +95,7 @@ const ProductionReportForm = () => {
             return {
               srNo: index + 1,
               _id: processRow._id,
+              productionReportId: response.data._id,
               date: formattedDate,
               operatorName: processRow.operatorName,
               processDescription: processRow.jobDescription,
@@ -107,7 +111,7 @@ const ProductionReportForm = () => {
           }
         );
         console.log("formattedData in pr", formattedData);
-        
+
         setRowData(formattedData);
       } catch (error) {
         console.log(error);
@@ -126,7 +130,13 @@ const ProductionReportForm = () => {
     console.log("Updated Row Data:", rowData);
   };
 
-  const handleDelete = async (processRowId, productionReportId) => {
+  const handleDelete = (processRowId, productionReportId) => {
+    setProcessRowToDelete({ processRowId, productionReportId });
+    setShowConfirmDelete(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    const { processRowId, productionReportId } = processRowToDelete;
     try {
       console.log("Deleting process row:", processRowId);
       await axios.delete(
@@ -138,15 +148,22 @@ const ProductionReportForm = () => {
     } catch (error) {
       console.log("Error deleting process row:", error);
     }
+    setShowConfirmDelete(false);
+  };
+
+  const handleCancelDelete = () => {
+    setShowConfirmDelete(false);
   };
 
   const CustomButtonComponent = (props) => {
+    console.log("props.data._id", props.data._id);
+    console.log("props.data.productionReportId", props.data.productionReportId);
     return (
       <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
         <button
           className="p-2 text-red-600 bg-red-200 rounded-lg"
           onClick={() =>
-            handleDelete(props.data._id)
+            handleDelete(props.data._id, props.data.productionReportId)
           }
         >
           <RiDeleteBin5Line />
@@ -208,7 +225,7 @@ const ProductionReportForm = () => {
       </div>
       <hr className="my-4 border-t border-gray-300" />
       {/* <Container> */}
-      <div className="flex justify-end mx-4 max-w-screen-full">
+      <div className="flex justify-end mx-4 mb-4 max-w-screen-full">
         <button
           onClick={handleSave}
           className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded"
@@ -221,6 +238,12 @@ const ProductionReportForm = () => {
           <FiPrinter className="ml-2" />
         </button>
       </div>
+      {showConfirmDelete && (
+        <ConfirmPopUp
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+        />
+      )}
     </div>
   );
 };
