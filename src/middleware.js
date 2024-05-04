@@ -29,6 +29,7 @@ export default function middleware(request) {
 export const config = {
     matcher: [
         '/',
+        '/login',
         '/sales-marketing',
         '/store-purchase',
         '/production/:path*',

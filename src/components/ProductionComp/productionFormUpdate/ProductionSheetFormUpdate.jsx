@@ -5,6 +5,8 @@ import { FiFile, FiSave, FiPrinter, FiArrowLeft } from "react-icons/fi";
 import { useRouter, useSearchParams } from "next/navigation";
 import { RiAttachmentLine } from "react-icons/ri";
 import axios from "axios";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const ProductionSheetFormUpdate = () => {
   const router = useRouter();
@@ -32,9 +34,21 @@ const ProductionSheetFormUpdate = () => {
     planningDate: "",
     achievementQuantity: "",
     achievementDate: "",
+    deliveryDate: "",
+    orderDate: "",
   });
 
   const [selectedFile, setSelectedFile] = useState(null);
+
+  // Function to format date in ISO format (yyyy-mm-dd)
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+    // return `${day}-${month}-${year}`;
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,14 +57,17 @@ const ProductionSheetFormUpdate = () => {
           `http://localhost:8000/api/production/get-planningSheetById/${id}`
         );
         const responseData = response.data;
-        console.log("responseData", responseData)
-        const formattedPlanningDate = new Date(responseData.planningDate)
-          .toISOString()
-          .split("T")[0];
-        const formattedAchievementDate = new Date(responseData.achievementDate)
-          .toISOString()
-          .split("T")[0];
+        console.log("responseData", responseData);
+        const formattedPlanningDate = formatDate(responseData.planningDate);
+        console.log("formattedPlanningDate", formattedPlanningDate);
+        const formattedAchievementDate = formatDate(
+          responseData.achievementDate
+        );
         console.log("formattedAchievementDate", formattedAchievementDate);
+        const formattedDeliveryDate = formatDate(responseData.deliveryDate);
+        console.log("formattedDeliveryDate", formattedDeliveryDate);
+        const formattedOrderDate = formatDate(responseData.orderDate);
+        console.log("formattedOrderDate", formattedOrderDate);
 
         console.log("responseData.planningQuantity", responseData.planningDate);
         setPlanningSheetForm({
@@ -73,6 +90,8 @@ const ProductionSheetFormUpdate = () => {
           planningDate: formattedPlanningDate,
           achievementQuantity: responseData.achievementQuantity,
           achievementDate: formattedAchievementDate,
+          deliveryDate: formattedDeliveryDate,
+          orderDate: formattedOrderDate,
           attachment: responseData.attachment,
           poNo: responseData.poNo,
         }); // Set the customer PO data in state
@@ -183,7 +202,7 @@ const ProductionSheetFormUpdate = () => {
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
                 <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-                  Material Issue
+                  Material Grade
                 </span>
               </label>
             </div>
@@ -526,16 +545,15 @@ const ProductionSheetFormUpdate = () => {
                 <label htmlFor="planningDate" className="w-32 mr-2 text-[16px]">
                   Date:
                 </label>
-                <input
-                  type="date"
-                  id="planningDate"
-                  value={planningSheetForm.planningDate}
-                  onChange={(e) =>
+                 <DatePicker
+                  selected={planningSheetForm.planningDate}
+                  onChange={(date) =>
                     setPlanningSheetForm({
                       ...planningSheetForm,
-                      planningDate: e.target.value,
+                      planningDate: date,
                     })
                   }
+                  dateFormat="dd/MM/yyyy"
                   className="w-full px-3 py-2 border border-gray-300 rounded"
                 />
               </div>
@@ -570,16 +588,64 @@ const ProductionSheetFormUpdate = () => {
                 >
                   Date:
                 </label>
-                <input
-                  type="date"
-                  id="achievementDate"
-                  value={planningSheetForm.achievementDate}
-                  onChange={(e) =>
+                <DatePicker
+                  selected={planningSheetForm.achievementDate}
+                  onChange={(date) =>
                     setPlanningSheetForm({
                       ...planningSheetForm,
-                      achievementDate: e.target.value,
+                      achievementDate: date,
                     })
                   }
+                  dateFormat="dd/MM/yyyy"
+                  className="w-full px-3 py-2 border border-gray-300 rounded"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr className="my-4 border-t border-gray-300" />
+
+        <div className="w-full ">
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2 lg:grid-cols-1 md:grid-cols-2">
+            {/* First Column */}
+            <div className="flex flex-col items-start">
+              <h3 className="mb-4 text-[16px] font-semibold">Order Date</h3>
+              <div className="flex items-center mb-4">
+                <label htmlFor="orderDate" className="w-32 mr-2 text-[16px]">
+                  Order Date:
+                </label>
+                <DatePicker
+                  selected={planningSheetForm.orderDate}
+                  onChange={(date) =>
+                    setPlanningSheetForm({
+                      ...planningSheetForm,
+                      orderDate: date,
+                    })
+                  }
+                  dateFormat="dd/MM/yyyy"
+                  className="w-full px-3 py-2 border border-gray-300 rounded"
+                />
+              </div>
+            </div>
+
+            {/* Second Column */}
+            <div className="flex flex-col items-start">
+              <h3 className="mb-4 text-[16px] font-semibold">Delivery Date</h3>
+
+              <div className="flex items-center mb-4">
+                <label htmlFor="deliveryDate" className="w-32 mr-2 text-[16px]">
+                  Delivery Date:
+                </label>
+                <DatePicker
+                  selected={planningSheetForm.deliveryDate}
+                  onChange={(date) =>
+                    setPlanningSheetForm({
+                      ...planningSheetForm,
+                      deliveryDate: date,
+                    })
+                  }
+                  dateFormat="dd/MM/yyyy"
                   className="w-full px-3 py-2 border border-gray-300 rounded"
                 />
               </div>
@@ -591,7 +657,8 @@ const ProductionSheetFormUpdate = () => {
         <div className="flex justify-end">
           <button
             onClick={saveFormData}
-            className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded">
+            className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded"
+          >
             Save
             <FiSave className="ml-2" />
           </button>

@@ -145,39 +145,74 @@ const MaterialIssueForm = () => {
           </label>
         </div>
 
-        <div className="flex items-center my-4">
+        <div className="flex flex-col items-center gap-4 my-4 md:flex-row">
+          {/* Stud Item Description */}
+          <div className="flex flex-col items-center gap-2 md:flex-row">
+            <label className="relative cursor-pointer App">
+              <input
+                type="text"
+                value={itemDescription}
+                onChange={(e) => setItemDescription(e.target.value)}
+                placeholder="Input"
+                className="h-10 w-96 xl:w-[400px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+              />
+              <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+                Stud Description
+              </span>
+            </label>
+          </div>
+
+          {/* Nut Item Description */}
+          <div className="flex flex-col items-center gap-2 md:flex-row">
           <label className="relative cursor-pointer App">
-            <input
-              type="text"
-              value={itemDescription}
-              onChange={(e) => setItemDescription(e.target.value)}
-              placeholder="Input"
-              className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
-            />
-            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              Item Description
-            </span>
-          </label>
+              <input
+                type="text"
+                value={itemDescription}
+                onChange={(e) => setItemDescription(e.target.value)}
+                placeholder="Input"
+                className="h-10 w-96 xl:w-[400px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+              />
+              <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+                Nut Description
+              </span>
+            </label>
+          </div>
         </div>
 
-        <div className="flex items-center my-4">
-          <label className="relative cursor-pointer App">
+        <div className="flex flex-col items-center my-4 md:flex-row">
+          {/* Stud Grade */}
+          <label className="relative mb-4 cursor-pointer App md:mr-4 md:mb-0">
             <input
+              id="StudGrade"
               type="text"
               value={materialGrade}
               onChange={(e) => setMaterialGrade(e.target.value)}
               placeholder="Input"
-              className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+              className="h-10 w-48 xl:w-[400px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              Material Grade
+              Stud Grade
+            </span>
+          </label>
+          {/* Nut Grade */}
+          <label className="relative cursor-pointer">
+            <input
+              id="StudGrade"
+              type="text"
+              value={materialGrade}
+              onChange={(e) => setMaterialGrade(e.target.value)}
+              placeholder="Input"
+              className="h-10 w-48 xl:w-[400px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+            />
+            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+              Nut Grade
             </span>
           </label>
         </div>
 
-        <div className="flex items-center gap-2 my-4">
+        <div className="flex flex-col items-start gap-2 my-4 md:items-center md:flex-row">
           <label htmlFor="size" className="text-[16px] mr-4">
-            Size:
+            PO Size:
           </label>
           {/* Diameter */}
           <label className="relative cursor-pointer App">
@@ -246,21 +281,80 @@ const MaterialIssueForm = () => {
             Calculation
           </button>
         </div>
-        {/* <div className="flex items-center my-4">
+
+        {/* Cutting Size */}
+        <div className="flex flex-col items-start gap-2 my-4 md:items-center md:flex-row">
+          <label htmlFor="size" className="text-[16px] mr-4">
+            Cutting Size:
+          </label>
+          {/* Diameter */}
           <label className="relative cursor-pointer App">
             <input
               id="sizeFirstPart"
               type="text"
-              value={size}
-              onChange={(e) => setSize(e.target.value)}
+              value={diameter}
+              onChange={(e) => setDiameter(e.target.value)}
               placeholder="Input"
               className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              size in KG
+              Diameter
             </span>
           </label>
-        </div> */}
+          <label
+            htmlFor="unit"
+            className="relative flex items-center cursor-pointer App"
+          >
+            <select
+              id="unit"
+              className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
+              value={diameterDimension}
+              onChange={(e) => setDiameterDimension(e.target.value)}
+            // onChange={handleDiameterDimensionChange}
+            >
+              <option value="inch">Inch</option>
+              <option value="mm">MM</option>
+            </select>
+          </label>
+          {/* Unit */}
+          <label className="relative cursor-pointer App">
+            <input
+              id="sizeFirstPart"
+              type="text"
+              value={length}
+              onChange={(e) => setLength(e.target.value)}
+              placeholder="Input"
+              className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+            />
+            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+              Length
+            </span>
+          </label>
+          <label
+            htmlFor="unit"
+            className="relative flex items-center cursor-pointer App"
+          >
+            <select
+              id="unit"
+              className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
+              value={lengthDimension}
+              onChange={(e) => setLengthDimension(e.target.value)}
+            // onChange={handleLengthDimensionChange}
+            >
+              <option value="inch">Inch</option>
+              <option value="mm">MM</option>
+            </select>
+          </label>
+
+          {/* Calculate button */}
+          <button
+            onClick={handleCalculate}
+            className="flex items-center px-4 py-2 ml-2 text-black bg-gray-300 rounded"
+          >
+            Calculation
+          </button>
+        </div>
+
         <div className="flex items-center my-4">
           <label className="relative cursor-pointer App">
             <input

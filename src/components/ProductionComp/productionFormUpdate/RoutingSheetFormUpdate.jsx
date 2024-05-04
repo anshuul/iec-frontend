@@ -7,11 +7,20 @@ import { FiArrowLeft, FiPrinter, FiSave } from "react-icons/fi";
 import { TiPlus } from "react-icons/ti";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 const RoutingSheetFormUpdate = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
+  // Retrieve production report from Redux store
+  const productionReportSliceDataForRouting = useSelector(
+    (state) => state.productionReport.data
+  );
+  console.log(
+    "productionReportSliceDataForRouting in routing",
+    productionReportSliceDataForRouting
+  );
 
   const handleGoBack = () => {
     router.back();
@@ -28,15 +37,47 @@ const RoutingSheetFormUpdate = () => {
         const responseData = Array.isArray(response.data)
           ? response.data
           : [response.data];
+        console.log("responseData", responseData);
 
-        setRowData(responseData[0]?.processRows || []); // Update rowData with processRows data
+        const newRows = responseData[0]?.processRows.map((row, index) => {
+          // Set default values for startTime and endTime
+          let startTime = "";
+          let endTime = "";
+
+          // Check if routingSheetNo starts with "Stud" or "Nut"
+          if (row.routingSheetNo.startsWith("Stud")) {
+            startTime =
+              productionReportSliceDataForRouting.productionReports[0]
+                ?.processRows[index]?.startTime || "";
+            endTime =
+              productionReportSliceDataForRouting.productionReports[0]
+                ?.processRows[index]?.endTime || "";
+          } else if (row.routingSheetNo.startsWith("Nut")) {
+            startTime =
+              productionReportSliceDataForRouting.productionReports[1]
+                ?.processRows[index]?.startTime || "";
+            endTime =
+              productionReportSliceDataForRouting.productionReports[1]
+                ?.processRows[index]?.endTime || "";
+          }
+
+          return {
+            ...row,
+            srNo: index + 1,
+            startTime,
+            endTime,
+            processRowNumber: index + 1,
+          };
+        });
+
+        setRowData(newRows || []);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
     fetchData();
-  }, [id]);
+  }, [id, productionReportSliceDataForRouting]);
 
   const handleAddRow = () => {
     const newRowData = {
@@ -62,10 +103,26 @@ const RoutingSheetFormUpdate = () => {
   const columnDefs = [
     { headerName: "Sr No", field: "processRowNumber" },
     { headerName: "Date", field: "date", editable: true },
-    { headerName: "Operator Name/Supplier", field: "operatorName", editable: true },
-    { headerName: "Machine No/Instrument No", field: "machineNo", editable: true },
-    { headerName: "PROCESS DESCRIPTION", field: "processDescription", editable: true },
-    { headerName: "PROCEDURE NO/DRAWING NO/REPORT NO.", field: "procedureNo", editable: true },
+    {
+      headerName: "Operator Name/Supplier",
+      field: "operatorName",
+      editable: true,
+    },
+    {
+      headerName: "Machine No/Instrument No",
+      field: "machineNo",
+      editable: true,
+    },
+    {
+      headerName: "PROCESS DESCRIPTION",
+      field: "processDescription",
+      editable: true,
+    },
+    {
+      headerName: "PROCEDURE NO/DRAWING NO/REPORT NO.",
+      field: "procedureNo",
+      editable: true,
+    },
     { headerName: "ORDER QTY", field: "orderQty", editable: true },
     { headerName: "PROCESS QTY", field: "processQty", editable: true },
     { headerName: "START TIME", field: "startTime", editable: true },

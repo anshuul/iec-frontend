@@ -56,6 +56,51 @@ const RoutingSheetTable = ({ productionStep }) => {
     fetchData();
   }, []);
 
+  console.log("rowData2", rowData);
+  useEffect(() => {
+    const fetchProductionReports = async () => {
+      try {
+        console.log("Fetching production reports for each row...");
+        const promises = rowData.map(async (item) => {
+          const response = await axios.get(
+            `http://localhost:8000/api/productionReport/get-production-report-by-routing-sheet/${item._id}`
+          );
+          console.log("response.data", response.data);
+          return response.data;
+        });
+
+        const productionReports = await Promise.all(promises);
+        console.log("Production Reports:", productionReports);
+
+        // Extract the _id of the first report from each production reports array
+        const firstReportIds = response.data.productionReports[0]?._id;
+        console.log("First Report Ids:", firstReportIds);
+
+        // Fetch data for each first report id and store startTime and endTime
+        const fetchedData = await Promise.all(
+          firstReportIds.map(async (firstReportId) => {
+            const response = await axios.get(
+              `http://localhost:8000/api/productionReport/get-production-reportById/${firstReportId}`
+            );
+            const { startTime, endTime } = response.data;
+            // Store startTime and endTime in localStorage
+            localStorage.setItem(`startTime_${firstReportId}`, startTime);
+            localStorage.setItem(`endTime_${firstReportId}`, endTime);
+            return response.data;
+          })
+        );
+
+        console.log("Fetched Data:", fetchedData);
+      } catch (error) {
+        console.error("Error fetching production reports:", error);
+      }
+    };
+
+    if (rowData.length > 0) {
+      fetchProductionReports();
+    }
+  }, [rowData]);
+
   const handleDeleteClick = async (data) => {
     console.log("data", data);
     try {
@@ -110,6 +155,29 @@ const RoutingSheetTable = ({ productionStep }) => {
     },
   ];
 
+  const onSelectionChanged = async () => {
+    const selectedRows = gridApiRef.current.getSelectedRows(); // Access gridApi using ref
+
+    if (selectedRows.length > 0) {
+      const selectedRoutingSheet = selectedRows[0]._id;
+      try {
+        setLoading(true);
+        const response = await axios.get(
+          `http://localhost:8000/api/routingSheet/get-routingSheetById/${selectedRoutingSheet}`
+        );
+        const RoutingData = response.data; // No need for extra property
+        localStorage.setItem(
+          "selectedRoutingSheet",
+          JSON.stringify(RoutingData)
+        );
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching routing sheet data:", error);
+        setLoading(false);
+      }
+    }
+  };
+
   const onRowClicked = (event) => {
     const selectedRoutingSheet = event.data; // Access the clicked row data
     localStorage.setItem(
@@ -136,6 +204,8 @@ const RoutingSheetTable = ({ productionStep }) => {
           paginationPageSize={10}
           onRowClicked={onRowClicked}
           rowSelection="single"
+          // onSelectionChanged={onSelectionChanged}
+          // onGridReady={(params) => (gridApiRef.current = params.api)}
         />
       </div>
     </div>

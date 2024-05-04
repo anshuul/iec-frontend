@@ -45,8 +45,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
         const formattedData = materialIssueSlips.map((issueSlip, index) => {
           let size = "N/A";
           if (issueSlip.size && issueSlip.size.diameter) {
-            size = `${JSON.parse(issueSlip.size.diameter).value}x${JSON.parse(issueSlip.size.length).value
-              }`;
+            size = `${issueSlip.size.diameter.value}x${issueSlip.size.length.value}`;
           }
 
           return {
@@ -62,6 +61,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
             Remarks: "-",
           };
         });
+
 
         setRowData(formattedData);
       } catch (error) {
@@ -122,6 +122,20 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
     }
   }
 
+  const handleDeleteClick = async (data) => {
+    try {
+      setLoading(true);
+      await axios.delete(
+        `http://localhost:8000/api/materialissueslip/delete-materialissueslipbyid/${data._id}`
+      );
+      const updatedRows = rowData.filter((row) => row !== data);
+      setRowData(updatedRows);
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      setLoading(false);
+    }
+  }
+
   const CustomButtonComponent = (props) => {
     const data = props.data;
 
@@ -135,7 +149,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
           <MdModeEdit />
         </button>
         <button
-          onClick={() => window.alert("clicked")}
+          onClick={() => handleDeleteClick(data)}
           className="p-2 text-red-600 bg-red-200 rounded-lg"
         >
           <RiDeleteBin5Line />

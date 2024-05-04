@@ -1,3 +1,4 @@
+import ProductionReportForm from "@/components/ProductionComp/ProductionStepsForms/ProductionReportForm";
 import DimensionReport from "@/components/ProductionComp/ProductionStepsTables/DimensionReport";
 import MaterialIssueSlipTable from "@/components/ProductionComp/ProductionStepsTables/MaterialIssueSlipTable";
 import ProductionReport from "@/components/ProductionComp/ProductionStepsTables/ProductionReport";
@@ -20,8 +21,11 @@ const ProducitonStep = ({ params }) => {
         <RoutingSheetTable productionStep={productionStep} />
       )}
       {productionStep === "production-report" && (
-        <ProductionReport productionStep={productionStep} />
+        <ProductionReportForm productionStep={productionStep} />
       )}
+      {/* {productionStep === "production-report" && (
+        <ProductionReport productionStep={productionStep} />
+      )} */}
       {productionStep === "in-process-dimension-report" && (
         <DimensionReport productionStep={productionStep} />
       )}
