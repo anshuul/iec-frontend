@@ -24,7 +24,7 @@ const ProductionReportForm = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
+        // setLoading(true);
         let response;
 
         // Check if there's a selected customer PO in localStorage
@@ -70,9 +70,9 @@ const ProductionReportForm = () => {
             // Split the date into parts and rearrange them to format as dd/mm/yyyy if datePart exists
             const formattedDate = datePart
               ? (() => {
-                  const parts = datePart.split("/");
-                  return `${parts[1]}/${parts[0]}/${parts[2]}`;
-                })()
+                const parts = datePart.split("/");
+                return `${parts[1]}/${parts[0]}/${parts[2]}`;
+              })()
               : "";
 
             // Extract Date and Time parts from endTime
@@ -86,9 +86,9 @@ const ProductionReportForm = () => {
             // Split the date into parts and rearrange them to format as dd/mm/yyyy if datePart exists
             const formattedDateForEndTime = datePartForEnd
               ? (() => {
-                  const parts = datePartForEnd.split("/");
-                  return `${parts[1]}/${parts[0]}/${parts[2]}`;
-                })()
+                const parts = datePartForEnd.split("/");
+                return `${parts[1]}/${parts[0]}/${parts[2]}`;
+              })()
               : "";
             console.log("formattedDateForEndTime", formattedDateForEndTime);
 
@@ -122,13 +122,36 @@ const ProductionReportForm = () => {
 
   const handleCellValueChanged = (event) => {
     const updatedRowData = [...rowData];
-    updatedRowData[event.rowIndex] = event.data;
+    updatedRowData[event.rowIndex] = { ...updatedRowData[event.rowIndex], ...event.data, modified: true };
     setRowData(updatedRowData);
   };
 
-  const handleSave = () => {
-    console.log("Updated Row Data:", rowData);
+
+  const handleSave = async () => {
+    try {
+      // Toggle the loading state
+      setLoading(true);
+      // Iterate over rowData to find the changed row
+      for (const row of rowData) {
+        // Check if the row has been modified
+        if (row.modified) {
+          const { productionReportId, _id, ...updatedProcessRowData } = row;
+          await axios.put(
+            `http://localhost:8000/api/productionReport/${productionReportId}/${_id}`,
+            updatedProcessRowData
+          );
+          console.log("Process row updated successfully:", row);
+          // Reset the modified flag
+          row.modified = false;
+        }
+      }
+    } catch (error) {
+      console.error("Error updating process row:", error);
+    } finally {
+      setLoading(false);
+    }
   };
+
 
   const handleDelete = (processRowId, productionReportId) => {
     setProcessRowToDelete({ processRowId, productionReportId });
@@ -226,13 +249,23 @@ const ProductionReportForm = () => {
       <hr className="my-4 border-t border-gray-300" />
       {/* <Container> */}
       <div className="flex justify-end mx-4 mb-4 max-w-screen-full">
-        <button
+        {/* <button
           onClick={handleSave}
           className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded"
         >
           Save
           <FiSave className="ml-2" />
+        </button> */}
+        <button
+          onClick={handleSave}
+          disabled={loading}
+          className={`flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded ${loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+        >
+          {loading ? "Saving..." : "Save"}
+          <FiSave className="ml-2" />
         </button>
+
         <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
           Print
           <FiPrinter className="ml-2" />
