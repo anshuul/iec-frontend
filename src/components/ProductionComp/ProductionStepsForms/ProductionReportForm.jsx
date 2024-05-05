@@ -202,25 +202,35 @@ const ProductionReportForm = () => {
       editable: false,
       minWidth: 50,
       maxWidth: 80,
+      pinned: "left",
     },
-    { headerName: "Date", field: "date", editable: true },
+    {
+      headerName: "Date",
+      field: "date",
+      editable: true,
+      minWidth: 120,
+      maxWidth: 120,
+      pinned: "left",
+    },
     {
       headerName: "Operator Name/Supplier",
       field: "operatorName",
       editable: true,
+      pinned: "left",
     },
     {
       headerName: "Job DESCRIPTION",
       field: "processDescription",
       editable: true,
+      pinned: "left",
     },
     {
       headerName: "PROCEDURE NO/DRAWING NO/REPORT NO.",
       field: "procedures",
       editable: true,
     },
-    { headerName: "ORDER QTY", field: "orderQty", editable: true },
-    { headerName: "PROCESS QTY", field: "processQty", editable: true },
+    { headerName: "ORDER QTY (NOS)", field: "orderQty", editable: true },
+    { headerName: "PROCESS QTY (NOS)", field: "processQty", editable: true },
     { headerName: "START TIME", field: "startTime", editable: true },
     { headerName: "END TIME", field: "endTime", editable: true },
     { headerName: "OPT SIGN", field: "optSign", editable: true },
@@ -249,13 +259,6 @@ const ProductionReportForm = () => {
       <hr className="my-4 border-t border-gray-300" />
       {/* <Container> */}
       <div className="flex justify-end mx-4 mb-4 max-w-screen-full">
-        {/* <button
-          onClick={handleSave}
-          className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded"
-        >
-          Save
-          <FiSave className="ml-2" />
-        </button> */}
         <button
           onClick={handleSave}
           disabled={loading}

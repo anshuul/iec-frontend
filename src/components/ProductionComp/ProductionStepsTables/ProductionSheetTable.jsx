@@ -198,15 +198,15 @@ const ProductionSheetTable = ({ productionStep }) => {
 
   const columnDefs = [
     { headerName: "Sr No", field: "srNo", minWidth: 50, maxWidth: 80 },
-    { headerName: "Production Planning", field: "ProductionPlanning", flex: 1 },
-    { headerName: "Created Date", field: "CreatedDate", flex: 1 },
-    { headerName: "Created By", field: "CreatedBy", flex: 1 },
     {
       headerName: "Action",
       cellRenderer: CustomButtonComponent,
       minWidth: 150,
       maxWidth: 200,
     },
+    { headerName: "Production Planning", field: "ProductionPlanning", flex: 1 },
+    { headerName: "Created Date", field: "CreatedDate", flex: 1 },
+    { headerName: "Created By", field: "CreatedBy", flex: 1 },
   ];
 
   const HistoryColumnDefs = [

@@ -4,6 +4,8 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiArrowLeft, FiFile, FiPrinter, FiSave } from "react-icons/fi";
 import axios from "axios";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const EditCustomerForm = () => {
   const searchParams = useSearchParams();
@@ -33,6 +35,7 @@ const EditCustomerForm = () => {
       cuttinglength: { value: "" },
     },
     quantity: "",
+    orderDate: "",
   });
   const [selectedFile, setSelectedFile] = useState(null);
   console.log("customerPO: ", customerPO);
@@ -161,6 +164,10 @@ const EditCustomerForm = () => {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
+  };
+
+  const handleOrderDateChange = (date) => {
+    setCustomerPO({ ...customerPO, orderDate: date });
   };
 
   return (
@@ -582,6 +589,23 @@ const EditCustomerForm = () => {
               Quantity
             </span>
           </label>
+        </div>
+
+        {/* Order Date */}
+        <div className="flex items-center mb-4">
+          <label
+            htmlFor="deliveryDate"
+            className="w-auto mr-2 text-[16px]"
+          >
+            Order Date:
+          </label>
+
+          <DatePicker
+            selected={customerPO.orderDate}
+            onChange={handleOrderDateChange}
+            dateFormat="dd/MM/yyyy"
+            className="w-full px-3 py-2 border border-gray-300 rounded"
+          />
         </div>
 
         <div className="flex items-center">

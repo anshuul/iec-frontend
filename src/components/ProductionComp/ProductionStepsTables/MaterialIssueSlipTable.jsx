@@ -185,6 +185,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
 
   const columnDefs = [
     { headerName: "Sr No", field: "srNo", maxWidth: 80 },
+    { headerName: "Action", cellRenderer: CustomButtonComponent },
     { headerName: "PO Number", field: "PONumber" },
     { headerName: "MaterialSlip Name", field: "MaterialSlipName" },
     { headerName: "Item Desc", field: "ItemDesc" },
@@ -193,7 +194,6 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
     { headerName: "Quantity Required", field: "QuantityRequired" },
     { headerName: "Quantity Issued", field: "QuantityIssued" },
     { headerName: "Remarks", field: "Remarks" },
-    { headerName: "Action", cellRenderer: CustomButtonComponent },
   ];
 
   const HistoryColumnDefs = [

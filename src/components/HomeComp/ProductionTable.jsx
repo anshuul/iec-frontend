@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setCustomerPOData } from "@/slice/customerPOSlice";
 import { setRoutingSheetData } from "@/slice/routingSheetSlice";
 import { setProductionReportData } from "@/slice/productionReportSlice";
+import HistoryTablePopup from "./HistoryTablePopup";
 
 const ProductionTable = () => {
   const dispatch = useDispatch();
@@ -138,27 +139,32 @@ const ProductionTable = () => {
     }
   };
 
+  // Function to close the history modal
+  const closeModal = () => {
+    setShowHistoryTable(false);
+  };
+
   const CustomButtonComponent = (props) => {
     const data = props.data;
     return (
-      <div className="ag-theme-alpine flex flex-row gap-2 items-center pt-1">
+      <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
         <button
           onClick={() => handleEditClick(data.CustomerPO)}
-          className="p-2 bg-green-200 rounded-lg text-green-600"
+          className="p-2 text-green-600 bg-green-200 rounded-lg"
         >
           <MdModeEdit />
         </button>
         {/* Delete Button */}
         <button
           onClick={() => handleDeleteClick(data)}
-          className="p-2 bg-red-200 rounded-lg text-red-600"
+          className="p-2 text-red-600 bg-red-200 rounded-lg"
         >
           <RiDeleteBin5Line />
         </button>
         {/* History Button */}
         <button
           onClick={() => handleHistoryClick(data.CustomerPO)}
-          className="p-2 bg-yellow-200 rounded-lg text-red-600"
+          className="p-2 text-red-600 bg-yellow-200 rounded-lg"
         >
           <BsInfoCircle />
         </button>
@@ -177,13 +183,13 @@ const ProductionTable = () => {
     const data = props.data;
     console.log("HistoryButton", data);
     return (
-      <div className="ag-theme-alpine flex flex-row gap-2 items-center pt-1">
+      <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
         {/* View Button */}
         <button
           onClick={() => {
             handleViewClick(data.CustomerPO, data.historyId);
           }}
-          className="p-2 bg-yellow-200 rounded-lg text-red-600"
+          className="p-2 text-red-600 bg-yellow-200 rounded-lg"
         >
           <IoSearch />
         </button>
@@ -277,7 +283,7 @@ const ProductionTable = () => {
                     id,
                     reportResponse
                   );
-                  dispatch(setProductionReportData(reportResponse.data)); 
+                  dispatch(setProductionReportData(reportResponse.data));
                   return reportResponse;
                 } else {
                   console.log("Invalid routing sheet data:", routingSheet);
@@ -302,9 +308,9 @@ const ProductionTable = () => {
   }, [customerPODataForRouting]);
 
   return (
-    <div className="flex flex-col mx-4 h-screen bg-white">
+    <div className="flex flex-col h-screen mx-4 bg-white">
       <button
-        className="self-end m-4 bg-gray-400 px-4 py-2 rounded-lg"
+        className="self-end px-4 py-2 m-4 bg-gray-400 rounded-lg"
         onClick={handleClick}
       >
         Create
@@ -325,11 +331,11 @@ const ProductionTable = () => {
           rowSelection="single"
         />
       </div>
-      {showHistoryTable ? (
+      {/* {showHistoryTable ? (
         <>
-          <hr className="mt-12 mb-6 mx-4 border-t border-gray-300" />
+          <hr className="mx-4 mt-12 mb-6 border-t border-gray-300" />
           <div className="ag-theme-alpine px-4 w-full h-[30vh]">
-            <p className="text-start font-bold text-xl mb-2">History</p>
+            <p className="mb-2 text-xl font-bold text-start">History</p>
             <AgGridReact
               columnDefs={HistoryColumnDefs}
               rowData={historyRowData}
@@ -342,7 +348,14 @@ const ProductionTable = () => {
             />
           </div>
         </>
-      ) : null}
+      ) : null} */}
+      {showHistoryTable && (
+        <HistoryTablePopup
+          HistoryColumnDefs={HistoryColumnDefs}
+          historyRowData={historyRowData}
+          closeModal={closeModal}
+        />
+      )}
     </div>
   );
 };

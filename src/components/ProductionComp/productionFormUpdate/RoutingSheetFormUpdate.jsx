@@ -101,21 +101,37 @@ const RoutingSheetFormUpdate = () => {
   };
 
   const columnDefs = [
-    { headerName: "Sr No", field: "processRowNumber" },
-    { headerName: "Date", field: "date", editable: true },
+    {
+      headerName: "Sr No",
+      field: "processRowNumber",
+      editable: false,
+      minWidth: 50,
+      maxWidth: 80,
+      pinned: "left",
+    },
+    {
+      headerName: "Date",
+      field: "date",
+      editable: true,
+      minWidth: 120,
+      maxWidth: 120,
+      pinned: "left",
+    },
     {
       headerName: "Operator Name/Supplier",
       field: "operatorName",
       editable: true,
-    },
-    {
-      headerName: "Machine No/Instrument No",
-      field: "machineNo",
-      editable: true,
+      pinned: "left",
     },
     {
       headerName: "PROCESS DESCRIPTION",
       field: "processDescription",
+      editable: true,
+      pinned: "left",
+    },
+    {
+      headerName: "Machine No/Instrument No",
+      field: "machineNo",
       editable: true,
     },
     {

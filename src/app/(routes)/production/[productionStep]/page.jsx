@@ -26,7 +26,7 @@ const ProducitonStep = ({ params }) => {
       {/* {productionStep === "production-report" && (
         <ProductionReport productionStep={productionStep} />
       )} */}
-      {productionStep === "in-process-dimension-report" && (
+      {productionStep === "dimension-report" && (
         <DimensionReport productionStep={productionStep} />
       )}
     </div>

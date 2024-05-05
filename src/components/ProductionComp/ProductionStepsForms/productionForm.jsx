@@ -4,6 +4,8 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiArrowLeft, FiFile, FiPrinter, FiSave } from "react-icons/fi";
 import axios from "axios";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const ProductionForm = () => {
   const searchParams = useSearchParams();
@@ -33,6 +35,7 @@ const ProductionForm = () => {
   const [cuttingLength, setCuttingLength] = useState("");
   const [lengthDimension, setLengthDimension] = useState("mm");
   const [quantity, setQuantity] = useState("");
+  const [orderDate, setOrderDate] = useState(new Date());
   const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
@@ -106,6 +109,7 @@ const ProductionForm = () => {
             },
           },
           quantity,
+          orderDate,
         }
       );
       console.log("response ", response);
@@ -113,6 +117,10 @@ const ProductionForm = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleOrderDateChange = (date) => {
+    setOrderDate(date);
   };
 
   // Function to convert inches to millimeters
@@ -495,6 +503,23 @@ const ProductionForm = () => {
               Quantity
             </span>
           </label>
+        </div>
+
+        {/* Order Date */}
+        <div className="flex items-center mb-4">
+          <label
+            htmlFor="deliveryDate"
+            className="w-auto mr-2 text-[16px]"
+          >
+            Order Date:
+          </label>
+
+          <DatePicker
+            selected={orderDate}
+            onChange={handleOrderDateChange}
+            dateFormat="dd/MM/yyyy"
+            className="w-full px-3 py-2 border border-gray-300 rounded"
+          />
         </div>
 
         <div className="flex items-center">
