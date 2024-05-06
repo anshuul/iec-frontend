@@ -27,11 +27,14 @@ const LoginPage = () => {
       if (response.status === 200) {
         // If login is successful, redirect or perform any other action
         const userData = response.data;
-        console.log("userData ", userData)
+        console.log("userData", userData)
 
         const token = userData.token;
 
         document.cookie = `token=${token}`;
+
+        // Store user email in localStorage
+        localStorage.setItem('userEmail', userData.user.email);
 
         console.log("Login successful");
         router.push("/");
@@ -59,8 +62,8 @@ const LoginPage = () => {
           <h1 className="mb-4 text-3xl font-bold">Log In</h1>
         </div>
 
-        <form 
-        onSubmit={handleSubmit}
+        <form
+          onSubmit={handleSubmit}
         >
           {/* Email Input */}
           <input

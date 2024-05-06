@@ -204,14 +204,14 @@ const ProductionReportForm = () => {
       maxWidth: 80,
       pinned: "left",
     },
-    {
-      headerName: "Date",
-      field: "date",
-      editable: true,
-      minWidth: 120,
-      maxWidth: 120,
-      pinned: "left",
-    },
+    // {
+    //   headerName: "Date",
+    //   field: "date",
+    //   editable: true,
+    //   minWidth: 120,
+    //   maxWidth: 120,
+    //   pinned: "left",
+    // },
     {
       headerName: "Operator Name/Supplier",
       field: "operatorName",
