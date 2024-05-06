@@ -146,6 +146,7 @@ const ProductionTable = () => {
 
   const CustomButtonComponent = (props) => {
     const data = props.data;
+    console.log("data.CustomerPO", data.CustomerPO);
     return (
       <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
         <button

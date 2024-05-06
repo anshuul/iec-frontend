@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { BsInfoCircle } from "react-icons/bs";
 import { IoSearch } from "react-icons/io5";
+import HistoryTablePopup from "@/components/HomeComp/HistoryTablePopup";
 
 const ProductionSheetTable = ({ productionStep }) => {
   console.log("productionStep", productionStep);
@@ -69,70 +70,68 @@ const ProductionSheetTable = ({ productionStep }) => {
     );
   };
 
-  const handleHistoryClick = async (poNo) => {
-    console.log("objectpono", poNo)
+  const handleHistoryClick = async (_id) => {
+    console.log("object _id", _id);
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:8000/api/production/productionPlanningHistory/${poNo}`
+        `http://localhost:8000/api/production/productionPlanningHistoryBypreviousDataId/${_id}`
       );
       console.log("Response data:", response.data);
-      // Check if historyRecords exists in the previousData object
-      if (response.data.previousData && response.data.previousData.historyRecords) {
-        const historyData = response.data.previousData.map((record, index) => ({
-          srNo: index + 1,
-          ProductionSheetName: record.productionSheetName,
-          itemDescription: record.itemDescription,
-          materialIssue: record.materialIssue,
-          requiredResources: record.requiredResources,
-          productAndCustomer: record.productAndCustomer,
-          legalAndApplicable: record.legalAndApplicable,
-          contingencyPlanning: record.contingencyPlanning,
-          verification: record.verification,
-          validation: record.validation,
-          monitoring: record.monitoring,
-          measurement: record.measurement,
-          inspection: record.inspection,
-          management: record.management,
-          recordsEvidence: record.recordsEvidence,
-          planningQuantity: record.planningQuantity,
-          planningDate: new Date(record.planningDate).toLocaleString(
-            undefined,
-            { dateStyle: "long", timeStyle: "medium" }
-          ), // Convert to pretty format
-          achievementQuantity: record.achievementQuantity,
-          selectedItem: record.selectedItem,
-          achievementDate: new Date(record.achievementDate).toLocaleString(
-            undefined,
-            { dateStyle: "long", timeStyle: "medium" }
-          ), // Convert to pretty format
-          attachment: record.attachment,
-          poNo: record.poNo,
-          CreatedAt: new Date(record.previousData.createdAt).toLocaleString(
-            undefined,
-            { dateStyle: "long", timeStyle: "medium" }
-          ), // Convert to pretty format
-          UpdatedAt: new Date(record.updatedAt).toLocaleString(
-            undefined,
-            { dateStyle: "long", timeStyle: "medium" }
-          ), // Convert to pretty format
-          historyId: record._id,
-        }));
 
-        console.log("historyData", historyData);
-        setHistoryRowData(historyData);
-        setShowHistoryTable(true);
-      } else {
-        console.log("No history records found in the response");
-        setHistoryRowData([]); // Clear history data
-        setShowHistoryTable(false);
-      }
+      const historyData = response.data.map((record, index) => ({
+        srNo: index + 1,
+        ProductionSheetName: record.previousData.productionSheetName,
+        itemDescription: record.previousData.itemDescription,
+        materialIssue: record.previousData.materialIssue,
+        requiredResources: record.previousData.requiredResources,
+        productAndCustomer: record.previousData.productAndCustomer,
+        legalAndApplicable: record.previousData.legalAndApplicable,
+        contingencyPlanning: record.previousData.contingencyPlanning,
+        verification: record.previousData.verification,
+        validation: record.previousData.validation,
+        monitoring: record.previousData.monitoring,
+        measurement: record.previousData.measurement,
+        inspection: record.previousData.inspection,
+        management: record.previousData.management,
+        recordsEvidence: record.previousData.recordsEvidence,
+        planningQuantity: record.previousData.planningQuantity,
+        planningDate: new Date(record.previousData.planningDate).toLocaleString(
+          undefined,
+          {
+            dateStyle: "long",
+            timeStyle: "medium",
+          }
+        ),
+        orderDate: new Date(record.previousData.orderDate).toLocaleString(
+          undefined,
+          {
+            dateStyle: "long",
+            timeStyle: "medium",
+          }
+        ),
+        achievementQuantity: record.previousData.achievementQuantity,
+        selectedItem: record.previousData.selectedItem,
+        achievementDate: new Date(
+          record.previousData.achievementDate
+        ).toLocaleString(undefined, { dateStyle: "long", timeStyle: "medium" }),
+        attachment: record.previousData.attachment,
+        poNo: record.poNo,
+        UpdatedAt: new Date(record.updatedAt).toLocaleString(undefined, {
+          dateStyle: "long",
+          timeStyle: "medium",
+        }),
+        historyId: record.previousData.id,
+      }));
+      console.log("historyData planning", historyData);
+      setHistoryRowData(historyData);
+      setShowHistoryTable(true);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching history data:", error);
       setLoading(false);
     }
-  }
+  };
 
   const handleDeleteClick = async (data) => {
     try {
@@ -149,9 +148,16 @@ const ProductionSheetTable = ({ productionStep }) => {
     }
   };
 
+  // Function to close the history modal
+  const closeModal = () => {
+    setShowHistoryTable(false);
+  };
+
   const CustomButtonComponent = (props) => {
     const data = props.data;
-    // console.log("first data", data);
+    console.log("data.PONumber", data.PONumber);
+    // console.log("data.all", data);
+    console.log("data.id", data._id);
     return (
       <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
         <button
@@ -169,7 +175,7 @@ const ProductionSheetTable = ({ productionStep }) => {
         </button>
         {/* History Button */}
         <button
-          onClick={() => handleHistoryClick(data.PONumber)}
+          onClick={() => handleHistoryClick(data._id)}
           className="p-2 text-red-600 bg-yellow-200 rounded-lg"
         >
           <BsInfoCircle />
@@ -178,16 +184,24 @@ const ProductionSheetTable = ({ productionStep }) => {
     );
   };
 
+  const handleViewClick = (historyId) => {
+    router.push(
+      `/production/production-planning-sheets/planningSheet-history?historyId=${historyId}`
+    );
+    // router.push(`/production/productionForm/view`);
+  };
+
   const HistoryButton = (props) => {
     const data = props.data;
-    console.log("HistoryButton", data);
+    console.log("data.CustomerPO", data);
+    console.log("data.historyId", data.historyId);
     return (
       <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
         {/* View Button */}
         <button
-          // onClick={() => {
-          //   handleViewClick(data.CustomerPO, data.historyId);
-          // }}
+          onClick={() => {
+            handleViewClick(data.historyId);
+          }}
           className="p-2 text-red-600 bg-yellow-200 rounded-lg"
         >
           <IoSearch />
@@ -211,15 +225,19 @@ const ProductionSheetTable = ({ productionStep }) => {
 
   const HistoryColumnDefs = [
     { headerName: "Sr No", field: "srNo", minWidth: 50, maxWidth: 80 },
-    { headerName: "Production Planning", field: "ProductionSheetName", flex: 1 },
-    { headerName: "Created Date", field: "CreatedAt", flex: 1 },
+    {
+      headerName: "Production Planning",
+      field: "ProductionSheetName",
+      flex: 1,
+    },
+    { headerName: "Created Date", field: "orderDate", flex: 1 },
     { headerName: "Created By", field: "UpdatedAt", flex: 1 },
     {
       headerName: "Action",
       cellRenderer: HistoryButton,
       minWidth: 150,
       maxWidth: 200,
-    }
+    },
   ];
 
   return (
@@ -240,7 +258,7 @@ const ProductionSheetTable = ({ productionStep }) => {
           paginationPageSize={10}
         />
       </div>
-      {showHistoryTable ? (
+      {/* {showHistoryTable ? (
         <>
           <hr className="mx-4 mt-12 mb-6 border-t border-gray-300" />
           <div className="ag-theme-alpine px-4 w-full h-[30vh]">
@@ -253,7 +271,14 @@ const ProductionSheetTable = ({ productionStep }) => {
             />
           </div>
         </>
-      ) : null}
+      ) : null} */}
+      {showHistoryTable && (
+        <HistoryTablePopup
+          HistoryColumnDefs={HistoryColumnDefs}
+          historyRowData={historyRowData}
+          closeModal={closeModal}
+        />
+      )}
     </div>
   );
 };

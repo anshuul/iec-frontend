@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { BsInfoCircle } from "react-icons/bs";
 import { IoSearch } from "react-icons/io5";
+import HistoryTablePopup from "@/components/HomeComp/HistoryTablePopup";
 
 const MaterialIssueSlipTable = ({ productionStep }) => {
   console.log("productionStep", productionStep);
@@ -62,7 +63,6 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
           };
         });
 
-
         setRowData(formattedData);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -84,13 +84,19 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
     );
   };
 
-  const handleHistoryClick = async (poNo) => {
-    console.log("objectpono", poNo)
+  const handleHistoryClick = async (_id) => {
+    console.log("objectpono", _id);
     try {
       setLoading(true);
+      // const response = await axios.get(
+      //   `http://localhost:8000/api/materialissueslip/materialIssueSlipHistory/${poNo}`
+      // );
       const response = await axios.get(
-        `http://localhost:8000/api/materialissueslip/materialIssueSlipHistory/${poNo}`
+        `http://localhost:8000/api/materialissueslip/materialIssueSlipHistory2/${_id}`
       );
+      console.log("Response data material:", response.data);
+      console.log("response.data.historyRecords:", response.data.historyRecords);
+
       const historyData = response.data.historyRecords.map((record, index) => ({
         srNo: index + 1,
         CustomerPO: record.poNo,
@@ -112,7 +118,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
         ), // Convert to pretty format
         historyId: record._id,
       }));
-      console.log("historyData", historyData)
+      console.log("historyData", historyData);
       setHistoryRowData(historyData);
       setShowHistoryTable(true);
       setLoading(false);
@@ -120,7 +126,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
       console.error("Error fetching history data:", error);
       setLoading(false);
     }
-  }
+  };
 
   const handleDeleteClick = async (data) => {
     try {
@@ -134,10 +140,16 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
       console.error("Error deleting data:", error);
       setLoading(false);
     }
-  }
+  };
+
+  // Function to close the history modal
+  const closeModal = () => {
+    setShowHistoryTable(false);
+  };
 
   const CustomButtonComponent = (props) => {
     const data = props.data;
+    console.log("data.PONumber material", data.PONumber)
 
     console.log("MaterialData", data);
     return (
@@ -156,7 +168,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
         </button>
         {/* History Button */}
         <button
-          onClick={() => handleHistoryClick(data.PONumber)}
+          onClick={() => handleHistoryClick(data._id)}
           className="p-2 text-red-600 bg-yellow-200 rounded-lg"
         >
           <BsInfoCircle />
@@ -211,7 +223,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
       cellRenderer: HistoryButton,
       minWidth: 150,
       maxWidth: 200,
-    }
+    },
   ];
 
   return (
@@ -232,7 +244,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
           paginationPageSize={10}
         />
       </div>
-      {showHistoryTable ? (
+      {/* {showHistoryTable ? (
         <>
           <hr className="mx-4 mt-12 mb-6 border-t border-gray-300" />
           <div className="ag-theme-alpine px-4 w-full h-[30vh]">
@@ -245,7 +257,14 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
             />
           </div>
         </>
-      ) : null}
+      ) : null} */}
+      {showHistoryTable && (
+        <HistoryTablePopup
+          HistoryColumnDefs={HistoryColumnDefs}
+          historyRowData={historyRowData}
+          closeModal={closeModal}
+        />
+      )}
     </div>
   );
 };

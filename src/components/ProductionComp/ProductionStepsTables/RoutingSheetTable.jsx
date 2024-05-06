@@ -144,15 +144,15 @@ const RoutingSheetTable = ({ productionStep }) => {
 
   const columnDefs = [
     { headerName: "Sr No", field: "srNo", minWidth: 50, maxWidth: 80 },
-    { headerName: "Routing Sheets", field: "RoutingSheets", flex: 1 },
-    { headerName: "Created Data", field: "CreatedData", flex: 1 },
-    { headerName: "Created By", field: "CreatedBy", flex: 1 },
     {
       headerName: "Action",
       cellRenderer: CustomButtonComponent,
       minWidth: 150,
       maxWidth: 200,
     },
+    { headerName: "Routing Sheets", field: "RoutingSheets", flex: 1 },
+    { headerName: "Created Data", field: "CreatedData", flex: 1 },
+    { headerName: "Created By", field: "CreatedBy", flex: 1 },
   ];
 
   const onSelectionChanged = async () => {

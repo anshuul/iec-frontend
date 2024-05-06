@@ -1,11 +1,11 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import Cookies from "js-cookie";
 
 import Breadcrumbs from "./Breadcrumbs";
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter } from "next/navigation";
 
 import { HiOutlineUser, HiOutlineLogout } from "react-icons/hi";
 
@@ -17,9 +17,9 @@ const Header = () => {
 
   useEffect(() => {
     // Retrieve user email from localStorage
-    const userEmail = localStorage.getItem('userEmail');
+    const userEmail = localStorage.getItem("userEmail");
     // Extract name from email
-    const name = userEmail ? userEmail.split('@')[0] : ""; // Split email by '@' and get the first part
+    const name = userEmail ? userEmail.split("@")[0] : ""; // Split email by '@' and get the first part
     setUserEmailName(name);
   }, []);
 
@@ -37,7 +37,10 @@ const Header = () => {
       <Breadcrumbs pathname={pathname} />
       {/* Account Info */}
       <div className="relative">
-        <div className="flex flex-row items-center justify-center gap-4 cursor-pointer" onClick={toggleDropdown}>
+        <div
+          className="flex flex-row items-center justify-center gap-4 cursor-pointer"
+          onClick={toggleDropdown}
+        >
           <span className="px-3 py-2 bg-blue-300 rounded-full">V</span>
           {/* Show user email name */}
           <p>{userEmailName}</p>
@@ -63,7 +66,7 @@ const Header = () => {
               <li>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-200"
+                  className="flex items-center px-4 py-2 text-gray-800 hover:bg-gray-200 w-full"
                 >
                   <HiOutlineLogout className="mr-2 font-bold text-red-600" />
                   Logout

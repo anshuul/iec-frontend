@@ -42,7 +42,7 @@ const CutomerPoHistoryForm = () => {
         const response = await axios.get(
           `http://localhost:8000/api/customerPO/customerPOHistory/${poNo}/${historyId}`
         );
-
+        console.log("response in history", response.data.historyRecord.previousData);
         setCustomerPO(response.data.historyRecord.previousData); // Set the customer PO data in state
       } catch (error) {
         console.error("Error fetching data:", error);
