@@ -199,9 +199,20 @@ const ProductionTable = () => {
   };
 
   const columnDefs = [
-    { headerName: "Sr No", field: "srNo", minWidth: 50, maxWidth: 80 },
-    { headerName: "Customer PO", field: "CustomerPO", flex: 1 },
-    { headerName: "Customer Name", field: "CustomerName", flex: 1 },
+    {
+      headerName: "Sr No",
+      field: "srNo",
+      minWidth: 50,
+      maxWidth: 80,
+      sort: "desc",
+    },
+    { headerName: "Customer PO", field: "CustomerPO", flex: 1, sort: "desc" },
+    {
+      headerName: "Customer Name",
+      field: "CustomerName",
+      flex: 1,
+      sort: "desc",
+    },
     {
       headerName: "Action",
       cellRenderer: CustomButtonComponent,

@@ -14,7 +14,7 @@ const ProductionLayout = ({ children }) => {
     "/production/material-issue-slip",
     "/production/routing-sheet",
     "/production/production-report",
-    "/production/in-process-dimension-report"
+    "/production/dimension-report"
   ];
 
   // Check if the current pathname is one of the valid paths
