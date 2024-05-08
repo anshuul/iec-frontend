@@ -48,7 +48,13 @@ const ProductionSheetForm = () => {
       if (selectedCustomerPOData.size) {
         const { diameter, length, thread } = selectedCustomerPOData.size;
         setProductAndCustomer(
-          `Size: ${diameter?.value || ''} ${diameter?.dimension || ''}, Length: ${length?.value || ''} ${length?.dimension || ''}, Thread: ${thread || ''}, Quantity: ${selectedCustomerPOData.quantity}` || ""
+          `Size: ${diameter?.value || ""} ${
+            diameter?.dimension || ""
+          }, Length: ${length?.value || ""} ${
+            length?.dimension || ""
+          }, Thread: ${thread || ""}, Quantity: ${
+            selectedCustomerPOData.quantity
+          }` || ""
         );
         setPlanningQuantity(selectedCustomerPOData.quantity || "");
         setAchievementQuantity(selectedCustomerPOData.quantity || "");
@@ -562,10 +568,7 @@ const ProductionSheetForm = () => {
                 />
               </div>
               <div className="flex items-center mb-4">
-                <label
-                  htmlFor="deliveryDate"
-                  className="w-32 mr-2 text-[16px]"
-                >
+                <label htmlFor="deliveryDate" className="w-32 mr-2 text-[16px]">
                   Date:
                 </label>
                 <input

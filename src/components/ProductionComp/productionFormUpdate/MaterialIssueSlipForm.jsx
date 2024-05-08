@@ -4,6 +4,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiArrowLeft, FiFile, FiPrinter, FiSave } from "react-icons/fi";
 import Container from "@/components/common/Container";
+import MaterialIssueSlip from "@/components/PDF/MaterialSlip/MaterialIssueSlip";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 
 const MaterialIssueSlipForm = () => {
   const router = useRouter();
@@ -122,7 +124,7 @@ const MaterialIssueSlipForm = () => {
         ...prevState,
         size: totalSize.toFixed(3), // Update the size
         quantityRequired: totalSize.toFixed(3), // Update the Quantity Required in KG
-        quantityIssued: totalSize.toFixed(3) 
+        quantityIssued: totalSize.toFixed(3),
       }));
     } else {
       // If any of the required fields are missing, reset the size to the default quantityRequired
@@ -355,10 +357,15 @@ const MaterialIssueSlipForm = () => {
             Save
             <FiSave className="ml-2" />
           </button>
-          <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
-            Print
-            <FiPrinter className="ml-2" />
-          </button>
+          <PDFDownloadLink
+            document={<MaterialIssueSlip data={materialIssueForm} />}
+            fileName={`MaterialIssueSlip_${id}.pdf`}
+          >
+            <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
+              Print
+              <FiPrinter className="ml-2" />
+            </button>
+          </PDFDownloadLink>
         </div>
       </div>
     </Container>

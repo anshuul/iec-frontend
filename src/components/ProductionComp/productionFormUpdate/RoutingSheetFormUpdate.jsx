@@ -8,6 +8,9 @@ import { TiPlus } from "react-icons/ti";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import RoutingSheetNut from "@/components/PDF/RoutingSheet/RoutingSheetNut";
+import RoutingSheetStud from "@/components/PDF/RoutingSheet/RoutingSheetStud";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 
 const RoutingSheetFormUpdate = () => {
   const router = useRouter();
@@ -101,37 +104,21 @@ const RoutingSheetFormUpdate = () => {
   };
 
   const columnDefs = [
-    {
-      headerName: "Sr No",
-      field: "processRowNumber",
-      editable: false,
-      minWidth: 50,
-      maxWidth: 80,
-      pinned: "left",
-    },
-    {
-      headerName: "Date",
-      field: "date",
-      editable: true,
-      minWidth: 120,
-      maxWidth: 120,
-      pinned: "left",
-    },
+    { headerName: "Sr No", field: "processRowNumber" },
+    { headerName: "Date", field: "date", editable: true },
     {
       headerName: "Operator Name/Supplier",
       field: "operatorName",
       editable: true,
-      pinned: "left",
-    },
-    {
-      headerName: "PROCESS DESCRIPTION",
-      field: "processDescription",
-      editable: true,
-      pinned: "left",
     },
     {
       headerName: "Machine No/Instrument No",
       field: "machineNo",
+      editable: true,
+    },
+    {
+      headerName: "PROCESS DESCRIPTION",
+      field: "processDescription",
       editable: true,
     },
     {
@@ -177,10 +164,24 @@ const RoutingSheetFormUpdate = () => {
           Save
           <FiSave className="ml-2" />
         </button>
-        <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
-          Print
-          <FiPrinter className="ml-2" />
-        </button>
+        <PDFDownloadLink
+          document={
+            <RoutingSheetStud
+              data={productionReportSliceDataForRouting?.routingSheet}
+            />
+          }
+          fileName={`RoutingSheet_${id}.pdf`}
+        >
+          <button
+            className="flex items-center px-4 py-2 text-black bg-gray-300 rounded"
+            onClick={() =>
+              console.log(productionReportSliceDataForRouting?.routingSheet)
+            }
+          >
+            Print
+            <FiPrinter className="ml-2" />
+          </button>
+        </PDFDownloadLink>
       </div>
     </div>
   );
