@@ -8,6 +8,9 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import ConfirmPopUp from "@/components/common/ConfirmPopUp";
+import ProductionReport from "@/components/PDF/ProductionReport/ProductionReport";
+import ProductionReportMain from "@/components/PDF/ProductionReport/ProductionReportMain";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 
 const ProductionReportForm = () => {
   const router = useRouter();
@@ -20,6 +23,7 @@ const ProductionReportForm = () => {
   const [loading, setLoading] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [processRowToDelete, setProcessRowToDelete] = useState(null);
+  const [data, setData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,6 +43,7 @@ const ProductionReportForm = () => {
             `http://localhost:8000/api/productionReport/get-production-report-by-routing-sheet/${parsedRoutingSheet._id}`
           );
           console.log("routingSheetIdData", routingSheetIdData.data);
+          setData(routingSheetIdData.data);
 
           // Extract the _id from the response
           const firstReportId =
@@ -70,9 +75,9 @@ const ProductionReportForm = () => {
             // Split the date into parts and rearrange them to format as dd/mm/yyyy if datePart exists
             const formattedDate = datePart
               ? (() => {
-                const parts = datePart.split("/");
-                return `${parts[1]}/${parts[0]}/${parts[2]}`;
-              })()
+                  const parts = datePart.split("/");
+                  return `${parts[1]}/${parts[0]}/${parts[2]}`;
+                })()
               : "";
 
             // Extract Date and Time parts from endTime
@@ -86,9 +91,9 @@ const ProductionReportForm = () => {
             // Split the date into parts and rearrange them to format as dd/mm/yyyy if datePart exists
             const formattedDateForEndTime = datePartForEnd
               ? (() => {
-                const parts = datePartForEnd.split("/");
-                return `${parts[1]}/${parts[0]}/${parts[2]}`;
-              })()
+                  const parts = datePartForEnd.split("/");
+                  return `${parts[1]}/${parts[0]}/${parts[2]}`;
+                })()
               : "";
             console.log("formattedDateForEndTime", formattedDateForEndTime);
 
@@ -122,10 +127,13 @@ const ProductionReportForm = () => {
 
   const handleCellValueChanged = (event) => {
     const updatedRowData = [...rowData];
-    updatedRowData[event.rowIndex] = { ...updatedRowData[event.rowIndex], ...event.data, modified: true };
+    updatedRowData[event.rowIndex] = {
+      ...updatedRowData[event.rowIndex],
+      ...event.data,
+      modified: true,
+    };
     setRowData(updatedRowData);
   };
-
 
   const handleSave = async () => {
     try {
@@ -151,7 +159,6 @@ const ProductionReportForm = () => {
       setLoading(false);
     }
   };
-
 
   const handleDelete = (processRowId, productionReportId) => {
     setProcessRowToDelete({ processRowId, productionReportId });
@@ -262,17 +269,28 @@ const ProductionReportForm = () => {
         <button
           onClick={handleSave}
           disabled={loading}
-          className={`flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded ${loading ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+          className={`flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded ${
+            loading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
         >
           {loading ? "Saving..." : "Save"}
           <FiSave className="ml-2" />
         </button>
 
-        <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
-          Print
-          <FiPrinter className="ml-2" />
-        </button>
+        <PDFDownloadLink
+          document={<ProductionReportMain data={data?.productionReports[0]} />}
+          fileName={`ProductionReport_${data?.productionReports[0]}.pdf`}
+        >
+          <button
+            className="flex items-center px-4 py-2 text-black bg-gray-300 rounded"
+            onClick={() => {
+              console.log(data?.productionReports[0]);
+            }}
+          >
+            Print
+            <FiPrinter className="ml-2" />
+          </button>
+        </PDFDownloadLink>
       </div>
       {showConfirmDelete && (
         <ConfirmPopUp

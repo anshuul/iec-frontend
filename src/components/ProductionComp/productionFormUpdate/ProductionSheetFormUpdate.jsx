@@ -7,6 +7,8 @@ import { RiAttachmentLine } from "react-icons/ri";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
+import ProductionPlanning from "@/components/PDF/ProductionPlanning/ProductionPlanning";
 
 const ProductionSheetFormUpdate = () => {
   const router = useRouter();
@@ -133,6 +135,10 @@ const ProductionSheetFormUpdate = () => {
     }
   };
 
+  const printFormData = () => {
+    console.log("Print", planningSheetForm);
+  };
+
   return (
     <Container>
       <div className="w-full p-8 mx-auto bg-white rounded shadow-md">
@@ -247,7 +253,7 @@ const ProductionSheetFormUpdate = () => {
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
                 <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-                  Product and Customer-specified-requirements
+                  Product and Customer
                 </span>
               </label>
               <button
@@ -545,7 +551,7 @@ const ProductionSheetFormUpdate = () => {
                 <label htmlFor="planningDate" className="w-32 mr-2 text-[16px]">
                   Date:
                 </label>
-                 <DatePicker
+                <DatePicker
                   selected={planningSheetForm.planningDate}
                   onChange={(date) =>
                     setPlanningSheetForm({
@@ -662,10 +668,15 @@ const ProductionSheetFormUpdate = () => {
             Save
             <FiSave className="ml-2" />
           </button>
-          <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
-            Print
-            <FiPrinter className="ml-2" />
-          </button>
+          <PDFDownloadLink
+            document={<ProductionPlanning data={planningSheetForm} />}
+            fileName={`productionPlanning_${id}.pdf`}
+          >
+            <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
+              Print
+              <FiPrinter className="ml-2" />
+            </button>
+          </PDFDownloadLink>
         </div>
       </div>
     </Container>
