@@ -258,20 +258,7 @@ const ProductionSheetTable = ({ productionStep }) => {
           paginationPageSize={10}
         />
       </div>
-      {/* {showHistoryTable ? (
-        <>
-          <hr className="mx-4 mt-12 mb-6 border-t border-gray-300" />
-          <div className="ag-theme-alpine px-4 w-full h-[30vh]">
-            <p className="mb-2 text-xl font-bold text-start">History</p>
-            <AgGridReact
-              columnDefs={HistoryColumnDefs}
-              rowData={historyRowData}
-              pagination={true}
-              paginationPageSize={10}
-            />
-          </div>
-        </>
-      ) : null} */}
+     
       {showHistoryTable && (
         <HistoryTablePopup
           HistoryColumnDefs={HistoryColumnDefs}
