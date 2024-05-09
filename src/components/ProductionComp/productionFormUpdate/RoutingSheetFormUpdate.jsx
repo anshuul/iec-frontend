@@ -105,7 +105,7 @@ const RoutingSheetFormUpdate = () => {
 
   const columnDefs = [
     { headerName: "Sr No", field: "processRowNumber" },
-    { headerName: "Date", field: "date", editable: true },
+    // { headerName: "Date", field: "date", editable: true },
     {
       headerName: "Operator Name/Supplier",
       field: "operatorName",

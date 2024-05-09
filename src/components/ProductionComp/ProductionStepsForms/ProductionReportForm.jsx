@@ -245,6 +245,7 @@ const ProductionReportForm = () => {
     { headerName: "Delete", cellRenderer: CustomButtonComponent },
   ];
 
+  console.log("Final output", rowData);
   return (
     <div className="flex flex-col mx-4 bg-white">
       <button
@@ -278,13 +279,13 @@ const ProductionReportForm = () => {
         </button>
 
         <PDFDownloadLink
-          document={<ProductionReportMain data={data?.productionReports[0]} />}
-          fileName={`ProductionReport_${data?.productionReports[0]}.pdf`}
+          document={<ProductionReportMain data={rowData} />}
+          fileName={`ProductionReport_${data?.rowData}.pdf`}
         >
           <button
             className="flex items-center px-4 py-2 text-black bg-gray-300 rounded"
             onClick={() => {
-              console.log(data?.productionReports[0]);
+              console.log(data?.rowData);
             }}
           >
             Print

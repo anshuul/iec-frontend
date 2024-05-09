@@ -117,8 +117,10 @@ const MaterialIssueSlipForm = () => {
       const calculatedSize =
         (parseFloat(diameter) * parseFloat(diameter) * parseFloat(length)) /
         162000;
+      console.log("calculatedSize in material", calculatedSize);
       // Multiply calculatedSize by quantityToUse
       const totalSize = calculatedSize * quantityToUse;
+      console.log("totalSize", totalSize);
       // Update the size value in the materialIssueForm state
       setMaterialIssueForm((prevState) => ({
         ...prevState,
