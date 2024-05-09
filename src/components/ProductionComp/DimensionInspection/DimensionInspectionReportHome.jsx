@@ -9,6 +9,7 @@ import NutDimensionReportPopup from "./NutDimensionReportPopup";
 import StudDimensionForm from "./StudDimensionReport/StudDimensionForm";
 import NutDimensionForm from "./NutDimensionReport/NutDimensionForm";
 import axios from "axios";
+import { FiPrinter } from "react-icons/fi";
 
 const DimensionReportHome = () => {
   const [showStudPopup, setShowStudPopup] = useState(false);
@@ -34,6 +35,7 @@ const DimensionReportHome = () => {
   const [parsedSelectedPO, setParsedSelectedPO] = useState(null);
   const [parsedRoutingSheet, setParsedRoutingSheet] = useState(null);
   const [dimensionReportResponse, setDimensionReportResponse] = useState(null);
+  const [dimensionReportResponseForNut, setDimensionReportResponseForNut] = useState(null);
 
   useEffect(() => {
     const selectedCustomerPO = localStorage.getItem("selectedCustomerPO");
@@ -73,16 +75,23 @@ const DimensionReportHome = () => {
           return;
         }
 
+        // Check if parsedSelectedPO has a valid length value
+        if (!parsedSelectedPO || !parsedSelectedPO.POsize?.length?.value) {
+          console.error("Error: No valid quantity found in parsedSelectedPO");
+          return;
+        }
+
         // Add quantity to studInputValues
         const newStudInputValues = {
           ...studInputValues,
           quantity: parsedSelectedPO.quantity,
+          length: parsedSelectedPO.POsize?.length?.value,
         };
         console.log("newStudInputValues 1st", newStudInputValues);
 
         const response = await axios.post(
           "http://localhost:8000/api/dimensinReport/createDimensionReport",
-          newStudInputValues // Use updated studInputValues
+          newStudInputValues
         );
         console.log(
           "Stud dimension report submitted successfully:",
@@ -116,10 +125,42 @@ const DimensionReportHome = () => {
 
       try {
         console.log("NutInputValues in try", nutInputValues);
+
+        // Check if parsedSelectedPO has a valid quantity value
+        if (!parsedSelectedPO || !parsedSelectedPO.quantity) {
+          console.error("Error: No valid quantity found in parsedSelectedPO");
+          return;
+        }
+
+        // Check if parsedSelectedPO has a valid length value
+        if (!parsedSelectedPO || !parsedSelectedPO.POsize?.length?.value) {
+          console.error("Error: No valid quantity found in parsedSelectedPO");
+          return;
+        }
+
+        // Check if parsedSelectedPO has a valid diameter value
+        if (!parsedSelectedPO || !parsedSelectedPO.POsize?.diameter?.value) {
+          console.error("Error: No valid quantity found in parsedSelectedPO");
+          return;
+        }
+        if (!parsedSelectedPO || !parsedSelectedPO.POsize?.diameter?.dimension) {
+          console.error("Error: No valid quantity found in parsedSelectedPO");
+          return;
+        }
+
+        const newNutInputValues = {
+          ...nutInputValues,
+          quantity: parsedSelectedPO.quantity,
+          length: parsedSelectedPO.POsize?.length?.value,
+          diameter: parsedSelectedPO.POsize?.diameter?.value,
+          dimension: parsedSelectedPO.POsize?.diameter?.dimension,
+        }
+        console.log("newNutInputValues", newNutInputValues)
+
         // Send an HTTP POST request to submit the stud data
         const response = await axios.post(
           "http://localhost:8000/api/dimensinReport/dimensionNut/createDimensionReportNut",
-          nutInputValues
+          newNutInputValues
         );
         console.log(
           "Stud dimension report submitted successfully:",
@@ -131,21 +172,18 @@ const DimensionReportHome = () => {
         console.log("id in stud", id);
 
         // Fetch data using the retrieved ID
-        const dimensionReportResponse = await axios.get(
+        const dimensionReportResponseForNut = await axios.get(
           `http://localhost:8000/api/dimensinReport/dimensionNut/${id}`
         );
         console.log(
           "Nut Fetched dimension report data:",
-          dimensionReportResponse.data
+          dimensionReportResponseForNut.data
         );
 
         // Set the dimension report response data to state
-        setDimensionReportResponse(dimensionReportResponse.data);
-
-        // You may want to handle any success behavior here, such as updating state or showing a success message
+        setDimensionReportResponseForNut(dimensionReportResponseForNut.data);
       } catch (error) {
         console.error("Error submitting stud dimension report:", error);
-        // You may want to handle any error behavior here, such as showing an error message to the user
       }
     }
     // Close the popups
@@ -171,45 +209,64 @@ const DimensionReportHome = () => {
     setNutSubmitted(false);
   };
 
-  const columnDefs = [
-    { headerName: "Item Number", field: "itemNumber", flex: 1 },
-    { headerName: "Total Length", field: "totalLength", flex: 1 },
-    { headerName: "Go / No Go Gauge", field: "goNoGoGauge", flex: 1 },
-  ];
-
+  let columnDefs = [];
   let rowData = [];
-  if (studSubmitted) {
-    rowData = [
-      {
-        itemNumber: "Stud",
-        totalLength: parsedSelectedPO?.POsize?.length?.value || "",
-        goNoGoGauge: "Ok",
-      },
+  if (studSubmitted && dimensionReportResponse) {
+    // Update columnDefs for Stud report
+    columnDefs = [
+      { headerName: "Item Number", field: "itemNumber", flex: 1 },
+      { headerName: "Total Length", field: "totalLength", flex: 1 },
+      { headerName: "Go / No Go Gauge", field: "goNoGoGauge", flex: 1 },
     ];
-  } else if (nutSubmitted) {
-    rowData = [
-      {
-        itemNumber: "Nut",
-        totalLength: parsedSelectedPO?.POsize?.length?.value || "",
+
+    // Update rowData with formatted data
+    rowData = dimensionReportResponse.observationValues.map((value, index) => {
+      const formattedValue = value.toFixed(2).padEnd(5, '0');
+      return {
+        itemNumber: `${index + 1}`,
+        totalLength: formattedValue,
         goNoGoGauge: "Ok",
-      },
+      };
+    });
+  } else if (nutSubmitted && dimensionReportResponseForNut) {
+    // Update columnDefs for Nut report
+    columnDefs = [
+      { headerName: "Item Number", field: "itemNumber", flex: 1 },
+      { headerName: "Across Flat", field: "af", flex: 1 },
+      { headerName: "Across Cross", field: "ac", flex: 1 },
+      { headerName: "Nut Thickness", field: "nutthickness", flex: 1 },
+      { headerName: "Go / No Go Gauge", field: "goNoGoGauge", flex: 1 },
     ];
+
+    const { AC, AF, NUT_THICKNESS } = dimensionReportResponseForNut.observationValuesNut;
+    // Get the percentage from the response
+    const { percentage } = dimensionReportResponseForNut;
+
+    for (let i = 0; i < percentage; i++) {
+      rowData.push({
+        itemNumber: `${i + 1}`,
+        af: AF[i],
+        ac: AC[i],
+        nutthickness: NUT_THICKNESS[i],
+        goNoGoGauge: "Ok",
+      });
+    }
   }
 
   return (
     <div className="flex flex-col mx-4 h-[85vh] bg-white">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         {parsedRoutingSheet &&
-        parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
+          parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
           <button
-            className="m-4 bg-gray-300 px-4 py-2 rounded-lg"
+            className="px-4 py-2 m-4 bg-gray-300 rounded-lg"
             onClick={openStudPopup}
           >
             Get Stud Report
           </button>
         ) : (
           <button
-            className="m-4 bg-gray-300 px-4 py-2 rounded-lg"
+            className="px-4 py-2 m-4 bg-gray-300 rounded-lg"
             onClick={openNutPopup}
           >
             Get Nut Report
@@ -237,7 +294,7 @@ const DimensionReportHome = () => {
       {rowData.length > 0 && (
         <>
           {parsedRoutingSheet &&
-          parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
+            parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
             <StudDimensionForm
               parsedSelectedPO={parsedSelectedPO}
               parsedRoutingSheet={parsedRoutingSheet}
@@ -247,19 +304,24 @@ const DimensionReportHome = () => {
             <NutDimensionForm
               parsedSelectedPO={parsedSelectedPO}
               parsedRoutingSheet={parsedRoutingSheet}
-              dimensionReportResponse={dimensionReportResponse}
+              dimensionReportResponseForNut={dimensionReportResponseForNut}
             />
           )}
           <div className="ag-theme-alpine px-4 w-full h-[75vh]">
             <AgGridReact
               columnDefs={columnDefs}
               rowData={rowData}
-              pagination={true}
-              paginationPageSize={20}
             />
           </div>
         </>
       )}
+      <hr className="my-4 border-t border-gray-300" />
+      <div className="flex justify-end mx-4 my-6">
+        <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
+          Print
+          <FiPrinter className="ml-2" />
+        </button>
+      </div>
     </div>
   );
 };
