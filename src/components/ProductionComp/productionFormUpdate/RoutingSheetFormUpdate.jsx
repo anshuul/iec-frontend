@@ -104,21 +104,30 @@ const RoutingSheetFormUpdate = () => {
   };
 
   const columnDefs = [
-    { headerName: "Sr No", field: "processRowNumber" },
+    {
+      headerName: "Sr No",
+      field: "processRowNumber",
+      editable: false,
+      minWidth: 50,
+      maxWidth: 80,
+      pinned: "left",
+    },
     // { headerName: "Date", field: "date", editable: true },
     {
       headerName: "Operator Name/Supplier",
       field: "operatorName",
       editable: true,
-    },
-    {
-      headerName: "Machine No/Instrument No",
-      field: "machineNo",
-      editable: true,
+      pinned: "left",
     },
     {
       headerName: "PROCESS DESCRIPTION",
       field: "processDescription",
+      editable: true,
+      pinned: "left",
+    },
+    {
+      headerName: "Machine No/Instrument No",
+      field: "machineNo",
       editable: true,
     },
     {
@@ -155,7 +164,7 @@ const RoutingSheetFormUpdate = () => {
           columnDefs={columnDefs}
           rowData={rowData}
           pagination={true}
-          paginationPageSize={15}
+          paginationPageSize={20}
         />
       </div>
       <hr className="my-4 border-t border-gray-300" />

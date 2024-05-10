@@ -18,6 +18,8 @@ import HistoryTablePopup from "./HistoryTablePopup";
 const ProductionTable = () => {
   const dispatch = useDispatch();
   const router = useRouter();
+  const [filteredRowData, setFilteredRowData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [rowData, setRowData] = useState([]);
   const [historyRowData, setHistoryRowData] = useState([]);
   const [showHistoryTable, setShowHistoryTable] = useState(false);
@@ -64,6 +66,7 @@ const ProductionTable = () => {
             })
           );
           setRowData(formattedData);
+          setFilteredRowData(formattedData);
           router.push("/production");
         } catch (error) {
           console.error("Error fetching data:", error);
@@ -139,6 +142,14 @@ const ProductionTable = () => {
     }
   };
 
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value); // Normalize search term
+    const filteredData = rowData.filter((row) =>
+      row.CustomerPO.includes(searchTerm)
+    );
+    setFilteredRowData(filteredData);
+  };
+
   // Function to close the history modal
   const closeModal = () => {
     setShowHistoryTable(false);
@@ -177,7 +188,6 @@ const ProductionTable = () => {
     router.push(
       `/production/productionForm/view?CustomerPO=${CustomerPO}&historyId=${historyId}`
     );
-    // router.push(`/production/productionForm/view`);
   };
 
   const HistoryButton = (props) => {
@@ -206,18 +216,18 @@ const ProductionTable = () => {
       maxWidth: 80,
       sort: "desc",
     },
+    {
+      headerName: "Action",
+      cellRenderer: CustomButtonComponent,
+      minWidth: 150,
+      maxWidth: 200,
+    },
     { headerName: "Customer PO", field: "CustomerPO", flex: 1, sort: "desc" },
     {
       headerName: "Customer Name",
       field: "CustomerName",
       flex: 1,
       sort: "desc",
-    },
-    {
-      headerName: "Action",
-      cellRenderer: CustomButtonComponent,
-      minWidth: 150,
-      maxWidth: 200,
     },
   ];
 
@@ -320,7 +330,24 @@ const ProductionTable = () => {
   }, [customerPODataForRouting]);
 
   return (
-    <div className="flex flex-col h-screen mx-4 bg-white">
+    <div className="flex flex-col h-[85vh] mx-4 bg-white">
+      {/* <div className="flex items-center mb-4 justify-between">
+        <input
+          type="text"
+          placeholder="Search by PO Number"
+          className="px-4 py-2 mr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
+
+        <button
+          className="self-end px-4 py-2 m-4 bg-gray-400 rounded-lg"
+          onClick={handleClick}
+        >
+          Create
+        </button>
+      </div> */}
+
       <button
         className="self-end px-4 py-2 m-4 bg-gray-400 rounded-lg"
         onClick={handleClick}
@@ -328,39 +355,23 @@ const ProductionTable = () => {
         Create
       </button>
 
-      <div className="ag-theme-alpine px-4 w-full h-[45vh]">
+      <div className="ag-theme-alpine px-4 w-full h-[75vh]">
         <AgGridReact
           columnDefs={columnDefs}
+          // rowData={filteredRowData}
           rowData={rowData}
           pagination={true}
-          paginationPageSize={10}
+          paginationPageSize={15}
           loadingOverlayComponent={"Loading"}
           overlayLoadingTemplate={
             '<span class="ag-overlay-loading-center">Please wait while loading...</span>'
           }
-          onGridReady={(params) => (gridApiRef.current = params.api)} // Assign gridApi to ref
+          onGridReady={(params) => (gridApiRef.current = params.api)}
           onSelectionChanged={onSelectionChanged}
           rowSelection="single"
         />
       </div>
-      {/* {showHistoryTable ? (
-        <>
-          <hr className="mx-4 mt-12 mb-6 border-t border-gray-300" />
-          <div className="ag-theme-alpine px-4 w-full h-[30vh]">
-            <p className="mb-2 text-xl font-bold text-start">History</p>
-            <AgGridReact
-              columnDefs={HistoryColumnDefs}
-              rowData={historyRowData}
-              pagination={true}
-              paginationPageSize={10}
-              loadingOverlayComponent={"Loading"}
-              overlayLoadingTemplate={
-                '<span class="ag-overlay-loading-center">Please wait while loading...</span>'
-              }
-            />
-          </div>
-        </>
-      ) : null} */}
+
       {showHistoryTable && (
         <HistoryTablePopup
           HistoryColumnDefs={HistoryColumnDefs}

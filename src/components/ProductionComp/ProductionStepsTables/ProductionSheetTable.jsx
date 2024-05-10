@@ -242,7 +242,7 @@ const ProductionSheetTable = ({ productionStep }) => {
 
   return (
     // <div className="flex flex-col items-center justify-center">
-    <div className="flex flex-col h-screen mx-4 bg-white">
+    <div className="flex flex-col h-[85VH] mx-4 bg-white">
       {/* Button positioned at the top right corner */}
       <button
         className="self-end px-4 py-2 m-4 bg-gray-400 rounded-lg"
@@ -250,12 +250,12 @@ const ProductionSheetTable = ({ productionStep }) => {
       >
         Create
       </button>
-      <div className="ag-theme-alpine px-4 w-full h-[45vh]">
+      <div className="ag-theme-alpine px-4 w-full h-[75vh]">
         <AgGridReact
           columnDefs={columnDefs}
           rowData={rowData}
           pagination={true}
-          paginationPageSize={10}
+          paginationPageSize={15}
         />
       </div>
      

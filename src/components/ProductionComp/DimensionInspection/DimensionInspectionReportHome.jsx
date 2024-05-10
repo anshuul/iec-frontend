@@ -1,15 +1,18 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { AgGridReact } from "ag-grid-react";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-alpine.css";
+import { useState, useEffect } from "react";
+import axios from "axios";
+
 import StudDimensionReportPopUp from "./StudDimensionReport/StudDimensionReportPopUp";
 import NutDimensionReportPopup from "./NutDimensionReportPopup";
 import StudDimensionForm from "./StudDimensionReport/StudDimensionForm";
 import NutDimensionForm from "./NutDimensionReport/NutDimensionForm";
-import axios from "axios";
 import { FiPrinter } from "react-icons/fi";
+
+// AGGRID React
+import { AgGridReact } from "ag-grid-react";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
 
 const DimensionReportHome = () => {
   const [showStudPopup, setShowStudPopup] = useState(false);
@@ -35,7 +38,8 @@ const DimensionReportHome = () => {
   const [parsedSelectedPO, setParsedSelectedPO] = useState(null);
   const [parsedRoutingSheet, setParsedRoutingSheet] = useState(null);
   const [dimensionReportResponse, setDimensionReportResponse] = useState(null);
-  const [dimensionReportResponseForNut, setDimensionReportResponseForNut] = useState(null);
+  const [dimensionReportResponseForNut, setDimensionReportResponseForNut] =
+    useState(null);
 
   useEffect(() => {
     const selectedCustomerPO = localStorage.getItem("selectedCustomerPO");
@@ -143,7 +147,10 @@ const DimensionReportHome = () => {
           console.error("Error: No valid quantity found in parsedSelectedPO");
           return;
         }
-        if (!parsedSelectedPO || !parsedSelectedPO.POsize?.diameter?.dimension) {
+        if (
+          !parsedSelectedPO ||
+          !parsedSelectedPO.POsize?.diameter?.dimension
+        ) {
           console.error("Error: No valid quantity found in parsedSelectedPO");
           return;
         }
@@ -154,8 +161,8 @@ const DimensionReportHome = () => {
           length: parsedSelectedPO.POsize?.length?.value,
           diameter: parsedSelectedPO.POsize?.diameter?.value,
           dimension: parsedSelectedPO.POsize?.diameter?.dimension,
-        }
-        console.log("newNutInputValues", newNutInputValues)
+        };
+        console.log("newNutInputValues", newNutInputValues);
 
         // Send an HTTP POST request to submit the stud data
         const response = await axios.post(
@@ -221,7 +228,7 @@ const DimensionReportHome = () => {
 
     // Update rowData with formatted data
     rowData = dimensionReportResponse.observationValues.map((value, index) => {
-      const formattedValue = value.toFixed(2).padEnd(5, '0');
+      const formattedValue = value.toFixed(2).padEnd(5, "0");
       return {
         itemNumber: `${index + 1}`,
         totalLength: formattedValue,
@@ -238,7 +245,8 @@ const DimensionReportHome = () => {
       { headerName: "Go / No Go Gauge", field: "goNoGoGauge", flex: 1 },
     ];
 
-    const { AC, AF, NUT_THICKNESS } = dimensionReportResponseForNut.observationValuesNut;
+    const { AC, AF, NUT_THICKNESS } =
+      dimensionReportResponseForNut.observationValuesNut;
     // Get the percentage from the response
     const { percentage } = dimensionReportResponseForNut;
 
@@ -257,7 +265,7 @@ const DimensionReportHome = () => {
     <div className="flex flex-col mx-4 h-[85vh] bg-white">
       <div className="flex items-center justify-between">
         {parsedRoutingSheet &&
-          parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
+        parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
           <button
             className="px-4 py-2 m-4 bg-gray-300 rounded-lg"
             onClick={openStudPopup}
@@ -294,7 +302,7 @@ const DimensionReportHome = () => {
       {rowData.length > 0 && (
         <>
           {parsedRoutingSheet &&
-            parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
+          parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
             <StudDimensionForm
               parsedSelectedPO={parsedSelectedPO}
               parsedRoutingSheet={parsedRoutingSheet}
@@ -308,20 +316,17 @@ const DimensionReportHome = () => {
             />
           )}
           <div className="ag-theme-alpine px-4 w-full h-[75vh]">
-            <AgGridReact
-              columnDefs={columnDefs}
-              rowData={rowData}
-            />
+            <AgGridReact columnDefs={columnDefs} rowData={rowData} />
+          </div>
+          <hr className="my-4 border-t border-gray-300" />
+          <div className="flex justify-end mx-4 my-6">
+            <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
+              Print
+              <FiPrinter className="ml-2" />
+            </button>
           </div>
         </>
       )}
-      <hr className="my-4 border-t border-gray-300" />
-      <div className="flex justify-end mx-4 my-6">
-        <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
-          Print
-          <FiPrinter className="ml-2" />
-        </button>
-      </div>
     </div>
   );
 };

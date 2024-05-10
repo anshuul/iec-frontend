@@ -1,8 +1,10 @@
 "use client";
 import Container from "@/components/common/Container";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiArrowLeft, FiFile, FiPrinter, FiSave } from "react-icons/fi";
+import { IoIosCloseCircleOutline } from "react-icons/io";
+
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -507,10 +509,7 @@ const ProductionForm = () => {
 
         {/* Order Date */}
         <div className="flex items-center mb-4">
-          <label
-            htmlFor="deliveryDate"
-            className="w-auto mr-2 text-[16px]"
-          >
+          <label htmlFor="deliveryDate" className="w-auto mr-2 text-[16px]">
             Order Date:
           </label>
 
@@ -540,9 +539,19 @@ const ProductionForm = () => {
             Choose file
             <FiFile className="ml-2" />
           </button>
-          {selectedFile && <span className="ml-2">{selectedFile.name}</span>}
+          {/* {selectedFile && <span className="ml-2">{selectedFile.name}</span>} */}
+          {selectedFile && (
+            <>
+              <span className="ml-2">{selectedFile.name}</span>
+              <button
+                onClick={() => setSelectedFile(null)}
+                className="flex items-center text-red-600 bg-none"
+              >
+                <IoIosCloseCircleOutline className="ml-2 text-2xl" />
+              </button>
+            </>
+          )}
         </div>
-
         <p className="ml-2 text-sm text-red-600">
           Only PDF files are allowed and only one file can be selected.
         </p>

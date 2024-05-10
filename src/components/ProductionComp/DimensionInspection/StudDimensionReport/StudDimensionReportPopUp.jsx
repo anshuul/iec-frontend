@@ -5,18 +5,6 @@ const StudDimensionReportPopUp = ({
   handleSubmit,
   closePopup,
 }) => {
-  // Regular expression for validating numbers with optional decimal places
-  const numberRegex = /^\d*\.?\d*$/;
-
-  // Function to handle input changes with number validation
-  const handleNumberInputChange = (e) => {
-    const { name, value } = e.target;
-    // Check if the input value matches the number format
-    if (value === "" || numberRegex.test(value)) {
-      handleInputChange(e);
-    }
-  };
-
   // Function to check if both tolerancemin, tolerancemax and studstartvalue, studendvalue have values
   const isSubmitDisabled = () => {
     const { tolerancemin, tolerancemax, studstartvalue, studendvalue } =
@@ -57,6 +45,7 @@ const StudDimensionReportPopUp = ({
               onChange={handleInputChange}
               placeholder="Input"
               className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+              disabled={inputValues.studstartvalue || inputValues.studendvalue}
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
               {`Tolerance(Min)`}
@@ -72,6 +61,7 @@ const StudDimensionReportPopUp = ({
               onChange={handleInputChange}
               placeholder="Input"
               className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+              disabled={inputValues.studstartvalue || inputValues.studendvalue}
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
               {`Tolerance(Max)`}
@@ -86,6 +76,7 @@ const StudDimensionReportPopUp = ({
             onChange={handleInputChange}
             className="w-full px-3 py-2 mb-3 border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500"
             placeholder="Parameter 2"
+            disabled={inputValues.tolerancemin || inputValues.tolerancemax}
           />
           <input
             type="text"
@@ -94,6 +85,7 @@ const StudDimensionReportPopUp = ({
             onChange={handleInputChange}
             className="w-full px-3 py-2 mb-3 border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500"
             placeholder="Parameter 3"
+            disabled={inputValues.tolerancemin || inputValues.tolerancemax}
           />
         </div>
         {/* Operator Name */}
