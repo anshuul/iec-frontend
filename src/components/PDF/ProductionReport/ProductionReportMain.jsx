@@ -17,7 +17,6 @@ const styles = StyleSheet.create({
 });
 
 const ProductionReportMain = ({
-  date,
   operator,
   soNo,
   jobDescription,
@@ -38,13 +37,14 @@ const ProductionReportMain = ({
   sign,
 }) => {
   return (
-    <View style={styles.header}>
-      <Text style={{ width: "40px", ...styles.cell3 }}>{date}</Text>
-      <Text style={{ width: "60px", ...styles.cell3 }}>{operator}</Text>
+    <View style={styles.header} wrap={false}>
+      <Text style={{ width: "60px", fontSize: "9px", ...styles.cell3 }}>
+        {operator}
+      </Text>
       <Text style={{ width: "80px", ...styles.cell3 }}>{soNo}</Text>
       <Text style={{ width: "80px", ...styles.cell3 }}>{jobDescription}</Text>
       <Text style={{ width: "80px", ...styles.cell3 }}>{startTime}</Text>
-      <Text style={{ width: "40px", ...styles.cell3 }}>{endTime}</Text>
+      <Text style={{ width: "80px", ...styles.cell3 }}>{endTime}</Text>
       <Text style={{ width: "40px", ...styles.cell3 }}>{productionHrs}</Text>
       <Text style={{ width: "20px", ...styles.cell3 }}>
         {nonProductiveHrsA}
@@ -67,15 +67,21 @@ const ProductionReportMain = ({
       <Text style={{ width: "20px", ...styles.cell3 }}>
         {nonProductiveHrsG}
       </Text>
-      <Text style={{ width: "50px", ...styles.cell3 }}>
+      <Text style={{ width: "50px", fontSize: "9px", ...styles.cell3 }}>
         {identificationMarkOk}
       </Text>
-      <Text style={{ width: "50px", ...styles.cell3 }}>
+      <Text style={{ width: "50px", fontSize: "9px", ...styles.cell3 }}>
         {identificationMarkRej}
       </Text>
-      <Text style={{ width: "40px", ...styles.cell3 }}>{totalQuantity}</Text>
-      <Text style={{ width: "60px", ...styles.cell3 }}>{progressiveTotal}</Text>
-      <Text style={{ width: "40px", ...styles.cell3 }}>{sign}</Text>
+      <Text style={{ width: "40px", fontSize: "9px", ...styles.cell3 }}>
+        {totalQuantity}
+      </Text>
+      <Text style={{ width: "60px", fontSize: "9px", ...styles.cell3 }}>
+        {progressiveTotal}
+      </Text>
+      <Text style={{ width: "40px", fontSize: "9px", ...styles.cell3 }}>
+        {sign}
+      </Text>
     </View>
   );
 };

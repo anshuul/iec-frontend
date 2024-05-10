@@ -278,8 +278,8 @@ const ProductionReportForm = () => {
         </button>
 
         <PDFDownloadLink
-          document={<ProductionReportMain data={data?.productionReports[0]} />}
-          fileName={`ProductionReport_${data?.productionReports[0]}.pdf`}
+          document={<ProductionReport data={data?.productionReports[0]} />}
+          fileName={`ProductionReport_${data?.productionReports[0]._id}.pdf`}
         >
           <button
             className="flex items-center px-4 py-2 text-black bg-gray-300 rounded"

@@ -10,6 +10,33 @@ import StudDimensionForm from "./StudDimensionReport/StudDimensionForm";
 import NutDimensionForm from "./NutDimensionReport/NutDimensionForm";
 import axios from "axios";
 import { FiPrinter } from "react-icons/fi";
+import DimensionInspection from "@/components/PDF/DimensionInspection/DimensionInspection";
+import DimensionInspectionNut from "@/components/PDF/DimensionInspection/DimensionInspectionNut";
+import DimensionInspectionStud from "@/components/PDF/DimensionInspection/DimensionInspectionStud";
+import DimensionInspectionFirstNut from "@/components/PDF/DimensionInspection/DimensionInspectionFirstNut";
+import {
+  Document,
+  PDFDownloadLink,
+  Page,
+  StyleSheet,
+  View,
+} from "@react-pdf/renderer";
+
+const styles = StyleSheet.create({
+  page: {
+    flexDirection: "row",
+    backgroundColor: "#E4E4E4",
+    padding: 10,
+  },
+  section: {
+    margin: 10,
+    flexGrow: 1,
+    display: "flex",
+    flexDirection: "column",
+    fontSize: 12,
+    marginBottom: 50,
+  },
+});
 
 const DimensionReportHome = () => {
   const [showStudPopup, setShowStudPopup] = useState(false);
@@ -35,7 +62,8 @@ const DimensionReportHome = () => {
   const [parsedSelectedPO, setParsedSelectedPO] = useState(null);
   const [parsedRoutingSheet, setParsedRoutingSheet] = useState(null);
   const [dimensionReportResponse, setDimensionReportResponse] = useState(null);
-  const [dimensionReportResponseForNut, setDimensionReportResponseForNut] = useState(null);
+  const [dimensionReportResponseForNut, setDimensionReportResponseForNut] =
+    useState(null);
 
   useEffect(() => {
     const selectedCustomerPO = localStorage.getItem("selectedCustomerPO");
@@ -143,7 +171,10 @@ const DimensionReportHome = () => {
           console.error("Error: No valid quantity found in parsedSelectedPO");
           return;
         }
-        if (!parsedSelectedPO || !parsedSelectedPO.POsize?.diameter?.dimension) {
+        if (
+          !parsedSelectedPO ||
+          !parsedSelectedPO.POsize?.diameter?.dimension
+        ) {
           console.error("Error: No valid quantity found in parsedSelectedPO");
           return;
         }
@@ -154,8 +185,8 @@ const DimensionReportHome = () => {
           length: parsedSelectedPO.POsize?.length?.value,
           diameter: parsedSelectedPO.POsize?.diameter?.value,
           dimension: parsedSelectedPO.POsize?.diameter?.dimension,
-        }
-        console.log("newNutInputValues", newNutInputValues)
+        };
+        console.log("newNutInputValues", newNutInputValues);
 
         // Send an HTTP POST request to submit the stud data
         const response = await axios.post(
@@ -221,7 +252,7 @@ const DimensionReportHome = () => {
 
     // Update rowData with formatted data
     rowData = dimensionReportResponse.observationValues.map((value, index) => {
-      const formattedValue = value.toFixed(2).padEnd(5, '0');
+      const formattedValue = value.toFixed(2).padEnd(5, "0");
       return {
         itemNumber: `${index + 1}`,
         totalLength: formattedValue,
@@ -238,7 +269,8 @@ const DimensionReportHome = () => {
       { headerName: "Go / No Go Gauge", field: "goNoGoGauge", flex: 1 },
     ];
 
-    const { AC, AF, NUT_THICKNESS } = dimensionReportResponseForNut.observationValuesNut;
+    const { AC, AF, NUT_THICKNESS } =
+      dimensionReportResponseForNut.observationValuesNut;
     // Get the percentage from the response
     const { percentage } = dimensionReportResponseForNut;
 
@@ -257,7 +289,7 @@ const DimensionReportHome = () => {
     <div className="flex flex-col mx-4 h-[85vh] bg-white">
       <div className="flex items-center justify-between">
         {parsedRoutingSheet &&
-          parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
+        parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
           <button
             className="px-4 py-2 m-4 bg-gray-300 rounded-lg"
             onClick={openStudPopup}
@@ -294,7 +326,7 @@ const DimensionReportHome = () => {
       {rowData.length > 0 && (
         <>
           {parsedRoutingSheet &&
-            parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
+          parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
             <StudDimensionForm
               parsedSelectedPO={parsedSelectedPO}
               parsedRoutingSheet={parsedRoutingSheet}
@@ -308,19 +340,72 @@ const DimensionReportHome = () => {
             />
           )}
           <div className="ag-theme-alpine px-4 w-full h-[75vh]">
-            <AgGridReact
-              columnDefs={columnDefs}
-              rowData={rowData}
-            />
+            <AgGridReact columnDefs={columnDefs} rowData={rowData} />
           </div>
         </>
       )}
       <hr className="my-4 border-t border-gray-300" />
       <div className="flex justify-end mx-4 my-6">
-        <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
-          Print
-          <FiPrinter className="ml-2" />
-        </button>
+        {parsedRoutingSheet &&
+        parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
+          <PDFDownloadLink
+            document={
+              <Document>
+                <Page
+                  size="A4"
+                  style={styles.page}
+                  orientation="landscape"
+                  wrap
+                >
+                  <DimensionInspection data={dimensionReportResponse} />
+                </Page>
+                <Page size="A4" style={styles.page} wrap>
+                  <DimensionInspectionStud data={dimensionReportResponse} />
+                </Page>
+              </Document>
+            }
+            fileName={`DimensionInspectionStud_${dimensionReportResponse?._id}.pdf`}
+          >
+            <button
+              className="flex items-center px-4 py-2 text-black bg-gray-300 rounded"
+              onClick={() => console.log(dimensionReportResponse)}
+            >
+              Print
+              <FiPrinter className="ml-2" />
+            </button>
+          </PDFDownloadLink>
+        ) : (
+          <PDFDownloadLink
+            document={
+              <Document>
+                <Page
+                  size="A4"
+                  style={styles.page}
+                  orientation="landscape"
+                  wrap
+                >
+                  <DimensionInspectionFirstNut
+                    data={dimensionReportResponseForNut}
+                  />
+                </Page>
+                <Page size="A4" style={styles.page} wrap>
+                  <DimensionInspectionNut
+                    data={dimensionReportResponseForNut}
+                  />
+                </Page>
+              </Document>
+            }
+            fileName={`DimensionInspectionNut_${dimensionReportResponseForNut?._id}.pdf`}
+          >
+            <button
+              className="flex items-center px-4 py-2 text-black bg-gray-300 rounded"
+              onClick={() => console.log(dimensionReportResponseForNut)}
+            >
+              Print
+              <FiPrinter className="ml-2" />
+            </button>
+          </PDFDownloadLink>
+        )}
       </div>
     </div>
   );
