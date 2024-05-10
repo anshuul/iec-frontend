@@ -8,11 +8,33 @@ import NutDimensionReportPopup from "./NutDimensionReportPopup";
 import StudDimensionForm from "./StudDimensionReport/StudDimensionForm";
 import NutDimensionForm from "./NutDimensionReport/NutDimensionForm";
 import { FiPrinter } from "react-icons/fi";
+import DimensionInspection from "@/components/PDF/DimensionInspection/DimensionInspection";
+import DimensionInspectionNut from "@/components/PDF/DimensionInspection/DimensionInspectionNut";
+import DimensionInspectionStud from "@/components/PDF/DimensionInspection/DimensionInspectionStud";
+import DimensionInspectionFirstNut from "@/components/PDF/DimensionInspection/DimensionInspectionFirstNut";
+import {
+  Document,
+  PDFDownloadLink,
+  Page,
+  StyleSheet,
+  View,
+} from "@react-pdf/renderer";
 
-// AGGRID React
-import { AgGridReact } from "ag-grid-react";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-alpine.css";
+const styles = StyleSheet.create({
+  page: {
+    flexDirection: "row",
+    backgroundColor: "#E4E4E4",
+    padding: 10,
+  },
+  section: {
+    margin: 10,
+    flexGrow: 1,
+    display: "flex",
+    flexDirection: "column",
+    fontSize: 12,
+    marginBottom: 50,
+  },
+});
 
 const DimensionReportHome = () => {
   const [showStudPopup, setShowStudPopup] = useState(false);
@@ -318,15 +340,71 @@ const DimensionReportHome = () => {
           <div className="ag-theme-alpine px-4 w-full h-[75vh]">
             <AgGridReact columnDefs={columnDefs} rowData={rowData} />
           </div>
-          <hr className="my-4 border-t border-gray-300" />
-          <div className="flex justify-end mx-4 my-6">
-            <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
+        </>
+      )}
+      <hr className="my-4 border-t border-gray-300" />
+      <div className="flex justify-end mx-4 my-6">
+        {parsedRoutingSheet &&
+        parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
+          <PDFDownloadLink
+            document={
+              <Document>
+                <Page
+                  size="A4"
+                  style={styles.page}
+                  orientation="landscape"
+                  wrap
+                >
+                  <DimensionInspection data={dimensionReportResponse} />
+                </Page>
+                <Page size="A4" style={styles.page} wrap>
+                  <DimensionInspectionStud data={dimensionReportResponse} />
+                </Page>
+              </Document>
+            }
+            fileName={`DimensionInspectionStud_${dimensionReportResponse?._id}.pdf`}
+          >
+            <button
+              className="flex items-center px-4 py-2 text-black bg-gray-300 rounded"
+              onClick={() => console.log(dimensionReportResponse)}
+            >
               Print
               <FiPrinter className="ml-2" />
             </button>
-          </div>
-        </>
-      )}
+          </PDFDownloadLink>
+        ) : (
+          <PDFDownloadLink
+            document={
+              <Document>
+                <Page
+                  size="A4"
+                  style={styles.page}
+                  orientation="landscape"
+                  wrap
+                >
+                  <DimensionInspectionFirstNut
+                    data={dimensionReportResponseForNut}
+                  />
+                </Page>
+                <Page size="A4" style={styles.page} wrap>
+                  <DimensionInspectionNut
+                    data={dimensionReportResponseForNut}
+                  />
+                </Page>
+              </Document>
+            }
+            fileName={`DimensionInspectionNut_${dimensionReportResponseForNut?._id}.pdf`}
+          >
+            <button
+              className="flex items-center px-4 py-2 text-black bg-gray-300 rounded"
+              onClick={() => console.log(dimensionReportResponseForNut)}
+            >
+              Print
+              <FiPrinter className="ml-2" />
+            </button>
+          </PDFDownloadLink>
+        )}
+      </div>
     </div>
   );
 };

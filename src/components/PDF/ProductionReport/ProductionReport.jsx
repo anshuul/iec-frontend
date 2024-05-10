@@ -96,6 +96,112 @@ const styles = StyleSheet.create({
   },
 });
 
+const Footer = () => (
+  <View fixed>
+    <View style={styles.header}>
+      <Text
+        style={{
+          textAlign: "left",
+          width: "800px",
+          ...styles.cellFooter,
+        }}
+      >
+        Non Productive Reasons Codes:
+      </Text>
+    </View>
+    <View style={styles.header}>
+      <Text
+        style={{
+          textAlign: "left",
+          fontSize: "10px",
+          width: "200px",
+          ...styles.cellFooter,
+        }}
+      >
+        A- No Power
+      </Text>
+      <Text
+        style={{
+          textAlign: "left",
+          fontSize: "10px",
+          width: "200px",
+          ...styles.cellFooter,
+        }}
+      >
+        C- Machine under Maintenance
+      </Text>
+      <Text
+        style={{
+          textAlign: "left",
+          fontSize: "10px",
+          width: "200px",
+          ...styles.cellFooter,
+        }}
+      >
+        E- No Material
+      </Text>
+      <Text
+        style={{
+          textAlign: "left",
+          fontSize: "10px",
+          width: "200px",
+          ...styles.cellFooter,
+        }}
+      >
+        G- Other
+      </Text>
+    </View>
+    <View style={styles.header}>
+      <Text
+        style={{
+          textAlign: "left",
+          fontSize: "10px",
+          width: "200px",
+          ...styles.cellFooter,
+        }}
+      >
+        B- Tooling problem
+      </Text>
+      <Text
+        style={{
+          textAlign: "left",
+          fontSize: "10px",
+          width: "200px",
+          ...styles.cellFooter,
+        }}
+      >
+        D- No Operator
+      </Text>
+      <Text
+        style={{
+          textAlign: "left",
+          fontSize: "10px",
+          width: "200px",
+          ...styles.cellFooter,
+        }}
+      >
+        F- Tool setting
+      </Text>
+    </View>
+  </View>
+);
+
+const formatQuantity = (data) => {
+  // Split the string at the space
+  let parts = data.split(" ");
+
+  // If there is a value in parenthesis, round it to two decimal places
+  if (parts.length > 1) {
+    let value = parseFloat(parts[1].replace(/\(|\)/g, ""));
+    parts[1] = value.toFixed(2);
+  }
+
+  // Join the parts back together
+  let result = parts.join(" ");
+
+  return result;
+};
+
 const ProductionReport = ({ data }) => {
   return (
     <Document>
@@ -149,14 +255,13 @@ const ProductionReport = ({ data }) => {
           </View>
 
           <View style={styles.header}>
-            <Text style={{ width: "40px", ...styles.cell3 }}>Date</Text>
             <Text style={{ width: "60px", ...styles.cell3 }}>Operator</Text>
             <Text style={{ width: "80px", ...styles.cell3 }}>SO No.</Text>
             <Text style={{ width: "80px", ...styles.cell3 }}>
               JOB Description
             </Text>
             <Text style={{ width: "80px", ...styles.cell3 }}>Start time</Text>
-            <Text style={{ width: "40px", ...styles.cell3 }}>End Time</Text>
+            <Text style={{ width: "80px", ...styles.cell3 }}>End Time</Text>
             <Text style={{ width: "40px", ...styles.cell3 }}>
               Production Hr
             </Text>
@@ -196,117 +301,28 @@ const ProductionReport = ({ data }) => {
             </Text>
             <Text style={{ width: "40px", ...styles.cell3 }}>Sign</Text>
           </View>
-          {/* {data?.processRows.map((ele, i) => (
-            <View wrap>
+          {data?.processRows.map((ele, i) => (
+            <View wrap={false}>
               <ProductionReportMain
-                date={}
-  operator={}
-  soNo={}
-  jobDescription={}
-  startTime={}
-  endTime={}
-  productionHrs={}
-  nonProductiveHrsA={}
-  nonProductiveHrsB={}
-  nonProductiveHrsC={}
-  nonProductiveHrsD={}
-  nonProductiveHrsE={}
-  nonProductiveHrsF={}
-  nonProductiveHrsG={}
-  identificationMarkOk={}
-  identificationMarkRej={}
-  totalQuantity={}
-  progressiveTotal={}
-  sign={}
+                operator={ele.operatorName}
+                soNo={data.poNo}
+                jobDescription={ele.jobDescription}
+                startTime={ele.startTime}
+                endTime={ele.endTime}
+                identificationMarkOk={
+                  ele.orderQty ? formatQuantity(ele.orderQty) : ""
+                }
+                identificationMarkRej={
+                  ele.orderQty ? formatQuantity(ele.orderQty) : ""
+                }
+                totalQuantity={ele.orderQty ? formatQuantity(ele.orderQty) : ""}
+                progressiveTotal={
+                  ele.orderQty ? formatQuantity(ele.orderQty) : ""
+                }
               />
             </View>
-          ))} */}
-
-          <View style={styles.header}>
-            <Text
-              style={{
-                textAlign: "left",
-                width: "800px",
-                ...styles.cellFooter,
-              }}
-            >
-              Non Productive Reasons Codes:
-            </Text>
-          </View>
-          <View style={styles.header}>
-            <Text
-              style={{
-                textAlign: "left",
-                fontSize: "10px",
-                width: "200px",
-                ...styles.cellFooter,
-              }}
-            >
-              A- No Power
-            </Text>
-            <Text
-              style={{
-                textAlign: "left",
-                fontSize: "10px",
-                width: "200px",
-                ...styles.cellFooter,
-              }}
-            >
-              C- Machine under Maintenance
-            </Text>
-            <Text
-              style={{
-                textAlign: "left",
-                fontSize: "10px",
-                width: "200px",
-                ...styles.cellFooter,
-              }}
-            >
-              E- No Material
-            </Text>
-            <Text
-              style={{
-                textAlign: "left",
-                fontSize: "10px",
-                width: "200px",
-                ...styles.cellFooter,
-              }}
-            >
-              G- Other
-            </Text>
-          </View>
-          <View style={styles.header}>
-            <Text
-              style={{
-                textAlign: "left",
-                fontSize: "10px",
-                width: "200px",
-                ...styles.cellFooter,
-              }}
-            >
-              B- Tooling problem
-            </Text>
-            <Text
-              style={{
-                textAlign: "left",
-                fontSize: "10px",
-                width: "200px",
-                ...styles.cellFooter,
-              }}
-            >
-              D- No Operator
-            </Text>
-            <Text
-              style={{
-                textAlign: "left",
-                fontSize: "10px",
-                width: "200px",
-                ...styles.cellFooter,
-              }}
-            >
-              F- Tool setting
-            </Text>
-          </View>
+          ))}
+          <Footer />
         </View>
       </Page>
     </Document>
