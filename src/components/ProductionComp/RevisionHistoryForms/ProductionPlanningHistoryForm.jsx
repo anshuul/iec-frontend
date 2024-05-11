@@ -123,12 +123,12 @@ console.log("planningSheetForm", planningSheetForm)
                   type="text"
                   placeholder="Input"
                   value={planningSheetForm.productionSheetName}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      productionSheetName: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     productionSheetName: e.target.value,
+                  //   })
+                  // }
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
                 <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
@@ -142,12 +142,12 @@ console.log("planningSheetForm", planningSheetForm)
                   type="text"
                   placeholder="Input"
                   value={planningSheetForm.itemDescription}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      itemDescription: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     itemDescription: e.target.value,
+                  //   })
+                  // }
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
                 <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
@@ -161,12 +161,12 @@ console.log("planningSheetForm", planningSheetForm)
                   type="text"
                   placeholder="Input"
                   value={planningSheetForm.materialIssue}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      materialIssue: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     materialIssue: e.target.value,
+                  //   })
+                  // }
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
                 <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
@@ -180,12 +180,12 @@ console.log("planningSheetForm", planningSheetForm)
                   type="text"
                   placeholder="Input"
                   value={planningSheetForm.requiredResources}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...requiredResources,
-                      materialIssue: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...requiredResources,
+                  //     materialIssue: e.target.value,
+                  //   })
+                  // }
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
                 <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
@@ -206,12 +206,12 @@ console.log("planningSheetForm", planningSheetForm)
                   type="text"
                   placeholder="Input"
                   value={planningSheetForm.productAndCustomer}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      productAndCustomer: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     productAndCustomer: e.target.value,
+                  //   })
+                  // }
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
                 <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
@@ -231,12 +231,12 @@ console.log("planningSheetForm", planningSheetForm)
                   type="text"
                   placeholder="Input"
                   value={planningSheetForm.legalAndApplicable}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      legalAndApplicable: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     legalAndApplicable: e.target.value,
+                  //   })
+                  // }
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
                 <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
@@ -256,12 +256,12 @@ console.log("planningSheetForm", planningSheetForm)
                   type="text"
                   placeholder="Input"
                   value={planningSheetForm.contingencyPlanning}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      contingencyPlanning: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     contingencyPlanning: e.target.value,
+                  //   })
+                  // }
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
                 <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
@@ -281,12 +281,12 @@ console.log("planningSheetForm", planningSheetForm)
                   type="text"
                   placeholder="Input"
                   value={planningSheetForm.verification}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      verification: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     verification: e.target.value,
+                  //   })
+                  // }
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
                 <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
@@ -309,12 +309,12 @@ console.log("planningSheetForm", planningSheetForm)
                 <input
                   type="text"
                   value={planningSheetForm.validation}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      validation: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     validation: e.target.value,
+                  //   })
+                  // }
                   placeholder="Input"
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
@@ -334,12 +334,12 @@ console.log("planningSheetForm", planningSheetForm)
                 <input
                   type="text"
                   value={planningSheetForm.monitoring}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      monitoring: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     monitoring: e.target.value,
+                  //   })
+                  // }
                   placeholder="Input"
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
@@ -359,12 +359,12 @@ console.log("planningSheetForm", planningSheetForm)
                 <input
                   type="text"
                   value={planningSheetForm.measurement}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      measurement: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     measurement: e.target.value,
+                  //   })
+                  // }
                   placeholder="Input"
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
@@ -384,12 +384,12 @@ console.log("planningSheetForm", planningSheetForm)
                 <input
                   type="text"
                   value={planningSheetForm.inspection}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      inspection: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     inspection: e.target.value,
+                  //   })
+                  // }
                   placeholder="Input"
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
@@ -409,12 +409,12 @@ console.log("planningSheetForm", planningSheetForm)
                 <input
                   type="text"
                   value={planningSheetForm.management}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      management: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     management: e.target.value,
+                  //   })
+                  // }
                   placeholder="Input"
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
@@ -434,12 +434,12 @@ console.log("planningSheetForm", planningSheetForm)
                 <input
                   type="text"
                   value={planningSheetForm.recordsEvidence}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      recordsEvidence: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     recordsEvidence: e.target.value,
+                  //   })
+                  // }
                   placeholder="Input"
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
@@ -463,7 +463,7 @@ console.log("planningSheetForm", planningSheetForm)
                 id="attachment"
                 className="hidden"
                 accept=".pdf"
-                onChange={handleFileSelection}
+                // onChange={handleFileSelection}
               />
               <button
                 onClick={() => document.getElementById("attachment").click()}
@@ -495,12 +495,12 @@ console.log("planningSheetForm", planningSheetForm)
                   <input
                     type="text"
                     value={planningSheetForm.planningQuantity}
-                    onChange={(e) =>
-                      setPlanningSheetForm({
-                        ...planningSheetForm,
-                        planningQuantity: e.target.value,
-                      })
-                    }
+                    // onChange={(e) =>
+                    //   setPlanningSheetForm({
+                    //     ...planningSheetForm,
+                    //     planningQuantity: e.target.value,
+                    //   })
+                    // }
                     placeholder="Input"
                     className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                   />
@@ -515,12 +515,12 @@ console.log("planningSheetForm", planningSheetForm)
                 </label>
                 <DatePicker
                   selected={planningSheetForm.planningDate}
-                  onChange={(date) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      planningDate: date,
-                    })
-                  }
+                  // onChange={(date) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     planningDate: date,
+                  //   })
+                  // }
                   dateFormat="dd/MM/yyyy"
                   className="w-full px-3 py-2 border border-gray-300 rounded"
                 />
@@ -535,12 +535,12 @@ console.log("planningSheetForm", planningSheetForm)
                   <input
                     type="text"
                     value={planningSheetForm.achievementQuantity}
-                    onChange={(e) =>
-                      setPlanningSheetForm({
-                        ...planningSheetForm,
-                        achievementQuantity: e.target.value,
-                      })
-                    }
+                    // onChange={(e) =>
+                    //   setPlanningSheetForm({
+                    //     ...planningSheetForm,
+                    //     achievementQuantity: e.target.value,
+                    //   })
+                    // }
                     placeholder="Input"
                     className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                   />
@@ -558,12 +558,12 @@ console.log("planningSheetForm", planningSheetForm)
                 </label>
                 <DatePicker
                   selected={planningSheetForm.achievementDate}
-                  onChange={(date) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      achievementDate: date,
-                    })
-                  }
+                  // onChange={(date) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     achievementDate: date,
+                  //   })
+                  // }
                   dateFormat="dd/MM/yyyy"
                   className="w-full px-3 py-2 border border-gray-300 rounded"
                 />
@@ -585,12 +585,12 @@ console.log("planningSheetForm", planningSheetForm)
                 </label>
                 <DatePicker
                   selected={planningSheetForm.orderDate}
-                  onChange={(date) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      orderDate: date,
-                    })
-                  }
+                  // onChange={(date) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     orderDate: date,
+                  //   })
+                  // }
                   dateFormat="dd/MM/yyyy"
                   className="w-full px-3 py-2 border border-gray-300 rounded"
                 />
@@ -607,12 +607,12 @@ console.log("planningSheetForm", planningSheetForm)
                 </label>
                 <DatePicker
                   selected={planningSheetForm.deliveryDate}
-                  onChange={(date) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      deliveryDate: date,
-                    })
-                  }
+                  // onChange={(date) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     deliveryDate: date,
+                  //   })
+                  // }
                   dateFormat="dd/MM/yyyy"
                   className="w-full px-3 py-2 border border-gray-300 rounded"
                 />

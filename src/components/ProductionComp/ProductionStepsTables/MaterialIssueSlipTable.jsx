@@ -95,29 +95,44 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
         `http://localhost:8000/api/materialissueslip/materialIssueSlipHistory2/${_id}`
       );
       console.log("Response data material:", response.data);
-      console.log("response.data.historyRecords:", response.data.historyRecords);
+      console.log(
+        "response.data.historyRecords:",
+        response.data.historyRecords
+      );
 
-      const historyData = response.data.historyRecords.map((record, index) => ({
-        srNo: index + 1,
-        CustomerPO: record.poNo,
-        CustomerName: record.previousData.customerName,
-        PONumber: record.previousData.poNo,
-        MaterialSlipName: record.previousData.materialSlipName,
-        ItemDescription: record.previousData.itemDescription,
-        MaterialGrade: record.previousData.materialGrade,
-        Size: record.previousData.size,
-        QuantityRequired: record.previousData.quantityRequired,
-        QuantityIssued: record.previousData.quantityIssued,
-        CreatedAt: new Date(record.previousData.createdAt).toLocaleString(
-          undefined,
-          { dateStyle: "long", timeStyle: "medium" }
-        ), // Convert to pretty format
-        UpdatedAt: new Date(record.previousData.updatedAt).toLocaleString(
-          undefined,
-          { dateStyle: "long", timeStyle: "medium" }
-        ), // Convert to pretty format
-        historyId: record._id,
-      }));
+      const historyData = response.data.historyRecords.map((record, index) => {
+        let revisionSize = "N/A";
+        if (record.previousData.size) {
+          revisionSize = `${record.previousData.size.diameter.value}x${record.previousData.size.length.value}`;
+        }
+        return {
+          srNo: index + 1,
+          CustomerPO: record.poNo,
+          CustomerName: record.previousData.customerName,
+          PONumber: record.previousData.poNo,
+          MaterialSlipName: record.previousData.materialSlipName,
+          ItemDescription: record.previousData.itemDescription,
+          MaterialGrade: record.previousData.materialGrade,
+          Size: revisionSize,
+          QuantityRequired: record.previousData.quantityRequired,
+          QuantityIssued: record.previousData.quantityIssued,
+          CreatedAt: new Date(record.previousData.createdAt).toLocaleString(
+            undefined,
+            {
+              dateStyle: "long",
+              timeStyle: "medium",
+            }
+          ), // Convert to pretty format
+          UpdatedAt: new Date(record.previousData.updatedAt).toLocaleString(
+            undefined,
+            {
+              dateStyle: "long",
+              timeStyle: "medium",
+            }
+          ), // Convert to pretty format
+          historyId: record.previousData.id,
+        };
+      });
       console.log("historyData", historyData);
       setHistoryRowData(historyData);
       setShowHistoryTable(true);
@@ -149,7 +164,8 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
 
   const CustomButtonComponent = (props) => {
     const data = props.data;
-    console.log("data.PONumber material", data.PONumber)
+    console.log("data material2", data);
+    console.log("data.PONumber material", data.PONumber);
 
     console.log("MaterialData", data);
     return (
@@ -177,16 +193,23 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
     );
   };
 
+  const handleViewClick = (historyId) => {
+    router.push(
+      `/production/material-issue-slip/materialissueslip-history?historyId=${historyId}`
+    );
+    // router.push(`/production/productionForm/view`);
+  };
+
   const HistoryButton = (props) => {
     const data = props.data;
-    console.log("HistoryButton", data);
+    console.log("history data", data);
     return (
       <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
         {/* View Button */}
         <button
-          // onClick={() => {
-          //   handleViewClick(data.CustomerPO, data.historyId);
-          // }}
+          onClick={() => {
+            handleViewClick(data.historyId);
+          }}
           className="p-2 text-red-600 bg-yellow-200 rounded-lg"
         >
           <IoSearch />
@@ -244,7 +267,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
           paginationPageSize={15}
         />
       </div>
-      
+
       {showHistoryTable && (
         <HistoryTablePopup
           HistoryColumnDefs={HistoryColumnDefs}
