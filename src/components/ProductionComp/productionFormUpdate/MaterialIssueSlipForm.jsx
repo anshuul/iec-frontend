@@ -138,8 +138,9 @@ const MaterialIssueSlipForm = () => {
       }
 
       // Update or Create Production Report
+      const productionReportId2 = "66406b92d772d81ea3a03e52"
       const updateProductionReport = await axios.post(
-        `http://localhost:8000/api/productionReport/create-updateGenerateProductionReport/`,
+        `http://localhost:8000/api/productionReport/create-updateGenerateProductionReport/${productionReportId2}`,
         {
           newCustomerPo: newCustomerPO,
           UpdatedMaterialIssueSlipData: LatestMaterialIssueSlipData,
