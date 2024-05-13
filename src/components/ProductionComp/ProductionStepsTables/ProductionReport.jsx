@@ -35,6 +35,7 @@ const ProductionReport = ({ productionStep }) => {
           response = await axios.get(
             `http://localhost:8000/api/productionReport/get-production-report-by-routing-sheet/${parsedRoutingSheet._id}`
           );
+          console.log("in condition response", response.data);
           console.log("responsebyid", selectedRoutingSheet);
         } else {
           // Fetch all material issue slips if no customer PO is selected
@@ -46,6 +47,7 @@ const ProductionReport = ({ productionStep }) => {
         // http://localhost:8000/api/productionReport/get-production-reportById/66212e4726e3bdaf230b6636
 
         const productionReports = response.data;
+        console.log("productionReports in report sheet", productionReports);
         const formattedData = productionReports.map((issueSlip, index) => {
           const processRow = issueSlip.processRows[0];
           let size = "N/A";
@@ -102,7 +104,6 @@ const ProductionReport = ({ productionStep }) => {
   ];
 
   return (
-    // <div className="flex flex-col items-center justify-center">
     <div className="flex flex-col mx-4 bg-white">
       {/* Button positioned at the top right corner */}
       <button

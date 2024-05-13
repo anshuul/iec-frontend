@@ -18,8 +18,9 @@ const MaterialIssueSlipForm = () => {
     materialSlipName: "",
     itemDescription: "",
     materialGrade: "",
-    diameter: { value: "", dimension: "" }, // Set as an object with 'value' and 'dimension' fields
-    length: { value: "", dimension: "" },
+    diameter: { value: "", dimension: "mm" }, // Set as an object with 'value' and 'dimension' fields
+    length: { value: "", dimension: "mm" },
+    thread: "",
     quantityRequired: "",
     quantityIssued: "",
     studquantity: "",
@@ -51,6 +52,7 @@ const MaterialIssueSlipForm = () => {
           diameterDimension: responseData.size.diameter
             ? responseData.size.diameter.dimension
             : "",
+          thread: responseData.size.thread,
           length: responseData.size.length
             ? responseData.size.length.value
             : "",
@@ -120,7 +122,8 @@ const MaterialIssueSlipForm = () => {
       );
       console.log("fetchProductionReportId", fetchProductionReportId.data);
       const productionReportId =
-        fetchProductionReportId.data.generatedProductionReportData;
+        fetchProductionReportId.data.generatedProductionReportData
+          .generatedProductionReportId;
       console.log("productionReportId", productionReportId);
 
       const nutsCountMatch = selectedItem.match(/\d+nuts/);
@@ -138,9 +141,9 @@ const MaterialIssueSlipForm = () => {
       }
 
       // Update or Create Production Report
-      const productionReportId2 = "66406b92d772d81ea3a03e52"
-      const updateProductionReport = await axios.post(
-        `http://localhost:8000/api/productionReport/create-updateGenerateProductionReport/${productionReportId2}`,
+      // const productionReportId2 = "66406b92d772d81ea3a03e52";
+      const updateProductionReport = await axios.put(
+        `http://localhost:8000/api/productionReport/create-updateGenerateProductionReport/${productionReportId}`,
         {
           newCustomerPo: newCustomerPO,
           UpdatedMaterialIssueSlipData: LatestMaterialIssueSlipData,
@@ -158,8 +161,40 @@ const MaterialIssueSlipForm = () => {
   console.log("materialIssueForm in Form", materialIssueForm);
 
   const handleCalculate = () => {
-    const { diameter, length, studquantity, nutquantity, materialSlipName } =
-      materialIssueForm;
+    console.log("Click")
+    const {
+      diameter,
+      diameterDimension,
+      length,
+      lengthDimension,
+      studquantity,
+      nutquantity,
+      materialSlipName,
+    } = materialIssueForm;
+
+    // Convert diameter from inches to millimeters if dimension is "inch"
+    let diameterInMM = diameter;
+    if (diameterDimension === "inch") {
+      const parts = diameter.split("/");
+      if (parts.length === 2) {
+        const numerator = parseFloat(parts[0]);
+        const denominator = parseFloat(parts[1]);
+        const diameterInInch = numerator / denominator;
+        diameterInMM = diameterInInch * 25.4; // Convert inches to millimeters
+      }
+    }
+
+    // Convert length from inches to millimeters if dimension is "inch"
+    let lengthInMM = length;
+    if (lengthDimension === "inch") {
+      const parts = length.split("/");
+      if (parts.length === 2) {
+        const numerator = parseFloat(parts[0]);
+        const denominator = parseFloat(parts[1]);
+        const lengthInInch = numerator / denominator;
+        lengthInMM = lengthInInch * 25.4; // Convert inches to millimeters
+      }
+    }
 
     let quantityToUse = null;
     if (materialSlipName.startsWith("Nut") && nutquantity) {
@@ -168,10 +203,17 @@ const MaterialIssueSlipForm = () => {
       quantityToUse = studquantity; // Use studquantity if materialSlipName starts with "Stud"
     }
 
-    if (diameter && length && quantityToUse) {
+    if (diameterInMM && lengthInMM && quantityToUse) {
+      console.log("calculated data", {
+        diameterInMM,
+        lengthInMM,
+        quantityToUse,
+      });
       // Perform the calculation
       const calculatedSize =
-        (parseFloat(diameter) * parseFloat(diameter) * parseFloat(length)) /
+        (parseFloat(diameterInMM) *
+          parseFloat(diameterInMM) *
+          parseFloat(lengthInMM)) /
         162000;
       console.log("calculatedSize in material", calculatedSize);
       // Multiply calculatedSize by quantityToUse
@@ -293,7 +335,7 @@ const MaterialIssueSlipForm = () => {
               Diameter
             </span>
           </label>
-          <label
+          {/* <label
             htmlFor="diameterDimension"
             className="relative flex items-center cursor-pointer App"
           >
@@ -306,7 +348,22 @@ const MaterialIssueSlipForm = () => {
               <option value="inch">Inch</option>
               <option value="mm">MM</option>
             </select>
-          </label>
+          </label> */}
+
+          {/* Pitch */}
+          {/* <label className="relative cursor-pointer App">
+            <input
+              id="thread"
+              type="text"
+              value={materialIssueForm.thread}
+              onChange={(e) => handleInputChange(e, "thread")}
+              placeholder="Input"
+              className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+            />
+            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+              Pitch
+            </span>
+          </label> */}
           {/* Length */}
           <label className="relative cursor-pointer App">
             <input
@@ -321,7 +378,7 @@ const MaterialIssueSlipForm = () => {
               Length
             </span>
           </label>
-          <label
+          {/* <label
             htmlFor="lengthDimension"
             className="relative flex items-center cursor-pointer App"
           >
@@ -334,7 +391,7 @@ const MaterialIssueSlipForm = () => {
               <option value="inch">Inch</option>
               <option value="mm">MM</option>
             </select>
-          </label>
+          </label> */}
 
           {/* Calculate button */}
           <button
