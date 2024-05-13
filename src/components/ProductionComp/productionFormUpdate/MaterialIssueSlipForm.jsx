@@ -161,7 +161,6 @@ const MaterialIssueSlipForm = () => {
   console.log("materialIssueForm in Form", materialIssueForm);
 
   const handleCalculate = () => {
-    console.log("Click")
     const {
       diameter,
       diameterDimension,
