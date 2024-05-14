@@ -117,7 +117,10 @@ const RoutingSheetTable = ({ productionStep }) => {
     }
   };
 
+  // 66433d3934430954d9f00160
+  // 66433d3a34430954d9f001d5
   const handleEditClick = (_id) => {
+    console.log("_id for routing", _id);
     router.push(`/production/routing-sheet/routingSheetFormUpdate?id=${_id}`);
   };
 
