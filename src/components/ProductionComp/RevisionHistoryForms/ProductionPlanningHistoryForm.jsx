@@ -7,15 +7,13 @@ import { RiAttachmentLine } from "react-icons/ri";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
-import ProductionPlanning from "@/components/PDF/ProductionPlanning/ProductionPlanning";
 
-const ProductionSheetFormUpdate = () => {
+const ProductionPlanningHistoryForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const id = searchParams.get("id");
-  console.log("first", id);
+  const historyId = searchParams.get("historyId");
+  console.log("historyId history", historyId);
 
   const [planningSheetForm, setPlanningSheetForm] = useState({
     productionSheetName: "",
@@ -55,57 +53,25 @@ const ProductionSheetFormUpdate = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log("start");
         const response = await axios.get(
-          `http://localhost:8000/api/production/get-planningSheetById/${id}`
+          `http://localhost:8000/api/production/productionPlanningHistoryBypreviousDataId/${historyId}`
         );
-        const responseData = response.data;
-        console.log("responseData", responseData);
-        const formattedPlanningDate = formatDate(responseData.planningDate);
-        console.log("formattedPlanningDate", formattedPlanningDate);
-        const formattedAchievementDate = formatDate(
-          responseData.achievementDate
-        );
-        console.log("formattedAchievementDate", formattedAchievementDate);
-        const formattedDeliveryDate = formatDate(responseData.deliveryDate);
-        console.log("formattedDeliveryDate", formattedDeliveryDate);
-        const formattedOrderDate = formatDate(responseData.orderDate);
-        console.log("formattedOrderDate", formattedOrderDate);
-
-        console.log("responseData.planningQuantity", responseData.planningDate);
-        setPlanningSheetForm({
-          ...planningSheetForm,
-          productionSheetName: responseData.productionSheetName,
-          itemDescription: responseData.itemDescription,
-          materialIssue: responseData.materialIssue,
-          requiredResources: responseData.requiredResources,
-          productAndCustomer: responseData.productAndCustomer,
-          legalAndApplicable: responseData.legalAndApplicable,
-          contingencyPlanning: responseData.contingencyPlanning,
-          verification: responseData.verification,
-          validation: responseData.validation,
-          monitoring: responseData.monitoring,
-          measurement: responseData.measurement,
-          inspection: responseData.inspection,
-          management: responseData.management,
-          recordsEvidence: responseData.recordsEvidence,
-          planningQuantity: responseData.planningQuantity,
-          planningDate: formattedPlanningDate,
-          achievementQuantity: responseData.achievementQuantity,
-          achievementDate: formattedAchievementDate,
-          deliveryDate: formattedDeliveryDate,
-          orderDate: formattedOrderDate,
-          attachment: responseData.attachment,
-          poNo: responseData.poNo,
-        }); // Set the customer PO data in state
+        console.log("response.data", response.data)
+        console.log("response history", response.data[0].previousData);
+        setPlanningSheetForm(response.data[0].previousData);
+        console.log("endt");
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
-    if (id) {
+    if (historyId) {
       fetchData(); // Fetch customer PO data when CustomerPO is available
     }
-  }, [id]);
+  }, [historyId]);
+
+console.log("planningSheetForm", planningSheetForm)
 
   const handleFileSelection = (e) => {
     const file = e.target.files[0];
@@ -135,10 +101,6 @@ const ProductionSheetFormUpdate = () => {
     }
   };
 
-  const printFormData = () => {
-    console.log("Print", planningSheetForm);
-  };
-
   return (
     <Container>
       <div className="w-full p-8 mx-auto bg-white rounded shadow-md">
@@ -161,12 +123,12 @@ const ProductionSheetFormUpdate = () => {
                   type="text"
                   placeholder="Input"
                   value={planningSheetForm.productionSheetName}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      productionSheetName: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     productionSheetName: e.target.value,
+                  //   })
+                  // }
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
                 <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
@@ -180,12 +142,12 @@ const ProductionSheetFormUpdate = () => {
                   type="text"
                   placeholder="Input"
                   value={planningSheetForm.itemDescription}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      itemDescription: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     itemDescription: e.target.value,
+                  //   })
+                  // }
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
                 <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
@@ -199,12 +161,12 @@ const ProductionSheetFormUpdate = () => {
                   type="text"
                   placeholder="Input"
                   value={planningSheetForm.materialIssue}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      materialIssue: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     materialIssue: e.target.value,
+                  //   })
+                  // }
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
                 <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
@@ -218,12 +180,12 @@ const ProductionSheetFormUpdate = () => {
                   type="text"
                   placeholder="Input"
                   value={planningSheetForm.requiredResources}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...requiredResources,
-                      materialIssue: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...requiredResources,
+                  //     materialIssue: e.target.value,
+                  //   })
+                  // }
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
                 <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
@@ -244,16 +206,16 @@ const ProductionSheetFormUpdate = () => {
                   type="text"
                   placeholder="Input"
                   value={planningSheetForm.productAndCustomer}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      productAndCustomer: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     productAndCustomer: e.target.value,
+                  //   })
+                  // }
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
                 <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-                  Product and Customer
+                  Product and Customer-specified-requirements
                 </span>
               </label>
               <button
@@ -269,12 +231,12 @@ const ProductionSheetFormUpdate = () => {
                   type="text"
                   placeholder="Input"
                   value={planningSheetForm.legalAndApplicable}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      legalAndApplicable: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     legalAndApplicable: e.target.value,
+                  //   })
+                  // }
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
                 <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
@@ -294,12 +256,12 @@ const ProductionSheetFormUpdate = () => {
                   type="text"
                   placeholder="Input"
                   value={planningSheetForm.contingencyPlanning}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      contingencyPlanning: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     contingencyPlanning: e.target.value,
+                  //   })
+                  // }
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
                 <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
@@ -319,12 +281,12 @@ const ProductionSheetFormUpdate = () => {
                   type="text"
                   placeholder="Input"
                   value={planningSheetForm.verification}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      verification: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     verification: e.target.value,
+                  //   })
+                  // }
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
                 <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
@@ -347,12 +309,12 @@ const ProductionSheetFormUpdate = () => {
                 <input
                   type="text"
                   value={planningSheetForm.validation}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      validation: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     validation: e.target.value,
+                  //   })
+                  // }
                   placeholder="Input"
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
@@ -372,12 +334,12 @@ const ProductionSheetFormUpdate = () => {
                 <input
                   type="text"
                   value={planningSheetForm.monitoring}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      monitoring: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     monitoring: e.target.value,
+                  //   })
+                  // }
                   placeholder="Input"
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
@@ -397,12 +359,12 @@ const ProductionSheetFormUpdate = () => {
                 <input
                   type="text"
                   value={planningSheetForm.measurement}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      measurement: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     measurement: e.target.value,
+                  //   })
+                  // }
                   placeholder="Input"
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
@@ -422,12 +384,12 @@ const ProductionSheetFormUpdate = () => {
                 <input
                   type="text"
                   value={planningSheetForm.inspection}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      inspection: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     inspection: e.target.value,
+                  //   })
+                  // }
                   placeholder="Input"
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
@@ -447,12 +409,12 @@ const ProductionSheetFormUpdate = () => {
                 <input
                   type="text"
                   value={planningSheetForm.management}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      management: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     management: e.target.value,
+                  //   })
+                  // }
                   placeholder="Input"
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
@@ -472,12 +434,12 @@ const ProductionSheetFormUpdate = () => {
                 <input
                   type="text"
                   value={planningSheetForm.recordsEvidence}
-                  onChange={(e) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      recordsEvidence: e.target.value,
-                    })
-                  }
+                  // onChange={(e) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     recordsEvidence: e.target.value,
+                  //   })
+                  // }
                   placeholder="Input"
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
@@ -501,7 +463,7 @@ const ProductionSheetFormUpdate = () => {
                 id="attachment"
                 className="hidden"
                 accept=".pdf"
-                onChange={handleFileSelection}
+                // onChange={handleFileSelection}
               />
               <button
                 onClick={() => document.getElementById("attachment").click()}
@@ -533,12 +495,12 @@ const ProductionSheetFormUpdate = () => {
                   <input
                     type="text"
                     value={planningSheetForm.planningQuantity}
-                    onChange={(e) =>
-                      setPlanningSheetForm({
-                        ...planningSheetForm,
-                        planningQuantity: e.target.value,
-                      })
-                    }
+                    // onChange={(e) =>
+                    //   setPlanningSheetForm({
+                    //     ...planningSheetForm,
+                    //     planningQuantity: e.target.value,
+                    //   })
+                    // }
                     placeholder="Input"
                     className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                   />
@@ -553,12 +515,12 @@ const ProductionSheetFormUpdate = () => {
                 </label>
                 <DatePicker
                   selected={planningSheetForm.planningDate}
-                  onChange={(date) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      planningDate: date,
-                    })
-                  }
+                  // onChange={(date) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     planningDate: date,
+                  //   })
+                  // }
                   dateFormat="dd/MM/yyyy"
                   className="w-full px-3 py-2 border border-gray-300 rounded"
                 />
@@ -573,12 +535,12 @@ const ProductionSheetFormUpdate = () => {
                   <input
                     type="text"
                     value={planningSheetForm.achievementQuantity}
-                    onChange={(e) =>
-                      setPlanningSheetForm({
-                        ...planningSheetForm,
-                        achievementQuantity: e.target.value,
-                      })
-                    }
+                    // onChange={(e) =>
+                    //   setPlanningSheetForm({
+                    //     ...planningSheetForm,
+                    //     achievementQuantity: e.target.value,
+                    //   })
+                    // }
                     placeholder="Input"
                     className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                   />
@@ -596,12 +558,12 @@ const ProductionSheetFormUpdate = () => {
                 </label>
                 <DatePicker
                   selected={planningSheetForm.achievementDate}
-                  onChange={(date) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      achievementDate: date,
-                    })
-                  }
+                  // onChange={(date) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     achievementDate: date,
+                  //   })
+                  // }
                   dateFormat="dd/MM/yyyy"
                   className="w-full px-3 py-2 border border-gray-300 rounded"
                 />
@@ -623,12 +585,12 @@ const ProductionSheetFormUpdate = () => {
                 </label>
                 <DatePicker
                   selected={planningSheetForm.orderDate}
-                  onChange={(date) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      orderDate: date,
-                    })
-                  }
+                  // onChange={(date) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     orderDate: date,
+                  //   })
+                  // }
                   dateFormat="dd/MM/yyyy"
                   className="w-full px-3 py-2 border border-gray-300 rounded"
                 />
@@ -645,12 +607,12 @@ const ProductionSheetFormUpdate = () => {
                 </label>
                 <DatePicker
                   selected={planningSheetForm.deliveryDate}
-                  onChange={(date) =>
-                    setPlanningSheetForm({
-                      ...planningSheetForm,
-                      deliveryDate: date,
-                    })
-                  }
+                  // onChange={(date) =>
+                  //   setPlanningSheetForm({
+                  //     ...planningSheetForm,
+                  //     deliveryDate: date,
+                  //   })
+                  // }
                   dateFormat="dd/MM/yyyy"
                   className="w-full px-3 py-2 border border-gray-300 rounded"
                 />
@@ -668,19 +630,14 @@ const ProductionSheetFormUpdate = () => {
             Save
             <FiSave className="ml-2" />
           </button>
-          <PDFDownloadLink
-            document={<ProductionPlanning data={planningSheetForm} />}
-            fileName={`productionPlanning_${id}.pdf`}
-          >
-            <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
-              Print
-              <FiPrinter className="ml-2" />
-            </button>
-          </PDFDownloadLink>
+          <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
+            Print
+            <FiPrinter className="ml-2" />
+          </button>
         </div>
       </div>
     </Container>
   );
 };
 
-export default ProductionSheetFormUpdate;
+export default ProductionPlanningHistoryForm;

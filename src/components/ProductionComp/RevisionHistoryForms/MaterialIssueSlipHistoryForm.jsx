@@ -7,27 +7,25 @@ import Container from "@/components/common/Container";
 import MaterialIssueSlip from "@/components/PDF/MaterialSlip/MaterialIssueSlip";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 
-const MaterialIssueSlipForm = () => {
+const MaterialIssueSlipHistoryForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const id = searchParams.get("id");
-  console.log("first", id);
+  const historyId = searchParams.get("historyId");
+  console.log("historyId material history", historyId);
 
   const [materialIssueForm, setMaterialIssueForm] = useState({
     materialSlipName: "",
     itemDescription: "",
     materialGrade: "",
-    diameter: { value: "", dimension: "mm" }, // Set as an object with 'value' and 'dimension' fields
-    length: { value: "", dimension: "mm" },
-    thread: "",
+    diameter: { value: "", dimension: "" }, // Set as an object with 'value' and 'dimension' fields
+    length: { value: "", dimension: "" },
     quantityRequired: "",
     quantityIssued: "",
     studquantity: "",
     nutquantity: "",
     size: "",
     id: "",
-    prefix: "",
   });
 
   const [selectedFile, setSelectedFile] = useState(null);
@@ -35,47 +33,23 @@ const MaterialIssueSlipForm = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log("start");
         const response = await axios.get(
-          `http://localhost:8000/api/materialissueslip/get-materialIssueSlipByID/${id}`
+          `http://localhost:8000/api/materialissueslip/materialIssueSlipHistory/${historyId}`
         );
-        const responseData = response.data;
-        console.log("responseData", responseData);
-
-        setMaterialIssueForm((prevState) => ({
-          ...prevState, // Spread previous state
-          materialSlipName: responseData.materialSlipName,
-          itemDescription: responseData.itemDescription,
-          materialGrade: responseData.materialGrade,
-          diameter: responseData.size.diameter
-            ? responseData.size.diameter.value
-            : "",
-          diameterDimension: responseData.size.diameter
-            ? responseData.size.diameter.dimension
-            : "",
-          thread: responseData.size.thread,
-          length: responseData.size.length
-            ? responseData.size.length.value
-            : "",
-          lengthDimension: responseData.size.length
-            ? responseData.size.length.dimension
-            : "",
-          quantityRequired: responseData.quantityRequired,
-          quantityIssued: responseData.quantityIssued,
-          studquantity: responseData.studquantity,
-          nutquantity: responseData.nutquantity,
-          size: responseData.size,
-          id: responseData._id,
-          prefix: responseData.prefix,
-        }));
+        console.log("response.data material", response.data);
+        console.log("response history material", response.data[0].previousData);
+        setMaterialIssueForm(response.data[0].previousData);
+        console.log("endt");
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
-    if (id) {
-      fetchData(); // Fetch data when id is available
+    if (historyId) {
+      fetchData(); // Fetch customer PO data when CustomerPO is available
     }
-  }, [id]);
+  }, [historyId]);
 
   const handleFileSelection = (e) => {
     const file = e.target.files[0];
@@ -92,147 +66,6 @@ const MaterialIssueSlipForm = () => {
     router.back();
   };
 
-  const saveFormData = async () => {
-    try {
-      const newCustomerPO = JSON.parse(
-        localStorage.getItem("selectedCustomerPO")
-      );
-      console.log("newCustomerPO in material", newCustomerPO);
-      const selectedItem = newCustomerPO.selectedItem;
-      console.log("selectedItem", selectedItem);
-      const response = await axios.put(
-        `http://localhost:8000/api/materialissueslip/update-materialIssueSlip/${id}`,
-        materialIssueForm
-      );
-      console.log("response in material", response.data);
-      const UpdatedMaterialIssueSlipData = response.data;
-      console.log("UpdatedMaterialIssueSlipData", UpdatedMaterialIssueSlipData);
-
-      localStorage.setItem(
-        "UpdatedMaterialIssueSlipData",
-        JSON.stringify(UpdatedMaterialIssueSlipData)
-      );
-
-      const LatestMaterialIssueSlipData = JSON.parse(
-        localStorage.getItem("UpdatedMaterialIssueSlipData")
-      );
-
-      const fetchProductionReportId = await axios.get(
-        `http://localhost:8000/api/productionReport/get-generatedProductionReportId/${UpdatedMaterialIssueSlipData.poNo}/${UpdatedMaterialIssueSlipData.prefix}`
-      );
-      console.log("fetchProductionReportId", fetchProductionReportId.data);
-      const productionReportId =
-        fetchProductionReportId.data.generatedProductionReportData
-          .generatedProductionReportId;
-      console.log("productionReportId", productionReportId);
-
-      const nutsCountMatch = selectedItem.match(/\d+nuts/);
-
-      let modifiedQuantity = newCustomerPO.quantity;
-      let customPoQuantity = newCustomerPO.quantity;
-
-      if (nutsCountMatch) {
-        const nutsCount = parseInt(nutsCountMatch[0].replace("nuts", ""));
-        if (!isNaN(nutsCount)) {
-          modifiedQuantity *= nutsCount; // Increment quantity based on the number of nuts
-        } else {
-          throw new Error("Invalid selectedItem format");
-        }
-      }
-
-      // Update or Create Production Report
-      // const productionReportId2 = "66406b92d772d81ea3a03e52";
-      const updateProductionReport = await axios.put(
-        `http://localhost:8000/api/productionReport/create-updateGenerateProductionReport/${productionReportId}`,
-        {
-          newCustomerPo: newCustomerPO,
-          UpdatedMaterialIssueSlipData: LatestMaterialIssueSlipData,
-          selectedItem: selectedItem,
-          modifiedQuantity: modifiedQuantity,
-          customPoQuantity: customPoQuantity,
-        }
-      );
-      console.log("updateProductionReport", updateProductionReport);
-      router.push("/production/material-issue-slip");
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  console.log("materialIssueForm in Form", materialIssueForm);
-
-  const handleCalculate = () => {
-    const {
-      diameter,
-      diameterDimension,
-      length,
-      lengthDimension,
-      studquantity,
-      nutquantity,
-      materialSlipName,
-    } = materialIssueForm;
-
-    // Convert diameter from inches to millimeters if dimension is "inch"
-    let diameterInMM = diameter;
-    if (diameterDimension === "inch") {
-      const parts = diameter.split("/");
-      if (parts.length === 2) {
-        const numerator = parseFloat(parts[0]);
-        const denominator = parseFloat(parts[1]);
-        const diameterInInch = numerator / denominator;
-        diameterInMM = diameterInInch * 25.4; // Convert inches to millimeters
-      }
-    }
-
-    // Convert length from inches to millimeters if dimension is "inch"
-    let lengthInMM = length;
-    if (lengthDimension === "inch") {
-      const parts = length.split("/");
-      if (parts.length === 2) {
-        const numerator = parseFloat(parts[0]);
-        const denominator = parseFloat(parts[1]);
-        const lengthInInch = numerator / denominator;
-        lengthInMM = lengthInInch * 25.4; // Convert inches to millimeters
-      }
-    }
-
-    let quantityToUse = null;
-    if (materialSlipName.startsWith("Nut") && nutquantity) {
-      quantityToUse = nutquantity; // Use nutquantity if materialSlipName starts with "Nut"
-    } else if (materialSlipName.startsWith("Stud") && studquantity) {
-      quantityToUse = studquantity; // Use studquantity if materialSlipName starts with "Stud"
-    }
-
-    if (diameterInMM && lengthInMM && quantityToUse) {
-      console.log("calculated data", {
-        diameterInMM,
-        lengthInMM,
-        quantityToUse,
-      });
-      // Perform the calculation
-      const calculatedSize =
-        (parseFloat(diameterInMM) *
-          parseFloat(diameterInMM) *
-          parseFloat(lengthInMM)) /
-        162000;
-      console.log("calculatedSize in material", calculatedSize);
-      // Multiply calculatedSize by quantityToUse
-      const totalSize = calculatedSize * quantityToUse;
-      console.log("totalSize", totalSize);
-      // Update the size value in the materialIssueForm state
-      setMaterialIssueForm((prevState) => ({
-        ...prevState,
-        size: totalSize.toFixed(3), // Update the size
-        quantityRequired: totalSize.toFixed(3), // Update the Quantity Required in KG
-        quantityIssued: totalSize.toFixed(3),
-      }));
-    } else {
-      // If any of the required fields are missing, reset the size to the default quantityRequired
-      setMaterialIssueForm((prevState) => ({
-        ...prevState,
-        size: prevState.quantityRequired, // Reset the size to default quantityRequired
-      }));
-    }
-  };
 
   const handleInputChange = (e, field) => {
     const value = e.target.value;
@@ -241,6 +74,8 @@ const MaterialIssueSlipForm = () => {
       [field]: value,
     }));
   };
+
+  console.log("materialIssueForm.materialSlipName", materialIssueForm)
 
   return (
     <Container>
@@ -334,7 +169,7 @@ const MaterialIssueSlipForm = () => {
               Diameter
             </span>
           </label>
-          {/* <label
+          <label
             htmlFor="diameterDimension"
             className="relative flex items-center cursor-pointer App"
           >
@@ -347,22 +182,7 @@ const MaterialIssueSlipForm = () => {
               <option value="inch">Inch</option>
               <option value="mm">MM</option>
             </select>
-          </label> */}
-
-          {/* Pitch */}
-          {/* <label className="relative cursor-pointer App">
-            <input
-              id="thread"
-              type="text"
-              value={materialIssueForm.thread}
-              onChange={(e) => handleInputChange(e, "thread")}
-              placeholder="Input"
-              className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
-            />
-            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              Pitch
-            </span>
-          </label> */}
+          </label>
           {/* Length */}
           <label className="relative cursor-pointer App">
             <input
@@ -377,7 +197,7 @@ const MaterialIssueSlipForm = () => {
               Length
             </span>
           </label>
-          {/* <label
+          <label
             htmlFor="lengthDimension"
             className="relative flex items-center cursor-pointer App"
           >
@@ -390,15 +210,15 @@ const MaterialIssueSlipForm = () => {
               <option value="inch">Inch</option>
               <option value="mm">MM</option>
             </select>
-          </label> */}
+          </label>
 
           {/* Calculate button */}
-          <button
+          {/* <button
             onClick={handleCalculate}
             className="flex items-center px-4 py-2 ml-2 text-black bg-gray-300 rounded"
           >
             Calculation
-          </button>
+          </button> */}
         </div>
 
         <div className="flex items-center my-4">
@@ -464,14 +284,7 @@ const MaterialIssueSlipForm = () => {
         </p>
         <hr className="my-4 border-t border-gray-300" />
         <div className="flex justify-end">
-          <button
-            onClick={saveFormData}
-            className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded"
-          >
-            Save
-            <FiSave className="ml-2" />
-          </button>
-          <PDFDownloadLink
+          {/* <PDFDownloadLink
             document={<MaterialIssueSlip data={materialIssueForm} />}
             fileName={`MaterialIssueSlip_${id}.pdf`}
           >
@@ -479,11 +292,15 @@ const MaterialIssueSlipForm = () => {
               Print
               <FiPrinter className="ml-2" />
             </button>
-          </PDFDownloadLink>
+        </PDFDownloadLink> */}
+          <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
+            Print
+            <FiPrinter className="ml-2" />
+          </button>
         </div>
       </div>
     </Container>
   );
 };
 
-export default MaterialIssueSlipForm;
+export default MaterialIssueSlipHistoryForm;

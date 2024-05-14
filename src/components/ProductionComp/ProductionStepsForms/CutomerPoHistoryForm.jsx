@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 import { FiArrowLeft, FiFile, FiPrinter, FiSave } from "react-icons/fi";
 import axios from "axios";
 
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 const CutomerPoHistoryForm = () => {
   const searchParams = useSearchParams();
 
@@ -42,7 +45,10 @@ const CutomerPoHistoryForm = () => {
         const response = await axios.get(
           `http://localhost:8000/api/customerPO/customerPOHistory/${poNo}/${historyId}`
         );
-
+        console.log(
+          "response in history",
+          response.data.historyRecord.previousData
+        );
         setCustomerPO(response.data.historyRecord.previousData); // Set the customer PO data in state
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -147,6 +153,10 @@ const CutomerPoHistoryForm = () => {
     }
   };
 
+  const handleOrderDateChange = (date) => {
+    setCustomerPO({ ...customerPO, orderDate: date });
+  };
+
   return (
     <Container>
       <div className="w-full p-8 mx-auto bg-white rounded shadow-md">
@@ -166,9 +176,9 @@ const CutomerPoHistoryForm = () => {
               id="poNo"
               type="text"
               value={customerPO.poNo}
-              onChange={(e) =>
-                setCustomerPO({ ...customerPO, poNo: e.target.value })
-              }
+              // onChange={(e) =>
+              //   setCustomerPO({ ...customerPO, poNo: e.target.value })
+              // }
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -185,9 +195,9 @@ const CutomerPoHistoryForm = () => {
               type="text"
               placeholder="Input"
               value={customerPO.customerName}
-              onChange={(e) =>
-                setCustomerPO({ ...customerPO, customerName: e.target.value })
-              }
+              // onChange={(e) =>
+              //   setCustomerPO({ ...customerPO, customerName: e.target.value })
+              // }
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
@@ -196,15 +206,15 @@ const CutomerPoHistoryForm = () => {
           </label>
         </div>
 
-        <div className="flex items-center my-4">
+        <div className="flex flex-col items-center gap-2 md:flex-row">
           <label className="relative cursor-pointer App">
             <input
               id="materialCode"
               type="text"
               value={customerPO.materialCode}
-              onChange={(e) =>
-                setCustomerPO({ ...customerPO, materialCode: e.target.value })
-              }
+              // onChange={(e) =>
+              //   setCustomerPO({ ...customerPO, materialCode: e.target.value })
+              // }
               placeholder="Input"
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -212,6 +222,26 @@ const CutomerPoHistoryForm = () => {
               Material Code
             </span>
           </label>
+          <select
+            id="selectedSurface"
+            value={customerPO.selectedSurface}
+            // onChange={(e) =>
+            //   setCustomerPO({
+            //     ...customerPO,
+            //     selectedSurface: e.target.value,
+            //   })
+            // }
+            className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
+          >
+            <option value="select">Surface Finish</option>
+            <option value="PhosphatingBlack">Phosphating(Black)</option>
+            <option value="ZincPlating">Zinc Plating</option>
+            <option value="ZincNickel">Zinc - Nickel</option>
+            <option value="XYLAN1070">Xylan 1070</option>
+            <option value="XYLAR1070">Xylar2 + Xylan 1070.</option>
+            {/* <option value="HDG">HotDip Galvanizing(HDG)</option>
+            <option value="PTFE">PTFE</option> */}
+          </select>
         </div>
 
         <div className="flex flex-col items-center gap-4 my-4 md:flex-row">
@@ -222,17 +252,17 @@ const CutomerPoHistoryForm = () => {
                 id="itemDescription"
                 type="text"
                 value={customerPO.studItemDescription}
-                onChange={(e) =>
-                  setCustomerPO({
-                    ...customerPO,
-                    studItemDescription: e.target.value,
-                  })
-                }
+                // onChange={(e) =>
+                //   setCustomerPO({
+                //     ...customerPO,
+                //     studItemDescription: e.target.value,
+                //   })
+                // }
                 placeholder="Input"
-                className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+                className="h-10 w-96 xl:w-[400px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
               />
               <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-                Item Description
+                Stud Description
               </span>
             </label>
           </div>
@@ -243,12 +273,12 @@ const CutomerPoHistoryForm = () => {
                 id="nutItemDescription2"
                 type="text"
                 value={customerPO.nutItemDescription}
-                onChange={(e) =>
-                  setCustomerPO({
-                    ...customerPO,
-                    nutItemDescription: e.target.value,
-                  })
-                }
+                // onChange={(e) =>
+                //   setCustomerPO({
+                //     ...customerPO,
+                //     nutItemDescription: e.target.value,
+                //   })
+                // }
                 placeholder="Input"
                 className="h-10 w-96 xl:w-[400px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
               />
@@ -259,12 +289,12 @@ const CutomerPoHistoryForm = () => {
             <select
               id="selectedItem"
               value={customerPO.selectedItem}
-              onChange={(e) =>
-                setCustomerPO({
-                  ...customerPO,
-                  selectedItem: e.target.value,
-                })
-              }
+              // onChange={(e) =>
+              //   setCustomerPO({
+              //     ...customerPO,
+              //     selectedItem: e.target.value,
+              //   })
+              // }
               className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
             >
               <option value="inch">stud</option>
@@ -277,18 +307,18 @@ const CutomerPoHistoryForm = () => {
           </div>
         </div>
 
-        <div className="flex flex-col items-center my-4 md:flex-row">
+        <div className="flex flex-col items-center gap-2 my-4 md:flex-row">
           {/* Stud Material Grade */}
           <label className="relative cursor-pointer App">
             <input
               id="studGrade"
               type="text"
               value={customerPO.studGrade}
-              onChange={(e) =>
-                setCustomerPO({ ...customerPO, studGrade: e.target.value })
-              }
+              // onChange={(e) =>
+              //   setCustomerPO({ ...customerPO, studGrade: e.target.value })
+              // }
               placeholder="Input"
-              className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+              className="h-10 w-96 xl:w-[400px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
               Stud Grade
@@ -301,11 +331,11 @@ const CutomerPoHistoryForm = () => {
               id="nutGrade"
               type="text"
               value={customerPO.nutGrade}
-              onChange={(e) =>
-                setCustomerPO({ ...customerPO, nutGrade: e.target.value })
-              }
+              // onChange={(e) =>
+              //   setCustomerPO({ ...customerPO, nutGrade: e.target.value })
+              // }
               placeholder="Input"
-              className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+              className="h-10 w-96 xl:w-[400px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
               Nut Grade
@@ -325,18 +355,18 @@ const CutomerPoHistoryForm = () => {
               type="text"
               // value={customerPO.size.diameter.value || customerPO.size.diameter}
               value={customerPO.POsize.diameter.value}
-              onChange={(e) =>
-                setCustomerPO({
-                  ...customerPO,
-                  POsize: {
-                    ...customerPO.POsize,
-                    diameter: {
-                      ...customerPO.POsize.diameter,
-                      value: e.target.value,
-                    },
-                  },
-                })
-              }
+              // onChange={(e) =>
+              //   setCustomerPO({
+              //     ...customerPO,
+              //     POsize: {
+              //       ...customerPO.POsize,
+              //       diameter: {
+              //         ...customerPO.POsize.diameter,
+              //         value: e.target.value,
+              //       },
+              //     },
+              //   })
+              // }
               placeholder="Input"
               className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -352,18 +382,18 @@ const CutomerPoHistoryForm = () => {
             <select
               id="diameterUnit"
               value={customerPO.POsize.diameter.dimension}
-              onChange={(e) =>
-                setCustomerPO({
-                  ...customerPO,
-                  POsize: {
-                    ...customerPO.POsize,
-                    diameter: {
-                      ...customerPO.POsize.diameter,
-                      dimension: e.target.value,
-                    },
-                  },
-                })
-              }
+              // onChange={(e) =>
+              //   setCustomerPO({
+              //     ...customerPO,
+              //     POsize: {
+              //       ...customerPO.POsize,
+              //       diameter: {
+              //         ...customerPO.POsize.diameter,
+              //         dimension: e.target.value,
+              //       },
+              //     },
+              //   })
+              // }
               className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
             >
               <option value="inch">Inch</option>
@@ -376,12 +406,12 @@ const CutomerPoHistoryForm = () => {
               id="sizeFirstPart"
               type="text"
               value={customerPO.POsize.thread}
-              onChange={(e) =>
-                setCustomerPO({
-                  ...customerPO,
-                  POsize: { ...customerPO.POsize, thread: e.target.value },
-                })
-              }
+              // onChange={(e) =>
+              //   setCustomerPO({
+              //     ...customerPO,
+              //     POsize: { ...customerPO.POsize, thread: e.target.value },
+              //   })
+              // }
               placeholder="Input"
               className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -395,18 +425,18 @@ const CutomerPoHistoryForm = () => {
               id="sizeFirstPart"
               type="text"
               value={customerPO.POsize.length.value}
-              onChange={(e) =>
-                setCustomerPO({
-                  ...customerPO,
-                  POsize: {
-                    ...customerPO.POsize,
-                    length: {
-                      ...customerPO.POsize.length,
-                      value: e.target.value,
-                    },
-                  },
-                })
-              }
+              // onChange={(e) =>
+              //   setCustomerPO({
+              //     ...customerPO,
+              //     POsize: {
+              //       ...customerPO.POsize,
+              //       length: {
+              //         ...customerPO.POsize.length,
+              //         value: e.target.value,
+              //       },
+              //     },
+              //   })
+              // }
               placeholder="Input"
               className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -422,18 +452,18 @@ const CutomerPoHistoryForm = () => {
             <select
               id="lengthUnit"
               value={customerPO.POsize.length.dimension}
-              onChange={(e) =>
-                setCustomerPO({
-                  ...customerPO,
-                  POsize: {
-                    ...customerPO.POsize,
-                    length: {
-                      ...customerPO.POsize.length,
-                      dimension: e.target.value,
-                    },
-                  },
-                })
-              }
+              // onChange={(e) =>
+              //   setCustomerPO({
+              //     ...customerPO,
+              //     POsize: {
+              //       ...customerPO.POsize,
+              //       length: {
+              //         ...customerPO.POsize.length,
+              //         dimension: e.target.value,
+              //       },
+              //     },
+              //   })
+              // }
               className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
             >
               <option value="inch">Inch</option>
@@ -461,18 +491,18 @@ const CutomerPoHistoryForm = () => {
               type="text"
               // value={customerPO.size.diameter.value || customerPO.size.diameter}
               value={customerPO.Cuttingsize.cuttingdiameter.value}
-              onChange={(e) =>
-                setCustomerPO({
-                  ...customerPO,
-                  Cuttingsize: {
-                    ...customerPO.Cuttingsize,
-                    diameter: {
-                      ...customerPO.Cuttingsize.cuttingdiameter,
-                      value: e.target.value,
-                    },
-                  },
-                })
-              }
+              // onChange={(e) =>
+              //   setCustomerPO({
+              //     ...customerPO,
+              //     Cuttingsize: {
+              //       ...customerPO.Cuttingsize,
+              //       diameter: {
+              //         ...customerPO.Cuttingsize.cuttingdiameter,
+              //         value: e.target.value,
+              //       },
+              //     },
+              //   })
+              // }
               placeholder="Input"
               className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -485,19 +515,19 @@ const CutomerPoHistoryForm = () => {
           <input
             id="cuttingthread"
             type="text"
-            value={customerPO.Cuttingsize.cuttingthread.value}
-            onChange={(e) =>
-              setCustomerPO({
-                ...customerPO,
-                Cuttingsize: {
-                  ...customerPO.Cuttingsize,
-                  cuttingthread: {
-                    ...customerPO.Cuttingsize.cuttingthread,
-                    value: e.target.value,
-                  },
-                },
-              })
-            }
+            value={customerPO.Cuttingsize.cuttingthread}
+            // onChange={(e) =>
+            //   setCustomerPO({
+            //     ...customerPO,
+            //     Cuttingsize: {
+            //       ...customerPO.Cuttingsize,
+            //       cuttingthread: {
+            //         ...customerPO.Cuttingsize.cuttingthread,
+            //         value: e.target.value,
+            //       },
+            //     },
+            //   })
+            // }
             placeholder="Input"
             className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
           />
@@ -508,18 +538,18 @@ const CutomerPoHistoryForm = () => {
               id="cuttinglength"
               type="text"
               value={customerPO.Cuttingsize.cuttinglength.value}
-              onChange={(e) =>
-                setCustomerPO({
-                  ...customerPO,
-                  Cuttingsize: {
-                    ...customerPO.Cuttingsize,
-                    length: {
-                      ...customerPO.Cuttingsize.cuttinglength,
-                      value: e.target.value,
-                    },
-                  },
-                })
-              }
+              // onChange={(e) =>
+              //   setCustomerPO({
+              //     ...customerPO,
+              //     Cuttingsize: {
+              //       ...customerPO.Cuttingsize,
+              //       length: {
+              //         ...customerPO.Cuttingsize.cuttinglength,
+              //         value: e.target.value,
+              //       },
+              //     },
+              //   })
+              // }
               placeholder="Input"
               className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
@@ -535,9 +565,9 @@ const CutomerPoHistoryForm = () => {
               type="text"
               placeholder="Input"
               value={customerPO.quantity}
-              onChange={(e) =>
-                setCustomerPO({ ...customerPO, quantity: e.target.value })
-              }
+              // onChange={(e) =>
+              //   setCustomerPO({ ...customerPO, quantity: e.target.value })
+              // }
               className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
@@ -546,24 +576,18 @@ const CutomerPoHistoryForm = () => {
           </label>
         </div>
 
-        <div className="flex items-center my-4">
-          <label className="relative cursor-pointer App">
-            <input
-              type="text"
-              placeholder="Input"
-              value={new Date(customerPO.createdAt).toLocaleString(undefined, {
-                dateStyle: "long",
-                timeStyle: "medium",
-              })}
-              onChange={(e) =>
-                setCustomerPO({ ...customerPO, quantity: e.target.value })
-              }
-              className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
-            />
-            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              createdAt
-            </span>
+        {/* Order Date */}
+        <div className="flex items-center mb-4">
+          <label htmlFor="deliveryDate" className="w-auto mr-2 text-[16px]">
+            Order Date:
           </label>
+
+          <DatePicker
+            selected={customerPO.orderDate}
+            // onChange={handleOrderDateChange}
+            dateFormat="dd/MM/yyyy"
+            className="w-full px-3 py-2 border border-gray-300 rounded"
+          />
         </div>
 
         <div className="flex items-center">
@@ -575,7 +599,7 @@ const CutomerPoHistoryForm = () => {
             id="attachment"
             className="hidden"
             accept=".pdf"
-            onChange={handleFileSelection}
+            // onChange={handleFileSelection}
           />
           <button
             onClick={() => document.getElementById("attachment").click()}

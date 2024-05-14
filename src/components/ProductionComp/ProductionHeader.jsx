@@ -24,8 +24,8 @@ const ProductionHeader = () => {
       text: "Production Report",
     },
     {
-      href: "/production/in-process-dimension-report",
-      text: "In-Process Dimension Report",
+      href: "/production/dimension-report",
+      text: "Dimension Report",
     },
   ];
 
@@ -34,7 +34,7 @@ const ProductionHeader = () => {
   };
 
   return (
-    <div className="py-2 bg-white mx-4">
+    <div className="py-2 mx-4 bg-white">
       <div className="flex items-center justify-start mx-4 ">
         {links.map((link, index) => (
           <Link

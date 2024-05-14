@@ -88,7 +88,7 @@ const RoutingSheetForm = () => {
       minWidth: 50,
       maxWidth: 80,
     },
-    { headerName: "Date", field: "date", editable: true },
+    // { headerName: "Date", field: "date", editable: true },
     {
       headerName: "Operator Name/Supplier",
       field: "operatorName",

@@ -4,6 +4,8 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiArrowLeft, FiFile, FiPrinter, FiSave } from "react-icons/fi";
 import axios from "axios";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const EditCustomerForm = () => {
   const searchParams = useSearchParams();
@@ -33,6 +35,7 @@ const EditCustomerForm = () => {
       cuttinglength: { value: "" },
     },
     quantity: "",
+    orderDate: "",
   });
   const [selectedFile, setSelectedFile] = useState(null);
   console.log("customerPO: ", customerPO);
@@ -76,12 +79,14 @@ const EditCustomerForm = () => {
         `http://localhost:8000/api/customerPO/update/${poNo}`,
         customerPO // Send the updated customer PO data
       );
-      console.log("response ", response);
+      console.log("response cutting data ", response.data.updatedCustomerPO);
+      const updatedNewCustomerPo = response.data.updatedCustomerPO;
+      console.log("updatedNewCustomerPo", updatedNewCustomerPo);
+
+      localStorage.setItem("updatedNewCustomerPo", updatedNewCustomerPo);
       router.push("/production");
-      // Optionally, you can handle success response here
     } catch (error) {
       console.log(error);
-      // Optionally, you can handle error here
     }
   };
 
@@ -163,6 +168,10 @@ const EditCustomerForm = () => {
     }
   };
 
+  const handleOrderDateChange = (date) => {
+    setCustomerPO({ ...customerPO, orderDate: date });
+  };
+
   return (
     <Container>
       <div className="w-full p-8 mx-auto bg-white rounded shadow-md">
@@ -232,12 +241,12 @@ const EditCustomerForm = () => {
           <select
             id="selectedSurface"
             value={customerPO.selectedSurface}
-            onChange={(e) => setCustomerPO(
-              {
+            onChange={(e) =>
+              setCustomerPO({
                 ...customerPO,
-                selectedSurface: e.target.value
-              }
-            )}
+                selectedSurface: e.target.value,
+              })
+            }
             className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
           >
             <option value="select">Surface Finish</option>
@@ -248,7 +257,6 @@ const EditCustomerForm = () => {
             <option value="XYLAR1070">Xylar2 + Xylan 1070.</option>
             {/* <option value="HDG">HotDip Galvanizing(HDG)</option>
             <option value="PTFE">PTFE</option> */}
-
           </select>
         </div>
 
@@ -582,6 +590,20 @@ const EditCustomerForm = () => {
               Quantity
             </span>
           </label>
+        </div>
+
+        {/* Order Date */}
+        <div className="flex items-center mb-4">
+          <label htmlFor="deliveryDate" className="w-auto mr-2 text-[16px]">
+            Order Date:
+          </label>
+
+          <DatePicker
+            selected={customerPO.orderDate}
+            onChange={handleOrderDateChange}
+            dateFormat="dd/MM/yyyy"
+            className="w-full px-3 py-2 border border-gray-300 rounded"
+          />
         </div>
 
         <div className="flex items-center">

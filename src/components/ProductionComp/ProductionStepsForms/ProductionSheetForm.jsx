@@ -48,7 +48,13 @@ const ProductionSheetForm = () => {
       if (selectedCustomerPOData.size) {
         const { diameter, length, thread } = selectedCustomerPOData.size;
         setProductAndCustomer(
-          `Size: ${diameter?.value || ''} ${diameter?.dimension || ''}, Length: ${length?.value || ''} ${length?.dimension || ''}, Thread: ${thread || ''}, Quantity: ${selectedCustomerPOData.quantity}` || ""
+          `Size: ${diameter?.value || ""} ${
+            diameter?.dimension || ""
+          }, Length: ${length?.value || ""} ${
+            length?.dimension || ""
+          }, Thread: ${thread || ""}, Quantity: ${
+            selectedCustomerPOData.quantity
+          }` || ""
         );
         setPlanningQuantity(selectedCustomerPOData.quantity || "");
         setAchievementQuantity(selectedCustomerPOData.quantity || "");
@@ -271,7 +277,7 @@ const ProductionSheetForm = () => {
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
                 <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-                  Product and Customer
+                  Product and Customer-specified-requirements
                 </span>
               </label>
               <button
@@ -562,10 +568,7 @@ const ProductionSheetForm = () => {
                 />
               </div>
               <div className="flex items-center mb-4">
-                <label
-                  htmlFor="deliveryDate"
-                  className="w-32 mr-2 text-[16px]"
-                >
+                <label htmlFor="deliveryDate" className="w-32 mr-2 text-[16px]">
                   Date:
                 </label>
                 <input

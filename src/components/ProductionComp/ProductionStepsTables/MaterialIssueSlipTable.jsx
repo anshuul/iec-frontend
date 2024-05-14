@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { BsInfoCircle } from "react-icons/bs";
 import { IoSearch } from "react-icons/io5";
+import HistoryTablePopup from "@/components/HomeComp/HistoryTablePopup";
 
 const MaterialIssueSlipTable = ({ productionStep }) => {
   console.log("productionStep", productionStep);
@@ -62,7 +63,6 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
           };
         });
 
-
         setRowData(formattedData);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -84,35 +84,56 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
     );
   };
 
-  const handleHistoryClick = async (poNo) => {
-    console.log("objectpono", poNo)
+  const handleHistoryClick = async (_id) => {
+    console.log("objectpono", _id);
     try {
       setLoading(true);
+      // const response = await axios.get(
+      //   `http://localhost:8000/api/materialissueslip/materialIssueSlipHistory/${poNo}`
+      // );
       const response = await axios.get(
-        `http://localhost:8000/api/materialissueslip/materialIssueSlipHistory/${poNo}`
+        `http://localhost:8000/api/materialissueslip/materialIssueSlipHistory2/${_id}`
       );
-      const historyData = response.data.historyRecords.map((record, index) => ({
-        srNo: index + 1,
-        CustomerPO: record.poNo,
-        CustomerName: record.previousData.customerName,
-        PONumber: record.previousData.poNo,
-        MaterialSlipName: record.previousData.materialSlipName,
-        ItemDescription: record.previousData.itemDescription,
-        MaterialGrade: record.previousData.materialGrade,
-        Size: record.previousData.size,
-        QuantityRequired: record.previousData.quantityRequired,
-        QuantityIssued: record.previousData.quantityIssued,
-        CreatedAt: new Date(record.previousData.createdAt).toLocaleString(
-          undefined,
-          { dateStyle: "long", timeStyle: "medium" }
-        ), // Convert to pretty format
-        UpdatedAt: new Date(record.previousData.updatedAt).toLocaleString(
-          undefined,
-          { dateStyle: "long", timeStyle: "medium" }
-        ), // Convert to pretty format
-        historyId: record._id,
-      }));
-      console.log("historyData", historyData)
+      console.log("Response data material:", response.data);
+      console.log(
+        "response.data.historyRecords:",
+        response.data.historyRecords
+      );
+
+      const historyData = response.data.historyRecords.map((record, index) => {
+        let revisionSize = "N/A";
+        if (record.previousData.size) {
+          revisionSize = `${record.previousData.size.diameter.value}x${record.previousData.size.length.value}`;
+        }
+        return {
+          srNo: index + 1,
+          CustomerPO: record.poNo,
+          CustomerName: record.previousData.customerName,
+          PONumber: record.previousData.poNo,
+          MaterialSlipName: record.previousData.materialSlipName,
+          ItemDescription: record.previousData.itemDescription,
+          MaterialGrade: record.previousData.materialGrade,
+          Size: revisionSize,
+          QuantityRequired: record.previousData.quantityRequired,
+          QuantityIssued: record.previousData.quantityIssued,
+          CreatedAt: new Date(record.previousData.createdAt).toLocaleString(
+            undefined,
+            {
+              dateStyle: "long",
+              timeStyle: "medium",
+            }
+          ), // Convert to pretty format
+          UpdatedAt: new Date(record.previousData.updatedAt).toLocaleString(
+            undefined,
+            {
+              dateStyle: "long",
+              timeStyle: "medium",
+            }
+          ), // Convert to pretty format
+          historyId: record.previousData.id,
+        };
+      });
+      console.log("historyData", historyData);
       setHistoryRowData(historyData);
       setShowHistoryTable(true);
       setLoading(false);
@@ -120,7 +141,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
       console.error("Error fetching history data:", error);
       setLoading(false);
     }
-  }
+  };
 
   const handleDeleteClick = async (data) => {
     try {
@@ -134,10 +155,17 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
       console.error("Error deleting data:", error);
       setLoading(false);
     }
-  }
+  };
+
+  // Function to close the history modal
+  const closeModal = () => {
+    setShowHistoryTable(false);
+  };
 
   const CustomButtonComponent = (props) => {
     const data = props.data;
+    console.log("data material2", data);
+    console.log("data.PONumber material", data.PONumber);
 
     console.log("MaterialData", data);
     return (
@@ -156,7 +184,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
         </button>
         {/* History Button */}
         <button
-          onClick={() => handleHistoryClick(data.PONumber)}
+          onClick={() => handleHistoryClick(data._id)}
           className="p-2 text-red-600 bg-yellow-200 rounded-lg"
         >
           <BsInfoCircle />
@@ -165,16 +193,23 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
     );
   };
 
+  const handleViewClick = (historyId) => {
+    router.push(
+      `/production/material-issue-slip/materialissueslip-history?historyId=${historyId}`
+    );
+    // router.push(`/production/productionForm/view`);
+  };
+
   const HistoryButton = (props) => {
     const data = props.data;
-    console.log("HistoryButton", data);
+    console.log("history data", data);
     return (
       <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
         {/* View Button */}
         <button
-          // onClick={() => {
-          //   handleViewClick(data.CustomerPO, data.historyId);
-          // }}
+          onClick={() => {
+            handleViewClick(data.historyId);
+          }}
           className="p-2 text-red-600 bg-yellow-200 rounded-lg"
         >
           <IoSearch />
@@ -185,6 +220,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
 
   const columnDefs = [
     { headerName: "Sr No", field: "srNo", maxWidth: 80 },
+    { headerName: "Action", cellRenderer: CustomButtonComponent },
     { headerName: "PO Number", field: "PONumber" },
     { headerName: "MaterialSlip Name", field: "MaterialSlipName" },
     { headerName: "Item Desc", field: "ItemDesc" },
@@ -193,11 +229,10 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
     { headerName: "Quantity Required", field: "QuantityRequired" },
     { headerName: "Quantity Issued", field: "QuantityIssued" },
     { headerName: "Remarks", field: "Remarks" },
-    { headerName: "Action", cellRenderer: CustomButtonComponent },
   ];
 
   const HistoryColumnDefs = [
-    { headerName: "Sr No", field: "srNo", maxWidth: 80 },
+    { headerName: "Sr No", field: "srNo", maxWidth: 80, sort: "desc" },
     { headerName: "PO Number", field: "PONumber" },
     { headerName: "MaterialSlip Name", field: "MaterialSlipName" },
     { headerName: "Item Desc", field: "ItemDesc" },
@@ -211,12 +246,12 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
       cellRenderer: HistoryButton,
       minWidth: 150,
       maxWidth: 200,
-    }
+    },
   ];
 
   return (
     // <div className="flex flex-col items-center justify-center">
-    <div className="flex flex-col h-screen mx-4 bg-white">
+    <div className="flex flex-col h-[85VH] mx-4 bg-white">
       {/* Button positioned at the top right corner */}
       <button
         className="self-end px-4 py-2 m-4 bg-gray-400 rounded-lg"
@@ -224,28 +259,22 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
       >
         Create
       </button>
-      <div className="ag-theme-alpine px-4 w-full h-[45vh]">
+      <div className="ag-theme-alpine px-4 w-full h-[75vh]">
         <AgGridReact
           columnDefs={columnDefs}
           rowData={rowData}
           pagination={true}
-          paginationPageSize={10}
+          paginationPageSize={15}
         />
       </div>
-      {showHistoryTable ? (
-        <>
-          <hr className="mx-4 mt-12 mb-6 border-t border-gray-300" />
-          <div className="ag-theme-alpine px-4 w-full h-[30vh]">
-            <p className="mb-2 text-xl font-bold text-start">History</p>
-            <AgGridReact
-              columnDefs={HistoryColumnDefs}
-              rowData={historyRowData}
-              pagination={true}
-              paginationPageSize={10}
-            />
-          </div>
-        </>
-      ) : null}
+
+      {showHistoryTable && (
+        <HistoryTablePopup
+          HistoryColumnDefs={HistoryColumnDefs}
+          historyRowData={historyRowData}
+          closeModal={closeModal}
+        />
+      )}
     </div>
   );
 };

@@ -8,6 +8,9 @@ import { TiPlus } from "react-icons/ti";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import RoutingSheetNut from "@/components/PDF/RoutingSheet/RoutingSheetNut";
+import RoutingSheetStud from "@/components/PDF/RoutingSheet/RoutingSheetStud";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 
 const RoutingSheetFormUpdate = () => {
   const router = useRouter();
@@ -53,12 +56,60 @@ const RoutingSheetFormUpdate = () => {
               productionReportSliceDataForRouting.productionReports[0]
                 ?.processRows[index]?.endTime || "";
           } else if (row.routingSheetNo.startsWith("Nut")) {
+            // startTime =
+            //   productionReportSliceDataForRouting.productionReports[1]
+            //     ?.processRows[index]?.startTime || productionReports[0]
+            //     ?.processRows[index]?.startTime;
+            // endTime =
+            //   productionReportSliceDataForRouting.productionReports[1]
+            //     ?.processRows[index]?.endTime || productionReports[0]
+            //     ?.processRows[index]?.endTime;
             startTime =
-              productionReportSliceDataForRouting.productionReports[1]
+              productionReportSliceDataForRouting.productionReports[0]
                 ?.processRows[index]?.startTime || "";
             endTime =
-              productionReportSliceDataForRouting.productionReports[1]
+              productionReportSliceDataForRouting.productionReports[0]
                 ?.processRows[index]?.endTime || "";
+          }
+
+          let operatorName = "";
+          let processDescription = "";
+          let procedureNo = "";
+          let orderQty = "";
+          let processQty = "";
+          // Check if routingSheetNo starts with "Stud" or "Nut"
+          if (row.routingSheetNo.startsWith("Stud")) {
+            operatorName =
+              productionReportSliceDataForRouting.productionReports[0]
+                ?.processRows[index]?.operatorName || "";
+            processDescription =
+              productionReportSliceDataForRouting.productionReports[0]
+                ?.processRows[index]?.jobDescription || "";
+            procedureNo =
+              productionReportSliceDataForRouting.productionReports[0]
+                ?.processRows[index]?.procedures || "";
+            orderQty =
+              productionReportSliceDataForRouting.productionReports[0]
+                ?.processRows[index]?.orderQty || "";
+            processQty =
+              productionReportSliceDataForRouting.productionReports[0]
+                ?.processRows[index]?.processQty || "";
+          } else if (row.routingSheetNo.startsWith("Nut")) {
+            operatorName =
+              productionReportSliceDataForRouting.productionReports[0]
+                ?.processRows[index]?.operatorName || "";
+            processDescription =
+              productionReportSliceDataForRouting.productionReports[0]
+                ?.processRows[index]?.jobDescription || "";
+            procedureNo =
+              productionReportSliceDataForRouting.productionReports[0]
+                ?.processRows[index]?.procedures || "";
+            orderQty =
+              productionReportSliceDataForRouting.productionReports[0]
+                ?.processRows[index]?.orderQty || "";
+            processQty =
+              productionReportSliceDataForRouting.productionReports[0]
+                ?.processRows[index]?.processQty || "";
           }
 
           return {
@@ -66,6 +117,11 @@ const RoutingSheetFormUpdate = () => {
             srNo: index + 1,
             startTime,
             endTime,
+            operatorName,
+            processDescription,
+            procedureNo,
+            orderQty,
+            processQty,
             processRowNumber: index + 1,
           };
         });
@@ -101,21 +157,30 @@ const RoutingSheetFormUpdate = () => {
   };
 
   const columnDefs = [
-    { headerName: "Sr No", field: "processRowNumber" },
-    { headerName: "Date", field: "date", editable: true },
+    {
+      headerName: "Sr No",
+      field: "processRowNumber",
+      editable: false,
+      minWidth: 50,
+      maxWidth: 80,
+      pinned: "left",
+    },
+    // { headerName: "Date", field: "date", editable: true },
     {
       headerName: "Operator Name/Supplier",
       field: "operatorName",
       editable: true,
-    },
-    {
-      headerName: "Machine No/Instrument No",
-      field: "machineNo",
-      editable: true,
+      pinned: "left",
     },
     {
       headerName: "PROCESS DESCRIPTION",
       field: "processDescription",
+      editable: true,
+      pinned: "left",
+    },
+    {
+      headerName: "Machine No/Instrument No",
+      field: "machineNo",
       editable: true,
     },
     {
@@ -130,7 +195,7 @@ const RoutingSheetFormUpdate = () => {
     { headerName: "OPT SIGN", field: "optSign", editable: true },
     { headerName: "REMARKS", field: "remarks", editable: true },
   ];
-
+  console.log("PDF Row Data", rowData)
   return (
     <div className="flex flex-col mx-4 bg-white">
       <button
@@ -152,7 +217,7 @@ const RoutingSheetFormUpdate = () => {
           columnDefs={columnDefs}
           rowData={rowData}
           pagination={true}
-          paginationPageSize={15}
+          paginationPageSize={20}
         />
       </div>
       <hr className="my-4 border-t border-gray-300" />
@@ -161,10 +226,24 @@ const RoutingSheetFormUpdate = () => {
           Save
           <FiSave className="ml-2" />
         </button>
-        <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
-          Print
-          <FiPrinter className="ml-2" />
-        </button>
+        <PDFDownloadLink
+          document={
+            <RoutingSheetStud
+              data={rowData}
+            />
+          }
+          fileName={`RoutingSheet_${id}.pdf`}
+        >
+          <button
+            className="flex items-center px-4 py-2 text-black bg-gray-300 rounded"
+            onClick={() =>
+              console.log(rowData)
+            }
+          >
+            Print
+            <FiPrinter className="ml-2" />
+          </button>
+        </PDFDownloadLink>
       </div>
     </div>
   );

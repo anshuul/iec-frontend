@@ -13,10 +13,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { setCustomerPOData } from "@/slice/customerPOSlice";
 import { setRoutingSheetData } from "@/slice/routingSheetSlice";
 import { setProductionReportData } from "@/slice/productionReportSlice";
+import HistoryTablePopup from "./HistoryTablePopup";
 
 const ProductionTable = () => {
   const dispatch = useDispatch();
   const router = useRouter();
+  const [filteredRowData, setFilteredRowData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [rowData, setRowData] = useState([]);
   const [historyRowData, setHistoryRowData] = useState([]);
   const [showHistoryTable, setShowHistoryTable] = useState(false);
@@ -63,6 +66,7 @@ const ProductionTable = () => {
             })
           );
           setRowData(formattedData);
+          setFilteredRowData(formattedData);
           router.push("/production");
         } catch (error) {
           console.error("Error fetching data:", error);
@@ -138,27 +142,41 @@ const ProductionTable = () => {
     }
   };
 
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value); // Normalize search term
+    const filteredData = rowData.filter((row) =>
+      row.CustomerPO.includes(searchTerm)
+    );
+    setFilteredRowData(filteredData);
+  };
+
+  // Function to close the history modal
+  const closeModal = () => {
+    setShowHistoryTable(false);
+  };
+
   const CustomButtonComponent = (props) => {
     const data = props.data;
+    console.log("data.CustomerPO", data.CustomerPO);
     return (
-      <div className="ag-theme-alpine flex flex-row gap-2 items-center pt-1">
+      <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
         <button
           onClick={() => handleEditClick(data.CustomerPO)}
-          className="p-2 bg-green-200 rounded-lg text-green-600"
+          className="p-2 text-green-600 bg-green-200 rounded-lg"
         >
           <MdModeEdit />
         </button>
         {/* Delete Button */}
         <button
           onClick={() => handleDeleteClick(data)}
-          className="p-2 bg-red-200 rounded-lg text-red-600"
+          className="p-2 text-red-600 bg-red-200 rounded-lg"
         >
           <RiDeleteBin5Line />
         </button>
         {/* History Button */}
         <button
           onClick={() => handleHistoryClick(data.CustomerPO)}
-          className="p-2 bg-yellow-200 rounded-lg text-red-600"
+          className="p-2 text-red-600 bg-yellow-200 rounded-lg"
         >
           <BsInfoCircle />
         </button>
@@ -170,20 +188,19 @@ const ProductionTable = () => {
     router.push(
       `/production/productionForm/view?CustomerPO=${CustomerPO}&historyId=${historyId}`
     );
-    // router.push(`/production/productionForm/view`);
   };
 
   const HistoryButton = (props) => {
     const data = props.data;
     console.log("HistoryButton", data);
     return (
-      <div className="ag-theme-alpine flex flex-row gap-2 items-center pt-1">
+      <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
         {/* View Button */}
         <button
           onClick={() => {
             handleViewClick(data.CustomerPO, data.historyId);
           }}
-          className="p-2 bg-yellow-200 rounded-lg text-red-600"
+          className="p-2 text-red-600 bg-yellow-200 rounded-lg"
         >
           <IoSearch />
         </button>
@@ -192,14 +209,25 @@ const ProductionTable = () => {
   };
 
   const columnDefs = [
-    { headerName: "Sr No", field: "srNo", minWidth: 50, maxWidth: 80 },
-    { headerName: "Customer PO", field: "CustomerPO", flex: 1 },
-    { headerName: "Customer Name", field: "CustomerName", flex: 1 },
+    {
+      headerName: "Sr No",
+      field: "srNo",
+      minWidth: 50,
+      maxWidth: 80,
+      sort: "desc",
+    },
     {
       headerName: "Action",
       cellRenderer: CustomButtonComponent,
       minWidth: 150,
       maxWidth: 200,
+    },
+    { headerName: "Customer PO", field: "CustomerPO", flex: 1, sort: "desc" },
+    {
+      headerName: "Customer Name",
+      field: "CustomerName",
+      flex: 1,
+      sort: "desc",
     },
   ];
 
@@ -277,7 +305,7 @@ const ProductionTable = () => {
                     id,
                     reportResponse
                   );
-                  dispatch(setProductionReportData(reportResponse.data)); 
+                  dispatch(setProductionReportData(reportResponse.data));
                   return reportResponse;
                 } else {
                   console.log("Invalid routing sheet data:", routingSheet);
@@ -302,47 +330,55 @@ const ProductionTable = () => {
   }, [customerPODataForRouting]);
 
   return (
-    <div className="flex flex-col mx-4 h-screen bg-white">
+    <div className="flex flex-col h-[85vh] mx-4 bg-white">
+      {/* <div className="flex items-center mb-4 justify-between">
+        <input
+          type="text"
+          placeholder="Search by PO Number"
+          className="px-4 py-2 mr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
+
+        <button
+          className="self-end px-4 py-2 m-4 bg-gray-400 rounded-lg"
+          onClick={handleClick}
+        >
+          Create
+        </button>
+      </div> */}
+
       <button
-        className="self-end m-4 bg-gray-400 px-4 py-2 rounded-lg"
+        className="self-end px-4 py-2 m-4 bg-gray-400 rounded-lg"
         onClick={handleClick}
       >
         Create
       </button>
 
-      <div className="ag-theme-alpine px-4 w-full h-[45vh]">
+      <div className="ag-theme-alpine px-4 w-full h-[75vh]">
         <AgGridReact
           columnDefs={columnDefs}
+          // rowData={filteredRowData}
           rowData={rowData}
           pagination={true}
-          paginationPageSize={10}
+          paginationPageSize={15}
           loadingOverlayComponent={"Loading"}
           overlayLoadingTemplate={
             '<span class="ag-overlay-loading-center">Please wait while loading...</span>'
           }
-          onGridReady={(params) => (gridApiRef.current = params.api)} // Assign gridApi to ref
+          onGridReady={(params) => (gridApiRef.current = params.api)}
           onSelectionChanged={onSelectionChanged}
           rowSelection="single"
         />
       </div>
-      {showHistoryTable ? (
-        <>
-          <hr className="mt-12 mb-6 mx-4 border-t border-gray-300" />
-          <div className="ag-theme-alpine px-4 w-full h-[30vh]">
-            <p className="text-start font-bold text-xl mb-2">History</p>
-            <AgGridReact
-              columnDefs={HistoryColumnDefs}
-              rowData={historyRowData}
-              pagination={true}
-              paginationPageSize={10}
-              loadingOverlayComponent={"Loading"}
-              overlayLoadingTemplate={
-                '<span class="ag-overlay-loading-center">Please wait while loading...</span>'
-              }
-            />
-          </div>
-        </>
-      ) : null}
+
+      {showHistoryTable && (
+        <HistoryTablePopup
+          HistoryColumnDefs={HistoryColumnDefs}
+          historyRowData={historyRowData}
+          closeModal={closeModal}
+        />
+      )}
     </div>
   );
 };

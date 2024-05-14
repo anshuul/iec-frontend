@@ -9,6 +9,8 @@ import ProductionForm from "@/components/ProductionComp/ProductionStepsForms/pro
 import ProductionSheetFormUpdate from "@/components/ProductionComp/productionFormUpdate/ProductionSheetFormUpdate";
 import MaterialIssueSlipForm from "@/components/ProductionComp/productionFormUpdate/MaterialIssueSlipForm";
 import RoutingSheetFormUpdate from "@/components/ProductionComp/productionFormUpdate/RoutingSheetFormUpdate";
+import ProductionPlanningHistoryForm from "@/components/ProductionComp/RevisionHistoryForms/ProductionPlanningHistoryForm";
+import MaterialIssueSlipHistoryForm from "@/components/ProductionComp/RevisionHistoryForms/MaterialIssueSlipHistoryForm";
 
 const productionForm = ({ params }) => {
   const { productionForm } = params;
@@ -26,6 +28,12 @@ const productionForm = ({ params }) => {
       )}
       {productionForm === "view" && (
         <CutomerPoHistoryForm productionForm={productionForm} />
+      )}
+      {productionForm === "planningSheet-history" && (
+        <ProductionPlanningHistoryForm productionForm={productionForm} />
+      )}
+      {productionForm === "materialissueslip-history" && (
+        <MaterialIssueSlipHistoryForm productionForm={productionForm} />
       )}
       {productionForm === "update" && (
         <EditCustomerForm productionForm={productionForm} />
