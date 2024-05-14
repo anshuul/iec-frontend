@@ -439,7 +439,7 @@ const RoutingSheetStud = ({ data }) => {
             startDate={tableData.routingSheet.processRows[0].startTime}
             endDate={tableData.routingSheet.processRows[0].endTime}
           /> */}
-          {data?.processRows.map((ele, i) => (
+          {data?.map((ele, i) => (
             <View wrap>
               <RoutingSheetNutMain
                 srNo={ele.processRowNumber}

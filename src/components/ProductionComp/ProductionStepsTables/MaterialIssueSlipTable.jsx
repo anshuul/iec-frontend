@@ -232,7 +232,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
   ];
 
   const HistoryColumnDefs = [
-    { headerName: "Sr No", field: "srNo", maxWidth: 80 },
+    { headerName: "Sr No", field: "srNo", maxWidth: 80, sort: "desc" },
     { headerName: "PO Number", field: "PONumber" },
     { headerName: "MaterialSlip Name", field: "MaterialSlipName" },
     { headerName: "Item Desc", field: "ItemDesc" },

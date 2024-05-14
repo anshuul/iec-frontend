@@ -56,12 +56,60 @@ const RoutingSheetFormUpdate = () => {
               productionReportSliceDataForRouting.productionReports[0]
                 ?.processRows[index]?.endTime || "";
           } else if (row.routingSheetNo.startsWith("Nut")) {
+            // startTime =
+            //   productionReportSliceDataForRouting.productionReports[1]
+            //     ?.processRows[index]?.startTime || productionReports[0]
+            //     ?.processRows[index]?.startTime;
+            // endTime =
+            //   productionReportSliceDataForRouting.productionReports[1]
+            //     ?.processRows[index]?.endTime || productionReports[0]
+            //     ?.processRows[index]?.endTime;
             startTime =
-              productionReportSliceDataForRouting.productionReports[1]
+              productionReportSliceDataForRouting.productionReports[0]
                 ?.processRows[index]?.startTime || "";
             endTime =
-              productionReportSliceDataForRouting.productionReports[1]
+              productionReportSliceDataForRouting.productionReports[0]
                 ?.processRows[index]?.endTime || "";
+          }
+
+          let operatorName = "";
+          let processDescription = "";
+          let procedureNo = "";
+          let orderQty = "";
+          let processQty = "";
+          // Check if routingSheetNo starts with "Stud" or "Nut"
+          if (row.routingSheetNo.startsWith("Stud")) {
+            operatorName =
+              productionReportSliceDataForRouting.productionReports[0]
+                ?.processRows[index]?.operatorName || "";
+            processDescription =
+              productionReportSliceDataForRouting.productionReports[0]
+                ?.processRows[index]?.jobDescription || "";
+            procedureNo =
+              productionReportSliceDataForRouting.productionReports[0]
+                ?.processRows[index]?.procedures || "";
+            orderQty =
+              productionReportSliceDataForRouting.productionReports[0]
+                ?.processRows[index]?.orderQty || "";
+            processQty =
+              productionReportSliceDataForRouting.productionReports[0]
+                ?.processRows[index]?.processQty || "";
+          } else if (row.routingSheetNo.startsWith("Nut")) {
+            operatorName =
+              productionReportSliceDataForRouting.productionReports[0]
+                ?.processRows[index]?.operatorName || "";
+            processDescription =
+              productionReportSliceDataForRouting.productionReports[0]
+                ?.processRows[index]?.jobDescription || "";
+            procedureNo =
+              productionReportSliceDataForRouting.productionReports[0]
+                ?.processRows[index]?.procedures || "";
+            orderQty =
+              productionReportSliceDataForRouting.productionReports[0]
+                ?.processRows[index]?.orderQty || "";
+            processQty =
+              productionReportSliceDataForRouting.productionReports[0]
+                ?.processRows[index]?.processQty || "";
           }
 
           return {
@@ -69,6 +117,11 @@ const RoutingSheetFormUpdate = () => {
             srNo: index + 1,
             startTime,
             endTime,
+            operatorName,
+            processDescription,
+            procedureNo,
+            orderQty,
+            processQty,
             processRowNumber: index + 1,
           };
         });
@@ -142,7 +195,7 @@ const RoutingSheetFormUpdate = () => {
     { headerName: "OPT SIGN", field: "optSign", editable: true },
     { headerName: "REMARKS", field: "remarks", editable: true },
   ];
-
+  console.log("PDF Row Data", rowData)
   return (
     <div className="flex flex-col mx-4 bg-white">
       <button
@@ -176,7 +229,7 @@ const RoutingSheetFormUpdate = () => {
         <PDFDownloadLink
           document={
             <RoutingSheetStud
-              data={productionReportSliceDataForRouting?.routingSheet}
+              data={rowData}
             />
           }
           fileName={`RoutingSheet_${id}.pdf`}
@@ -184,7 +237,7 @@ const RoutingSheetFormUpdate = () => {
           <button
             className="flex items-center px-4 py-2 text-black bg-gray-300 rounded"
             onClick={() =>
-              console.log(productionReportSliceDataForRouting?.routingSheet)
+              console.log(rowData)
             }
           >
             Print

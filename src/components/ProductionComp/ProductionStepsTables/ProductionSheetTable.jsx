@@ -224,7 +224,7 @@ const ProductionSheetTable = ({ productionStep }) => {
   ];
 
   const HistoryColumnDefs = [
-    { headerName: "Sr No", field: "srNo", minWidth: 50, maxWidth: 80 },
+    { headerName: "Sr No", field: "srNo", minWidth: 50, maxWidth: 80, sort: "desc", },
     {
       headerName: "Production Planning",
       field: "ProductionSheetName",
@@ -258,7 +258,7 @@ const ProductionSheetTable = ({ productionStep }) => {
           paginationPageSize={15}
         />
       </div>
-     
+
       {showHistoryTable && (
         <HistoryTablePopup
           HistoryColumnDefs={HistoryColumnDefs}
