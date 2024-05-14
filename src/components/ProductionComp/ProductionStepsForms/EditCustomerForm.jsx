@@ -249,14 +249,11 @@ const EditCustomerForm = () => {
             }
             className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
           >
-            <option value="select">Surface Finish</option>
+             <option value="select">Surface Finish</option>
             <option value="PhosphatingBlack">Phosphating(Black)</option>
             <option value="ZincPlating">Zinc Plating</option>
-            <option value="ZincNickel">Zinc - Nickel</option>
-            <option value="XYLAN1070">Xylan 1070</option>
-            <option value="XYLAR1070">Xylar2 + Xylan 1070.</option>
-            {/* <option value="HDG">HotDip Galvanizing(HDG)</option>
-            <option value="PTFE">PTFE</option> */}
+            <option value="HDG">HotDip Galvanizing(HDG)</option>
+            <option value="PTFE">PTFE</option>
           </select>
         </div>
 
