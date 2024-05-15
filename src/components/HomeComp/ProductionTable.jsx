@@ -305,14 +305,13 @@ const ProductionTable = () => {
                     id,
                     reportResponse
                   );
-                  return reportResponse;
+                  return reportResponse.data.productionReports;
                 } else {
                   console.log("Invalid routing sheet data:", routingSheet);
                   return null;
                 }
               })
             );
-            // dispatch(setProductionReportData(reportResponse.data));
 
             // Dispatch action to update production report data in Redux store if needed
             dispatch(setProductionReportData(reportResponses.filter(Boolean)));

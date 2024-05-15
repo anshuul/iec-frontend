@@ -21,10 +21,18 @@ const RoutingSheetFormUpdate = () => {
   const productionReportSliceDataForRouting = useSelector(
     (state) => state.productionReport.data
   );
-  console.log(
-    "productionReportSliceDataForRouting in routing",
-    productionReportSliceDataForRouting
-  );
+  // console.log(
+  //   "productionReportSliceDataForRouting in routing",
+  //   productionReportSliceDataForRouting
+  // );
+  // console.log(
+  //   "productionReportSliceDataForRouting 0 index data ",
+  //   productionReportSliceDataForRouting[0][0].processRows
+  // );
+  // console.log(
+  //   "productionReportSliceDataForRouting 1st index data",
+  //   productionReportSliceDataForRouting[1][1]
+  // );
 
   const handleGoBack = () => {
     router.back();
@@ -44,145 +52,71 @@ const RoutingSheetFormUpdate = () => {
         console.log("responseData routing", responseData);
 
         const newRows = responseData[0]?.processRows.map((row, index) => {
-          // Set default values for startTime and endTime
-          // let startTime = "";
-          // let endTime = "";
-
-          // // Check if routingSheetNo starts with "Stud" or "Nut"
-          // if (row.routingSheetNo.startsWith("Stud")) {
-          //   startTime =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.startTime || "";
-          //   endTime =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.endTime || "";
-          // } else if (row.routingSheetNo.startsWith("Nut")) {
-          //   // startTime =
-          //   //   productionReportSliceDataForRouting.productionReports[1]
-          //   //     ?.processRows[index]?.startTime || productionReports[0]
-          //   //     ?.processRows[index]?.startTime;
-          //   // endTime =
-          //   //   productionReportSliceDataForRouting.productionReports[1]
-          //   //     ?.processRows[index]?.endTime || productionReports[0]
-          //   //     ?.processRows[index]?.endTime;
-          //   startTime =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.startTime || "";
-          //   endTime =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.endTime || "";
-          // }
-
-          // let operatorName = "";
-          // let processDescription = "";
-          // let procedureNo = "";
-          // let orderQty = "";
-          // let processQty = "";
-          // // Check if routingSheetNo starts with "Stud" or "Nut"
-          // if (row.routingSheetNo.startsWith("Stud")) {
-          //   operatorName =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.operatorName || "";
-          //   processDescription =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.jobDescription || "";
-          //   procedureNo =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.procedures || "";
-          //   orderQty =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.orderQty || "";
-          //   processQty =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.processQty || "";
-          // } else if (row.routingSheetNo.startsWith("Nut")) {
-          //   operatorName =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.operatorName || "";
-          //   processDescription =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.jobDescription || "";
-          //   procedureNo =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.procedures || "";
-          //   orderQty =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.orderQty || "";
-          //   processQty =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.processQty || "";
-          // }
-
-          // return {
-          //   ...row,
-          //   srNo: index + 1,
-          //   startTime,
-          //   endTime,
-          //   operatorName,
-          //   processDescription,
-          //   procedureNo,
-          //   orderQty,
-          //   processQty,
-          //   processRowNumber: index + 1,
-          // };
-
           let startTime = "";
           let endTime = "";
+          let operatorName = "";
+          let processDescription = "";
+          let procedureNo = "";
+          let orderQty = "";
+          let processQty = "";
 
           // Check if routingSheetNo starts with "Stud" or "Nut"
           if (row.routingSheetNo.startsWith("Stud")) {
             startTime =
-              productionReportSliceDataForRouting.productionReports[0]
-                ?.processRows[index]?.startTime || "";
+              productionReportSliceDataForRouting[0][0]?.processRows[index]
+                ?.startTime || "";
             endTime =
-              productionReportSliceDataForRouting.productionReports[0]
-                ?.processRows[index]?.endTime || "";
+              productionReportSliceDataForRouting[0][0]?.processRows[index]
+                ?.endTime || "";
+            operatorName =
+              productionReportSliceDataForRouting[0][0]?.processRows[index]
+                ?.operatorName || "";
+            processDescription =
+              productionReportSliceDataForRouting[0][0]?.processRows[index]
+                ?.jobDescription || "";
+            procedureNo =
+              productionReportSliceDataForRouting[0][0]?.processRows[index]
+                ?.procedures || "";
+            orderQty =
+              productionReportSliceDataForRouting[0][0]?.processRows[index]
+                ?.orderQty || "";
+            processQty =
+              productionReportSliceDataForRouting[0][0]?.processRows[index]
+                ?.processQty || "";
           } else if (row.routingSheetNo.startsWith("Nut")) {
             startTime =
-              productionReportSliceDataForRouting.productionReports[1]
-                ?.processRows[index]?.startTime || "";
+              productionReportSliceDataForRouting[1][1]?.processRows[index]
+                ?.startTime || "";
             endTime =
-              productionReportSliceDataForRouting.productionReports[1]
-                ?.processRows[index]?.endTime || "";
+              productionReportSliceDataForRouting[1][1]?.processRows[index]
+                ?.endTime || "";
+            operatorName =
+              productionReportSliceDataForRouting[1][1]?.processRows[index]
+                ?.operatorName || "";
+            processDescription =
+              productionReportSliceDataForRouting[1][1]?.processRows[index]
+                ?.jobDescription || "";
+            procedureNo =
+              productionReportSliceDataForRouting[1][1]?.processRows[index]
+                ?.procedures || "";
+            orderQty =
+              productionReportSliceDataForRouting[1][1]?.processRows[index]
+                ?.processQty || "";
+            processQty =
+              productionReportSliceDataForRouting[1][1]?.processRows[index]
+                ?.processQty || "";
           }
-
-          // let operatorName = "";
-          // let processDescription = "";
-          // let procedureNo = "";
-          // let orderQty = "";
-          // let processQty = "";
-          // // Check if routingSheetNo starts with "Stud" or "Nut"
-          // if (row.routingSheetNo.startsWith("Stud")) {
-          //   operatorName =
-          //     responseData[0]?.processRows[index]?.operatorName || "";
-          //   processDescription =
-          //   responseData[0]?.processRows[index]?.processDescription || "";
-          //   procedureNo = responseData[0]?.processRows[index]?.procedures || "";
-          //   orderQty = responseData[0]?.processRows[index]?.orderQty || "";
-          //   processQty = responseData[0]?.processRows[index]?.processQty || "";
-          // } else if (row.routingSheetNo.startsWith("Nut")) {
-          //   operatorName =
-          //     responseData[0]?.processRows[index]?.operatorName || "";
-          //   processDescription =
-          //   responseData[0]?.processRows[index]?.processDescription || "";
-          //   procedureNo =
-          //   responseData[0]?.processRows[index]?.procedures || "";
-          //   orderQty =
-          //   responseData[0]?.processRows[index]?.orderQty || "";
-          //   processQty =
-          //   responseData[0]?.processRows[index]?.processQty || "";
-          // }
 
           return {
             ...row,
             srNo: index + 1,
             startTime,
             endTime,
-            // operatorName,
-            // processDescription,
-            // procedureNo,
-            // orderQty,
-            // processQty,
+            operatorName,
+            processDescription,
+            procedureNo,
+            orderQty,
+            processQty,
             processRowNumber: index + 1,
           };
         });
