@@ -1,10 +1,10 @@
 // productionReportSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 
-export const productionReprtSlice = createSlice({
-  name: "productionReprtSlice",
+export const productionReportSlice = createSlice({
+  name: "productionReport",
   initialState: {
-    data: null,
+    data: [],
   },
   reducers: {
     setProductionReportData: (state, action) => {
@@ -13,5 +13,5 @@ export const productionReprtSlice = createSlice({
   },
 });
 
-export const { setProductionReportData } = productionReprtSlice.actions;
-export default productionReprtSlice.reducer;
+export const { setProductionReportData } = productionReportSlice.actions;
+export default productionReportSlice.reducer;

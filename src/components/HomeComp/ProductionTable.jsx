@@ -305,7 +305,6 @@ const ProductionTable = () => {
                     id,
                     reportResponse
                   );
-                  dispatch(setProductionReportData(reportResponse.data));
                   return reportResponse;
                 } else {
                   console.log("Invalid routing sheet data:", routingSheet);
@@ -313,6 +312,10 @@ const ProductionTable = () => {
                 }
               })
             );
+            // dispatch(setProductionReportData(reportResponse.data));
+
+            // Dispatch action to update production report data in Redux store if needed
+            dispatch(setProductionReportData(reportResponses.filter(Boolean)));
             // Dispatch action to update production report data in Redux store if needed
             console.log("reportResponses", reportResponses);
           }
@@ -331,7 +334,7 @@ const ProductionTable = () => {
 
   return (
     <div className="flex flex-col h-[85vh] mx-4 bg-white">
-      {/* <div className="flex items-center mb-4 justify-between">
+      {/* <div className="flex items-center justify-between mb-4">
         <input
           type="text"
           placeholder="Search by PO Number"
