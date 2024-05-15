@@ -6,6 +6,8 @@ import { FiArrowLeft, FiFile, FiPrinter, FiSave } from "react-icons/fi";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { getPlanningSheetData } from "@/utils/Planning-Sheet/getPlanningSheetData";
+import { getMaterialIssueSlipData } from "@/utils/Material-Issue-Slip/getMaterialIssueSlipData";
 
 const EditCustomerForm = () => {
   const searchParams = useSearchParams();
@@ -79,9 +81,46 @@ const EditCustomerForm = () => {
         `http://localhost:8000/api/customerPO/update/${poNo}`,
         customerPO // Send the updated customer PO data
       );
+      console.log("response noraml data ", response.data);
       console.log("response cutting data ", response.data.updatedCustomerPO);
       const updatedNewCustomerPo = response.data.updatedCustomerPO;
       console.log("updatedNewCustomerPo", updatedNewCustomerPo);
+
+      const {
+        planningSheetID,
+        selectedItem,
+        selectedSurface,
+        modifiedQuantity,
+        customPoQuantity,
+      } = await getPlanningSheetData(updatedNewCustomerPo);
+
+      const updatePlanningSheetByID = await axios.put(
+        `http://localhost:8000/api/production/update-GeneratePlanningSheets/${planningSheetID}`,
+        {
+          customerPO: updatedNewCustomerPo,
+          selectedItem,
+          selectedSurface,
+          modifiedQuantity,
+          customPoQuantity,
+        }
+      );
+      console.log("updatePlanningSheetByID", updatePlanningSheetByID);
+
+      const { MaterialIssueSlipId } = await getMaterialIssueSlipData(
+        updatedNewCustomerPo
+      );
+
+      const updateMaterailIssueSliptByID = await axios.put(
+        `http://localhost:8000/api/materialissueslip/update-GenerateMaterialIssueSlips/${MaterialIssueSlipId}`,
+        {
+          customerPO: updatedNewCustomerPo,
+          selectedItem,
+          modifiedQuantity,
+          customPoQuantity,
+        }
+      );
+      console.log("updateMaterailIssueSliptByID", updateMaterailIssueSliptByID);
+      
 
       localStorage.setItem("updatedNewCustomerPo", updatedNewCustomerPo);
       router.push("/production");
@@ -249,7 +288,7 @@ const EditCustomerForm = () => {
             }
             className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
           >
-             <option value="select">Surface Finish</option>
+            <option value="select">Surface Finish</option>
             <option value="PhosphatingBlack">Phosphating(Black)</option>
             <option value="ZincPlating">Zinc Plating</option>
             <option value="HDG">HotDip Galvanizing(HDG)</option>
