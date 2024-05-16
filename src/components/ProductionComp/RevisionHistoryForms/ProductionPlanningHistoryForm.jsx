@@ -55,9 +55,9 @@ const ProductionPlanningHistoryForm = () => {
       try {
         console.log("start");
         const response = await axios.get(
-          `http://localhost:8000/api/production/productionPlanningHistoryBypreviousDataId/${historyId}`
+          `http://localhost:8000/api/production/getSingle-productionPlanningHistoryBypreviousDataId/${historyId}`
         );
-        console.log("response.data", response.data)
+        console.log("response.data", response.data);
         console.log("response history", response.data[0].previousData);
         setPlanningSheetForm(response.data[0].previousData);
         console.log("endt");
@@ -71,7 +71,7 @@ const ProductionPlanningHistoryForm = () => {
     }
   }, [historyId]);
 
-console.log("planningSheetForm", planningSheetForm)
+  console.log("planningSheetForm", planningSheetForm);
 
   const handleFileSelection = (e) => {
     const file = e.target.files[0];

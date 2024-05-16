@@ -121,7 +121,7 @@ const ProductionSheetTable = ({ productionStep }) => {
           dateStyle: "long",
           timeStyle: "medium",
         }),
-        historyId: record.previousData.id,
+        historyId: record._id,
       }));
       console.log("historyData planning", historyData);
       setHistoryRowData(historyData);

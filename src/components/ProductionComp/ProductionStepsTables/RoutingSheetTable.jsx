@@ -5,15 +5,20 @@ import "ag-grid-community/styles/ag-theme-alpine.css";
 import { MdModeEdit } from "react-icons/md";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import { BsInfoCircle } from "react-icons/bs";
+import { IoSearch } from "react-icons/io5";
+import HistoryTablePopup from "@/components/HomeComp/HistoryTablePopup";
+import { current } from "@reduxjs/toolkit";
 
 const RoutingSheetTable = ({ productionStep }) => {
   console.log("productionStep", productionStep);
   const router = useRouter();
   const [rowData, setRowData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const gridApiRef = useRef(null);
+  const [historyRowData, setHistoryRowData] = useState([]);
+  const [showHistoryTable, setShowHistoryTable] = useState(false);
 
   const handleClick = () => {
     router.push(`/production/${productionStep}/routingSheetForm`);
@@ -117,15 +122,75 @@ const RoutingSheetTable = ({ productionStep }) => {
     }
   };
 
-  // 66433d3934430954d9f00160
-  // 66433d3a34430954d9f001d5
   const handleEditClick = (_id) => {
     console.log("_id for routing", _id);
     router.push(`/production/routing-sheet/routingSheetFormUpdate?id=${_id}`);
   };
 
+  const handleHistoryClick = async (_id) => {
+    console.log("object _id routing sheet", _id);
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `http://localhost:8000/api/routingSheet/get-getRoutingHistoryByroutingId/${_id}`
+      );
+      console.log("Response data Routing Sheet:", response.data);
+      console.log(
+        "Response data Routing Sheet historyRecords:",
+        response.data.historyRecords
+      );
+
+      const historyData = response.data.historyRecords.map((record, index) => {
+        const { date, processRows } = record.previousData;
+        console.log("Routing Sheet Records", record);
+        console.log(
+          "processRows.length > 0 ? processRows[0].routingSheetNo ",
+          processRows.length > 0 ? processRows[0].routingSheetNo : ""
+        );
+        return {
+          srNo: index + 1,
+          // routingSheets: record._id,
+          RoutingSheets:
+            processRows.length > 0 ? processRows[0].routingSheetNo : "",
+          currentId: record._id,
+          CreatedDate: new Date(date).toLocaleDateString(), // Format date
+          UpdatedDate: record.updatedAt,
+          ...processRows.map((processRow) => ({
+            routingSheetNo: processRow.routingSheetNo,
+            operatorName: processRow.operatorName,
+            machineNo: processRow.machineNo,
+            processDescription: processRow.processDescription,
+            procedureNo: processRow.procedureNo,
+            orderQty: processRow.orderQty,
+            processQty: processRow.processQty,
+            startTime: processRow.startTime,
+            endTime: processRow.endTime,
+            optSign: processRow.optSign,
+            remarks: processRow.remarks,
+          })),
+        };
+      });
+
+      // }));
+      console.log("historyData Routing Sheet", historyData);
+      setHistoryRowData(historyData);
+      console.log("first historyRowData routing", historyRowData);
+      setShowHistoryTable(true);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching history data:", error);
+      setLoading(false);
+    }
+  };
+
+  // Function to close the history modal
+  const closeModal = () => {
+    setShowHistoryTable(false);
+  };
+
   const CustomButtonComponent = (props) => {
     const data = props.data;
+    console.log("Routing Sheet Data", data);
 
     return (
       <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
@@ -140,6 +205,37 @@ const RoutingSheetTable = ({ productionStep }) => {
           className="p-2 text-red-600 bg-red-200 rounded-lg"
         >
           <RiDeleteBin5Line />
+        </button>
+        {/* History Button */}
+        <button
+          onClick={() => handleHistoryClick(data._id)}
+          className="p-2 text-red-600 bg-yellow-200 rounded-lg"
+        >
+          <BsInfoCircle />
+        </button>
+      </div>
+    );
+  };
+
+  const handleViewClick = (currentId) => {
+    router.push(
+      `/production/routing-sheet/routing-sheet-history?currentId=${currentId}`
+    );
+  };
+
+  const HistoryButton = (props) => {
+    const data = props.data;
+    console.log("data in routing for history", data);
+    return (
+      <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
+        {/* View Button */}
+        <button
+          onClick={() => {
+            handleViewClick(data.currentId);
+          }}
+          className="p-2 text-red-600 bg-yellow-200 rounded-lg"
+        >
+          <IoSearch />
         </button>
       </div>
     );
@@ -158,28 +254,24 @@ const RoutingSheetTable = ({ productionStep }) => {
     { headerName: "Created By", field: "CreatedBy", flex: 1 },
   ];
 
-  const onSelectionChanged = async () => {
-    const selectedRows = gridApiRef.current.getSelectedRows(); // Access gridApi using ref
-
-    if (selectedRows.length > 0) {
-      const selectedRoutingSheet = selectedRows[0]._id;
-      try {
-        setLoading(true);
-        const response = await axios.get(
-          `http://localhost:8000/api/routingSheet/get-routingSheetById/${selectedRoutingSheet}`
-        );
-        const RoutingData = response.data; // No need for extra property
-        localStorage.setItem(
-          "selectedRoutingSheet",
-          JSON.stringify(RoutingData)
-        );
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching routing sheet data:", error);
-        setLoading(false);
-      }
-    }
-  };
+  const HistoryColumnDefs = [
+    {
+      headerName: "Action",
+      cellRenderer: HistoryButton,
+      minWidth: 150,
+      maxWidth: 200,
+    },
+    {
+      headerName: "Sr No",
+      field: "srNo",
+      minWidth: 50,
+      maxWidth: 80,
+      sort: "desc",
+    },
+    { headerName: "Routing Sheets", field: "RoutingSheets", flex: 1 },
+    { headerName: "Created Data", field: "CreatedDate", flex: 1 },
+    { headerName: "Updated Date", field: "UpdatedDate", flex: 1 },
+  ];
 
   const onRowClicked = (event) => {
     const selectedRoutingSheet = event.data; // Access the clicked row data
@@ -207,10 +299,16 @@ const RoutingSheetTable = ({ productionStep }) => {
           paginationPageSize={10}
           onRowClicked={onRowClicked}
           rowSelection="single"
-          // onSelectionChanged={onSelectionChanged}
-          // onGridReady={(params) => (gridApiRef.current = params.api)}
         />
       </div>
+
+      {showHistoryTable && (
+        <HistoryTablePopup
+          HistoryColumnDefs={HistoryColumnDefs}
+          historyRowData={historyRowData}
+          closeModal={closeModal}
+        />
+      )}
     </div>
   );
 };

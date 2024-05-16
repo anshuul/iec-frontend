@@ -8,6 +8,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { getPlanningSheetData } from "@/utils/Planning-Sheet/getPlanningSheetData";
 import { getMaterialIssueSlipData } from "@/utils/Material-Issue-Slip/getMaterialIssueSlipData";
+import { getRoutingSheetData } from "@/utils/Routing-Sheet/getRoutingSheetData";
+import { getProductionReportData } from "@/utils/Production-Report/getProductionReportData";
 
 const EditCustomerForm = () => {
   const searchParams = useSearchParams();
@@ -86,6 +88,23 @@ const EditCustomerForm = () => {
       const updatedNewCustomerPo = response.data.updatedCustomerPO;
       console.log("updatedNewCustomerPo", updatedNewCustomerPo);
 
+      let prefix;
+
+      if (
+        updatedNewCustomerPo?.selectedItem?.toLowerCase().startsWith("studwith")
+      ) {
+        prefix = ["Stud", "Nut"];
+        console.log("prefixArray:", prefix);
+      } else if (updatedNewCustomerPo?.selectedItem === "Stud") {
+        prefix = ["Stud"];
+        console.log("prefixArray For Stud:", prefix);
+      } else if (updatedNewCustomerPo?.selectedItem === "Nut") {
+        prefix = ["Nut"];
+        console.log("prefixArray For Nut:", prefix);
+      } else {
+        console.log("selectedItem does not start with 'studwith'");
+      }
+
       const {
         planningSheetID,
         selectedItem,
@@ -120,7 +139,53 @@ const EditCustomerForm = () => {
         }
       );
       console.log("updateMaterailIssueSliptByID", updateMaterailIssueSliptByID);
-      
+
+      const { routingingSheetID } = await getRoutingSheetData(
+        updatedNewCustomerPo
+      );
+      console.log("routingingSheetID in Update PO", routingingSheetID);
+      const updateRoutingSheetByID = await axios.put(
+        `http://localhost:8000/api/routingSheet/update-GeneratedRoutingSheetByIDs/${routingingSheetID}`,
+        {
+          newCustomerPo: updatedNewCustomerPo,
+          selectedItem,
+          modifiedQuantity,
+          customPoQuantity,
+        }
+      );
+      console.log("updateRoutingSheetByID", updateRoutingSheetByID);
+
+      const { generatedProductionReportId } = await getProductionReportData(
+        updatedNewCustomerPo,
+        prefix
+      );
+      console.log(
+        "generatedProductionReportId in PO",
+        generatedProductionReportId
+      );
+
+      const id0 =
+        generatedProductionReportId[0].generatedProductionReportData
+          .generatedProductionReportId[0];
+      const id1 =
+        generatedProductionReportId[1].generatedProductionReportData
+          .generatedProductionReportId[1];
+
+      console.log("productionReportID at index 0:", id0);
+      console.log("productionReportID at index 1:", id1);
+      // Extract generatedProductionReportId values and store them in an array
+      let productionReportIDs = [id0, id1];
+      console.log("productionReportIDs", productionReportIDs);
+      // Initialize an empty array to store the production report IDs
+      // let productionReportIDs = [];
+
+      // // Iterate over the array of objects
+      // generatedProductionReportId.forEach((item) => {
+      //   // Extract the generatedProductionReportId value from each object and push it to the productionReportIDs array
+      //   productionReportIDs.push(item.generatedProductionReportId);
+      // });
+
+      // console.log("Production Report IDs:", productionReportIDs);
 
       localStorage.setItem("updatedNewCustomerPo", updatedNewCustomerPo);
       router.push("/production");

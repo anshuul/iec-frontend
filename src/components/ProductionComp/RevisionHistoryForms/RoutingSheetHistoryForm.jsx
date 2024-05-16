@@ -8,19 +8,14 @@ import { TiPlus } from "react-icons/ti";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import RoutingSheetNut from "@/components/PDF/RoutingSheet/RoutingSheetNut";
 import RoutingSheetStud from "@/components/PDF/RoutingSheet/RoutingSheetStud";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 
-const RoutingSheetFormUpdate = () => {
+const RoutingSheetHistoryForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const id = searchParams.get("id");
-  console.log("Final id for update routing form", id);
-  // Retrieve production report from Redux store
-  const productionReportSliceDataForRouting = useSelector(
-    (state) => state.productionReport.data
-  );
+  const currentId = searchParams.get("currentId");
+  console.log("currentId history", currentId);
 
   const handleGoBack = () => {
     router.back();
@@ -32,82 +27,20 @@ const RoutingSheetFormUpdate = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/routingSheet/get-routingSheetById/${id}`
+          `http://localhost:8000/api/routingSheet/get-getSingleRoutingHistoryByroutingId/${currentId}`
         );
-        const responseData = Array.isArray(response.data)
-          ? response.data
-          : [response.data];
-        console.log("responseData routing", responseData);
+        console.log("History Response Data Routing", response.data);
 
-        const newRows = responseData[0]?.processRows.map((row, index) => {
-          let startTime = "";
-          let endTime = "";
-          let operatorName = "";
-          let processDescription = "";
-          let procedureNo = "";
-          let orderQty = "";
-          let processQty = "";
+        const historyRecords = response.data.historyRecords || [];
+        const processRows = historyRecords
+          .map((record) => record.previousData.processRows)
+          .flat();
+        console.log("History Process Rows", processRows);
 
-          // Check if routingSheetNo starts with "Stud" or "Nut"
-          if (row.routingSheetNo.startsWith("Stud")) {
-            startTime =
-              productionReportSliceDataForRouting[0][0]?.processRows[index]
-                ?.startTime || "";
-            endTime =
-              productionReportSliceDataForRouting[0][0]?.processRows[index]
-                ?.endTime || "";
-            operatorName =
-              productionReportSliceDataForRouting[0][0]?.processRows[index]
-                ?.operatorName || "";
-            processDescription =
-              productionReportSliceDataForRouting[0][0]?.processRows[index]
-                ?.jobDescription || "";
-            procedureNo =
-              productionReportSliceDataForRouting[0][0]?.processRows[index]
-                ?.procedures || "";
-            orderQty =
-              productionReportSliceDataForRouting[0][0]?.processRows[index]
-                ?.orderQty || "";
-            processQty =
-              productionReportSliceDataForRouting[0][0]?.processRows[index]
-                ?.processQty || "";
-          } else if (row.routingSheetNo.startsWith("Nut")) {
-            startTime =
-              productionReportSliceDataForRouting[1][1]?.processRows[index]
-                ?.startTime || "";
-            endTime =
-              productionReportSliceDataForRouting[1][1]?.processRows[index]
-                ?.endTime || "";
-            operatorName =
-              productionReportSliceDataForRouting[1][1]?.processRows[index]
-                ?.operatorName || "";
-            processDescription =
-              productionReportSliceDataForRouting[1][1]?.processRows[index]
-                ?.jobDescription || "";
-            procedureNo =
-              productionReportSliceDataForRouting[1][1]?.processRows[index]
-                ?.procedures || "";
-            orderQty =
-              productionReportSliceDataForRouting[1][1]?.processRows[index]
-                ?.processQty || "";
-            processQty =
-              productionReportSliceDataForRouting[1][1]?.processRows[index]
-                ?.processQty || "";
-          }
-
-          return {
-            ...row,
-            srNo: index + 1,
-            startTime,
-            endTime,
-            operatorName,
-            processDescription,
-            procedureNo,
-            orderQty,
-            processQty,
-            processRowNumber: index + 1,
-          };
-        });
+        const newRows = processRows.map((row, index) => ({
+          ...row,
+          srNo: index + 1,
+        }));
 
         setRowData(newRows || []);
       } catch (error) {
@@ -116,7 +49,7 @@ const RoutingSheetFormUpdate = () => {
     };
 
     fetchData();
-  }, [id, productionReportSliceDataForRouting]);
+  }, [currentId]);
 
   const handleAddRow = () => {
     const newRowData = {
@@ -136,7 +69,7 @@ const RoutingSheetFormUpdate = () => {
       routingSheetNumber: 0,
       processRowNumber: rowData.length + 1, // Update processRowNumber
     };
-    setRowData([...rowData, newRowData]);
+    setRowData([...rowData, newRowData]); // Add the new row data to the existing rowData
   };
 
   const columnDefs = [
@@ -148,7 +81,6 @@ const RoutingSheetFormUpdate = () => {
       maxWidth: 80,
       pinned: "left",
     },
-    // { headerName: "Date", field: "date", editable: true },
     {
       headerName: "Operator Name/Supplier",
       field: "operatorName",
@@ -178,7 +110,7 @@ const RoutingSheetFormUpdate = () => {
     { headerName: "OPT SIGN", field: "optSign", editable: true },
     { headerName: "REMARKS", field: "remarks", editable: true },
   ];
-  console.log("PDF Row Data", rowData);
+  console.log("History Row Data Routing", rowData);
   return (
     <div className="flex flex-col mx-4 bg-white">
       <button
@@ -209,7 +141,7 @@ const RoutingSheetFormUpdate = () => {
           Save
           <FiSave className="ml-2" />
         </button>
-        <PDFDownloadLink
+        {/* <PDFDownloadLink
           document={<RoutingSheetStud data={rowData} />}
           fileName={`RoutingSheet_${id}.pdf`}
         >
@@ -220,10 +152,10 @@ const RoutingSheetFormUpdate = () => {
             Print
             <FiPrinter className="ml-2" />
           </button>
-        </PDFDownloadLink>
+        </PDFDownloadLink> */}
       </div>
     </div>
   );
 };
 
-export default RoutingSheetFormUpdate;
+export default RoutingSheetHistoryForm;

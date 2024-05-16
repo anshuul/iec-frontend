@@ -13,6 +13,7 @@ const MaterialIssueSlipHistoryForm = () => {
 
   const historyId = searchParams.get("historyId");
   console.log("historyId material history", historyId);
+  const id = historyId;
 
   const [materialIssueForm, setMaterialIssueForm] = useState({
     materialSlipName: "",
@@ -35,7 +36,7 @@ const MaterialIssueSlipHistoryForm = () => {
       try {
         console.log("start");
         const response = await axios.get(
-          `http://localhost:8000/api/materialissueslip/materialIssueSlipHistory/${historyId}`
+          `http://localhost:8000/api/materialissueslip/materialIssueSlipHistory-single/${id}`
         );
         console.log("response.data material", response.data);
         console.log("response history material", response.data[0].previousData);
@@ -46,10 +47,10 @@ const MaterialIssueSlipHistoryForm = () => {
       }
     };
 
-    if (historyId) {
+    if (id) {
       fetchData(); // Fetch customer PO data when CustomerPO is available
     }
-  }, [historyId]);
+  }, [id]);
 
   const handleFileSelection = (e) => {
     const file = e.target.files[0];
@@ -66,7 +67,6 @@ const MaterialIssueSlipHistoryForm = () => {
     router.back();
   };
 
-
   const handleInputChange = (e, field) => {
     const value = e.target.value;
     setMaterialIssueForm((prevState) => ({
@@ -75,7 +75,7 @@ const MaterialIssueSlipHistoryForm = () => {
     }));
   };
 
-  console.log("materialIssueForm.materialSlipName", materialIssueForm)
+  console.log("materialIssueForm.materialSlipName", materialIssueForm);
 
   return (
     <Container>
