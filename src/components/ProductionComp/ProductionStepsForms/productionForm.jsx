@@ -112,7 +112,12 @@ const ProductionForm = () => {
           },
           quantity,
           orderDate,
-        }
+        },
+        // {
+        //   headers: {
+        //     "Content-Type": "multipart/form-data",
+        //   },
+        // },
       );
       console.log("response ", response);
       router.push("/production");
@@ -529,7 +534,7 @@ const ProductionForm = () => {
             type="file"
             id="attachment"
             className="hidden"
-            accept=".pdf"
+            accept="application/pdf"
             onChange={handleFileSelection}
           />
           <button
