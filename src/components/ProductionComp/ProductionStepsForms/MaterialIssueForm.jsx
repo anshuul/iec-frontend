@@ -12,6 +12,7 @@ const MaterialIssueForm = () => {
   );
   const [itemDescription, setItemDescription] = useState("");
   const [materialGrade, setMaterialGrade] = useState("Default Material Grade");
+  const [lotNumber, setLotNumber] = useState("");
   const [diameter, setDiameter] = useState("");
   const [diameterDimension, setDiameterDimension] = useState("mm");
   const [length, setLength] = useState("");
@@ -63,6 +64,7 @@ const MaterialIssueForm = () => {
           materialSlipName,
           itemDescription,
           materialGrade,
+          lotNumber,
           size: size,
           diameterValue: diameter,
           diameterDimension: diameterDimension,
@@ -206,6 +208,23 @@ const MaterialIssueForm = () => {
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
               Nut Grade
+            </span>
+          </label>
+        </div>
+        {/* lotNumber */}
+        <div className="flex flex-col items-center my-4 md:flex-row">
+          {/* Stud Grade */}
+          <label className="relative mb-4 cursor-pointer App md:mr-4 md:mb-0">
+            <input
+              id="StudGrade"
+              type="text"
+              value={lotNumber}
+              onChange={(e) => setLotNumber(e.target.value)}
+              placeholder="Input"
+              className="h-10 w-48 xl:w-[400px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+            />
+            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+              Lot Number
             </span>
           </label>
         </div>

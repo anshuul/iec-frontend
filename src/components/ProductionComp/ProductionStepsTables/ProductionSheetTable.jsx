@@ -211,7 +211,13 @@ const ProductionSheetTable = ({ productionStep }) => {
   };
 
   const columnDefs = [
-    { headerName: "Sr No", field: "srNo", minWidth: 50, maxWidth: 80 },
+    {
+      headerName: "Sr No",
+      field: "srNo",
+      minWidth: 50,
+      maxWidth: 80,
+      sort: "desc",
+    },
     {
       headerName: "Action",
       cellRenderer: CustomButtonComponent,
@@ -224,7 +230,13 @@ const ProductionSheetTable = ({ productionStep }) => {
   ];
 
   const HistoryColumnDefs = [
-    { headerName: "Sr No", field: "srNo", minWidth: 50, maxWidth: 80, sort: "desc", },
+    {
+      headerName: "Sr No",
+      field: "srNo",
+      minWidth: 50,
+      maxWidth: 80,
+      sort: "desc",
+    },
     {
       headerName: "Production Planning",
       field: "ProductionSheetName",

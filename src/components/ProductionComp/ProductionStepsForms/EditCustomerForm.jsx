@@ -10,6 +10,7 @@ import { getPlanningSheetData } from "@/utils/Planning-Sheet/getPlanningSheetDat
 import { getMaterialIssueSlipData } from "@/utils/Material-Issue-Slip/getMaterialIssueSlipData";
 import { getRoutingSheetData } from "@/utils/Routing-Sheet/getRoutingSheetData";
 import { getProductionReportData } from "@/utils/Production-Report/getProductionReportData";
+import { IoIosCloseCircleOutline } from "react-icons/io";
 
 const EditCustomerForm = () => {
   const searchParams = useSearchParams();
@@ -40,8 +41,9 @@ const EditCustomerForm = () => {
     },
     quantity: "",
     orderDate: "",
+    attachment: null,
   });
-  const [selectedFile, setSelectedFile] = useState(null);
+
   console.log("customerPO: ", customerPO);
 
   useEffect(() => {
@@ -65,10 +67,12 @@ const EditCustomerForm = () => {
   const handleFileSelection = (e) => {
     const file = e.target.files[0];
     if (file && file.type === "application/pdf") {
-      setSelectedFile(file);
+      setCustomerPO((prevState) => ({
+        ...prevState,
+        attachment: { file, fileName: file.name },
+      }));
     } else {
       // Optionally, you can display an error message or perform other actions here
-      setSelectedFile(null);
       alert("Please select a PDF file.");
     }
   };
@@ -81,7 +85,12 @@ const EditCustomerForm = () => {
     try {
       const response = await axios.put(
         `http://localhost:8000/api/customerPO/update/${poNo}`,
-        customerPO // Send the updated customer PO data
+        customerPO,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data", // Set content type to multipart form data
+          },
+        }
       );
       console.log("response noraml data ", response.data);
       console.log("response cutting data ", response.data.updatedCustomerPO);
@@ -725,7 +734,23 @@ const EditCustomerForm = () => {
             Choose file
             <FiFile className="ml-2" />
           </button>
-          {selectedFile && <span className="ml-2">{selectedFile.name}</span>}
+          {/* {selectedFile && <span className="ml-2">{selectedFile.name}</span>} */}
+          {customerPO.attachment && (
+            <>
+              <span className="ml-2">{customerPO.attachment.fileName}</span>
+              <button
+                onClick={() =>
+                  setCustomerPO((prevState) => ({
+                    ...prevState,
+                    attachment: null,
+                  }))
+                }
+                className="flex items-center text-red-600 bg-none"
+              >
+                <IoIosCloseCircleOutline className="ml-2 text-2xl" />
+              </button>
+            </>
+          )}
         </div>
 
         <p className="ml-2 text-sm text-red-600">

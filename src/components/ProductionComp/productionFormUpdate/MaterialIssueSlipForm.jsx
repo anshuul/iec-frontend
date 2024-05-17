@@ -18,6 +18,7 @@ const MaterialIssueSlipForm = () => {
     materialSlipName: "",
     itemDescription: "",
     materialGrade: "",
+    lotNumber: "",
     diameter: { value: "", dimension: "mm" }, // Set as an object with 'value' and 'dimension' fields
     length: { value: "", dimension: "mm" },
     thread: "",
@@ -46,6 +47,7 @@ const MaterialIssueSlipForm = () => {
           materialSlipName: responseData.materialSlipName,
           itemDescription: responseData.itemDescription,
           materialGrade: responseData.materialGrade,
+          lotNumber: responseData.lotNumber,
           diameter: responseData.size.diameter
             ? responseData.size.diameter.value
             : "",
@@ -312,6 +314,27 @@ const MaterialIssueSlipForm = () => {
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
               Material Grade
+            </span>
+          </label>
+        </div>
+
+        {/* lotNumber */}
+        <div className="flex items-center my-4">
+          <label className="relative cursor-pointer App">
+            <input
+              type="text"
+              value={materialIssueForm.lotNumber}
+              onChange={(e) =>
+                setMaterialIssueForm({
+                  ...materialIssueForm,
+                  lotNumber: e.target.value,
+                })
+              }
+              placeholder="Input"
+              className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+            />
+            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+              Lot Number
             </span>
           </label>
         </div>

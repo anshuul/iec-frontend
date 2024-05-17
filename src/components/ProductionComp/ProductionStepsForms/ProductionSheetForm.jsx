@@ -1,9 +1,13 @@
 "use client";
+
+import axios from "axios";
+
 import { useEffect, useState } from "react";
 import Container from "@/components/common/Container";
 import { FiFile, FiSave, FiPrinter, FiArrowLeft } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { RiAttachmentLine } from "react-icons/ri";
+import { IoIosCloseCircleOutline } from "react-icons/io";
 
 const ProductionSheetForm = () => {
   const router = useRouter();
@@ -20,7 +24,6 @@ const ProductionSheetForm = () => {
   );
   const [contingencyPlanning, setContingencyPlanning] = useState("P-QMS-03");
   const [verification, setVerification] = useState("As Per ITP");
-  const [selectedFile, setSelectedFile] = useState(null);
 
   // Second col Form
   const [validation, setValidation] = useState("");
@@ -36,6 +39,40 @@ const ProductionSheetForm = () => {
   const [achievementQuantity, setAchievementQuantity] = useState("");
   const [achievementDate, setAchievementDate] = useState("");
   const [deliveryDate, setDeliveryDate] = useState("");
+
+  // Planning Sheet Attachments
+  // const [resourcesAttachments, setResourcesAttachments] = useState(null);
+  // const [productAndCustomerAttachments, setProductAndCustomerAttachments] =
+  //   useState(null);
+  // const [legalAndApplicableAttachments, setLegalAndApplicableAttachments] =
+  //   useState(null);
+  // const [contingencyPlanningAttachments, setContingencyPlanningAttachments] =
+  //   useState(null);
+  // const [verificationAttachments, setVerificationAttachments] = useState(null);
+  // const [validationAttachments, setValidationAttachments] = useState(null);
+  // const [monitoringAttachments, setMonitoringAttachments] = useState(null);
+  // const [measurementAttachments, setMeasurementAttachments] = useState(null);
+  // const [inspectionAttachments, setInspectionAttachments] = useState(null);
+  // const [managementAttachments, setManagementAttachments] = useState(null);
+  // const [recordsEvidenceAttachments, setRecordsEvidenceAttachments] =
+  //   useState(null);
+  // State for attachments
+  const [attachments, setAttachments] = useState({
+    resourcesAttachment: null,
+    productAndCustomerAttachment: null,
+    legalAndApplicableAttachment: null,
+    contingencyPlanningAttachment: null,
+    verificationAttachment: null,
+    validationAttachment: null,
+    monitoringAttachment: null,
+    measurementAttachment: null,
+    inspectionAttachment: null,
+    managementAttachment: null,
+    recordsEvidenceAttachment: null,
+  });
+
+  // Attachments
+  const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
     const selectedCustomerPOData = JSON.parse(
@@ -62,6 +99,67 @@ const ProductionSheetForm = () => {
       // Set other fields accordingly
     }
   }, []);
+
+  // const handleSave = async () => {
+  //   const selectedCustomerPODataForpoNo = JSON.parse(
+  //     localStorage.getItem("selectedCustomerPO")
+  //   );
+  //   console.log(
+  //     "selectedCustomerPOData.poNo",
+  //     selectedCustomerPODataForpoNo.poNo
+  //   );
+  //   // Prepare data to send to the API
+  //   const data = {
+  //     poNo: selectedCustomerPODataForpoNo.poNo,
+  //     productionSheetName,
+  //     itemDescription,
+  //     materialIssue,
+  //     requiredResources,
+  //     productAndCustomer,
+  //     legalAndApplicable,
+  //     contingencyPlanning,
+  //     verification,
+  //     selectedFile,
+  //     validation,
+  //     monitoring,
+  //     measurement,
+  //     inspection,
+  //     management,
+  //     recordsEvidence,
+  //     planningQuantity,
+  //     planningDate,
+  //     achievementQuantity,
+  //     achievementDate,
+  //     deliveryDate,
+  //   };
+
+  //   try {
+  //     const response = await fetch(
+  //       "http://localhost:8000/api/production/createPlanningSheet",
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify(data),
+  //       }
+  //     );
+
+  //     if (!response.ok) {
+  //       throw new Error("Network response was not ok");
+  //     }
+
+  //     // Assuming the response contains some data or confirmation message
+  //     const responseData = await response.json();
+  //     console.log("Response:", responseData);
+
+  //     // Redirect or perform any other actions after successful save
+  //     router.push("/production/production-planning-sheets");
+  //   } catch (error) {
+  //     console.error("Error:", error.message);
+  //   }
+  // };
+
   const handleSave = async () => {
     const selectedCustomerPODataForpoNo = JSON.parse(
       localStorage.getItem("selectedCustomerPO")
@@ -70,40 +168,51 @@ const ProductionSheetForm = () => {
       "selectedCustomerPOData.poNo",
       selectedCustomerPODataForpoNo.poNo
     );
-    // Prepare data to send to the API
-    const data = {
-      poNo: selectedCustomerPODataForpoNo.poNo,
-      productionSheetName,
-      itemDescription,
-      materialIssue,
-      requiredResources,
-      productAndCustomer,
-      legalAndApplicable,
-      contingencyPlanning,
-      verification,
-      selectedFile,
-      validation,
-      monitoring,
-      measurement,
-      inspection,
-      management,
-      recordsEvidence,
-      planningQuantity,
-      planningDate,
-      achievementQuantity,
-      achievementDate,
-      deliveryDate,
-    };
 
+    // Create a new FormData object
+    const formData = new FormData();
+
+    // Append all the fields to the FormData object
+    formData.append("poNo", selectedCustomerPODataForpoNo.poNo);
+    formData.append("productionSheetName", productionSheetName);
+    formData.append("itemDescription", itemDescription);
+    formData.append("materialIssue", materialIssue);
+    formData.append("requiredResources", requiredResources);
+    formData.append("productAndCustomer", productAndCustomer);
+    formData.append("legalAndApplicable", legalAndApplicable);
+    formData.append("contingencyPlanning", contingencyPlanning);
+    formData.append("verification", verification);
+    formData.append("validation", validation);
+    formData.append("monitoring", monitoring);
+    formData.append("measurement", measurement);
+    formData.append("inspection", inspection);
+    formData.append("management", management);
+    formData.append("recordsEvidence", recordsEvidence);
+    formData.append("planningQuantity", planningQuantity);
+    formData.append("planningDate", planningDate);
+    formData.append("achievementQuantity", achievementQuantity);
+    formData.append("achievementDate", achievementDate);
+    formData.append("deliveryDate", deliveryDate);
+    formData.append("attachmentPoNo", selectedCustomerPODataForpoNo.poNo);
+    // if (selectedFile) {
+    //   formData.append("attachment", selectedFile);
+    // }
+
+    // Append attachments for all fields
+    Object.keys(attachments).forEach((field) => {
+      const file = attachments[field];
+      if (file) {
+        formData.append(field, file);
+      }
+    });
     try {
-      const response = await fetch(
+      const response = await axios.post(
         "http://localhost:8000/api/production/createPlanningSheet",
+        formData,
         {
-          method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data", // Set content type to multipart form data
           },
-          body: JSON.stringify(data),
         }
       );
 
@@ -113,12 +222,13 @@ const ProductionSheetForm = () => {
 
       // Assuming the response contains some data or confirmation message
       const responseData = await response.json();
-      console.log("Response:", responseData);
+      console.log("Response planning:", responseData);
 
       // Redirect or perform any other actions after successful save
       router.push("/production/production-planning-sheets");
     } catch (error) {
       console.error("Error:", error.message);
+      router.push("/production/production-planning-sheets");
     }
   };
 
@@ -147,11 +257,25 @@ const ProductionSheetForm = () => {
 
   const handleFileSelection = (e) => {
     const file = e.target.files[0];
+    console.log("Selected file in Planning Sheet:", file);
     if (file && file.type === "application/pdf") {
       setSelectedFile(file);
     } else {
       // Optionally, you can display an error message or perform other actions here
       setSelectedFile(null);
+      alert("Please select a PDF file.");
+    }
+  };
+
+  // Function to handle file selection for all attachment fields
+  const handleFileAttachments = (field, file) => {
+    if (file && file.type === "application/pdf") {
+      setAttachments((prevAttachments) => ({
+        ...prevAttachments,
+        [field]: file,
+      }));
+    } else {
+      // Optionally, you can display an error message or perform other actions here
       alert("Please select a PDF file.");
     }
   };
@@ -204,20 +328,7 @@ const ProductionSheetForm = () => {
                 </span>
               </label>
             </div>
-            {/* <div className="flex items-center mb-4">
-              <label className="relative cursor-pointer App">
-                <input
-                  type="text"
-                  placeholder="Input"
-                  value={itemDescription}
-                  onChange={(e) => setItemDescription(e.target.value)}
-                  className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
-                />
-                <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-                  Nut Description
-                </span>
-              </label>
-            </div> */}
+
             <div className="flex items-center mb-4">
               <label className="relative cursor-pointer App">
                 <input
@@ -259,12 +370,46 @@ const ProductionSheetForm = () => {
                   Required Resources
                 </span>
               </label>
+              <input
+                type="file"
+                id="resourcesAttachment"
+                className="hidden"
+                name="resourcesAttachment"
+                accept="application/pdf"
+                onChange={(e) =>
+                  handleFileAttachments(
+                    "resourcesAttachment",
+                    e.target.files[0]
+                  )
+                }
+              />
               <button
                 className="flex items-center justify-center w-10 h-10 text-white bg-gray-500 rounded-lg"
-                onClick={() => document.getElementById("attachment").click()}
+                onClick={() =>
+                  document.getElementById("resourcesAttachment").click()
+                }
               >
                 <RiAttachmentLine className="text-white" />
               </button>
+              {attachments.resourcesAttachment && (
+                <>
+                  <span className="ml-2">
+                    {attachments.resourcesAttachment.name}
+                  </span>
+                  {/* clear button */}
+                  <button
+                    onClick={() =>
+                      setAttachments((prevAttachments) => ({
+                        ...prevAttachments,
+                        resourcesAttachment: null,
+                      }))
+                    }
+                    className="flex items-center text-red-600 bg-none"
+                  >
+                    <IoIosCloseCircleOutline className="ml-2 text-2xl" />
+                  </button>
+                </>
+              )}
             </div>
 
             <div className="flex items-center gap-2 mb-4">
@@ -280,13 +425,50 @@ const ProductionSheetForm = () => {
                   Product and Customer-specified-requirements
                 </span>
               </label>
+              <input
+                type="file"
+                id="productAndCustomerAttachment"
+                className="hidden"
+                name="productAndCustomerAttachment"
+                accept="application/pdf"
+                onChange={(e) =>
+                  handleFileAttachments(
+                    "productAndCustomerAttachment",
+                    e.target.files[0]
+                  )
+                }
+              />
               <button
                 className="flex items-center justify-center w-10 h-10 text-white bg-gray-500 rounded-lg"
-                onClick={() => document.getElementById("attachment").click()}
+                onClick={() =>
+                  document
+                    .getElementById("productAndCustomerAttachment")
+                    .click()
+                }
               >
                 <RiAttachmentLine className="text-white" />
               </button>
+              {attachments.productAndCustomerAttachment && (
+                <>
+                  <span className="ml-2">
+                    {attachments.productAndCustomerAttachment.name}
+                  </span>
+                  {/* clear button */}
+                  <button
+                    onClick={() =>
+                      setAttachments((prevAttachments) => ({
+                        ...prevAttachments,
+                        productAndCustomerAttachment: null,
+                      }))
+                    }
+                    className="flex items-center text-red-600 bg-none"
+                  >
+                    <IoIosCloseCircleOutline className="ml-2 text-2xl" />
+                  </button>
+                </>
+              )}
             </div>
+
             <div className="flex items-center gap-2 mb-4">
               <label className="relative cursor-pointer App">
                 <input
@@ -300,12 +482,48 @@ const ProductionSheetForm = () => {
                   Legal and Applicable
                 </span>
               </label>
+              <input
+                type="file"
+                id="legalAndApplicableAttachment"
+                className="hidden"
+                name="legalAndApplicableAttachment"
+                accept="application/pdf"
+                onChange={(e) =>
+                  handleFileAttachments(
+                    "legalAndApplicableAttachment",
+                    e.target.files[0]
+                  )
+                }
+              />
               <button
                 className="flex items-center justify-center w-10 h-10 text-white bg-gray-500 rounded-lg"
-                onClick={() => document.getElementById("attachment").click()}
+                onClick={() =>
+                  document
+                    .getElementById("legalAndApplicableAttachment")
+                    .click()
+                }
               >
                 <RiAttachmentLine className="text-white" />
               </button>
+              {attachments.legalAndApplicableAttachment && (
+                <>
+                  <span className="ml-2">
+                    {attachments.legalAndApplicableAttachment.name}
+                  </span>
+                  {/* clear button */}
+                  <button
+                    onClick={() =>
+                      setAttachments((prevAttachments) => ({
+                        ...prevAttachments,
+                        legalAndApplicableAttachment: null,
+                      }))
+                    }
+                    className="flex items-center text-red-600 bg-none"
+                  >
+                    <IoIosCloseCircleOutline className="ml-2 text-2xl" />
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
@@ -324,12 +542,48 @@ const ProductionSheetForm = () => {
                   Contingency Planning
                 </span>
               </label>
+              <input
+                type="file"
+                id="contingencyPlanningAttachment"
+                className="hidden"
+                name="contingencyPlanningAttachment"
+                accept="application/pdf"
+                onChange={(e) =>
+                  handleFileAttachments(
+                    "contingencyPlanningAttachment",
+                    e.target.files[0]
+                  )
+                }
+              />
               <button
                 className="flex items-center justify-center w-10 h-10 text-white bg-gray-500 rounded-lg"
-                onClick={() => document.getElementById("attachment").click()}
+                onClick={() =>
+                  document
+                    .getElementById("contingencyPlanningAttachment")
+                    .click()
+                }
               >
                 <RiAttachmentLine className="text-white" />
               </button>
+              {attachments.contingencyPlanningAttachment && (
+                <>
+                  <span className="ml-2">
+                    {attachments.contingencyPlanningAttachment.name}
+                  </span>
+                  {/* clear button */}
+                  <button
+                    onClick={() =>
+                      setAttachments((prevAttachments) => ({
+                        ...prevAttachments,
+                        contingencyPlanningAttachment: null,
+                      }))
+                    }
+                    className="flex items-center text-red-600 bg-none"
+                  >
+                    <IoIosCloseCircleOutline className="ml-2 text-2xl" />
+                  </button>
+                </>
+              )}
             </div>
             <div className="flex items-center gap-2">
               <label className="relative cursor-pointer App">
@@ -344,12 +598,46 @@ const ProductionSheetForm = () => {
                   Verification
                 </span>
               </label>
+              <input
+                type="file"
+                id="verificationAttachment"
+                className="hidden"
+                name="verificationAttachment"
+                accept="application/pdf"
+                onChange={(e) =>
+                  handleFileAttachments(
+                    "verificationAttachment",
+                    e.target.files[0]
+                  )
+                }
+              />
               <button
                 className="flex items-center justify-center w-10 h-10 text-white bg-gray-500 rounded-lg"
-                onClick={() => document.getElementById("attachment").click()}
+                onClick={() =>
+                  document.getElementById("verificationAttachment").click()
+                }
               >
                 <RiAttachmentLine className="text-white" />
               </button>
+              {attachments.verificationAttachment && (
+                <>
+                  <span className="ml-2">
+                    {attachments.verificationAttachment.name}
+                  </span>
+                  {/* clear button */}
+                  <button
+                    onClick={() =>
+                      setAttachments((prevAttachments) => ({
+                        ...prevAttachments,
+                        verificationAttachment: null,
+                      }))
+                    }
+                    className="flex items-center text-red-600 bg-none"
+                  >
+                    <IoIosCloseCircleOutline className="ml-2 text-2xl" />
+                  </button>
+                </>
+              )}
             </div>
             <div className="flex items-center gap-2 my-4">
               <label className="relative cursor-pointer App">
@@ -364,12 +652,46 @@ const ProductionSheetForm = () => {
                   Validation
                 </span>
               </label>
+              <input
+                type="file"
+                id="validationAttachment"
+                className="hidden"
+                name="validationAttachment"
+                accept="application/pdf"
+                onChange={(e) =>
+                  handleFileAttachments(
+                    "validationAttachment",
+                    e.target.files[0]
+                  )
+                }
+              />
               <button
                 className="flex items-center justify-center w-10 h-10 text-white bg-gray-500 rounded-lg"
-                onClick={() => document.getElementById("attachment").click()}
+                onClick={() =>
+                  document.getElementById("validationAttachment").click()
+                }
               >
                 <RiAttachmentLine className="text-white" />
               </button>
+              {attachments.validationAttachment && (
+                <>
+                  <span className="ml-2">
+                    {attachments.validationAttachment.name}
+                  </span>
+                  {/* clear button */}
+                  <button
+                    onClick={() =>
+                      setAttachments((prevAttachments) => ({
+                        ...prevAttachments,
+                        validationAttachment: null,
+                      }))
+                    }
+                    className="flex items-center text-red-600 bg-none"
+                  >
+                    <IoIosCloseCircleOutline className="ml-2 text-2xl" />
+                  </button>
+                </>
+              )}
             </div>
             <div className="flex items-center gap-2 mb-4">
               <label className="relative cursor-pointer App">
@@ -384,12 +706,46 @@ const ProductionSheetForm = () => {
                   Monitoring
                 </span>
               </label>
+              <input
+                type="file"
+                id="monitoringAttachment"
+                className="hidden"
+                name="monitoringAttachment"
+                accept="application/pdf"
+                onChange={(e) =>
+                  handleFileAttachments(
+                    "monitoringAttachment",
+                    e.target.files[0]
+                  )
+                }
+              />
               <button
                 className="flex items-center justify-center w-10 h-10 text-white bg-gray-500 rounded-lg"
-                onClick={() => document.getElementById("attachment").click()}
+                onClick={() =>
+                  document.getElementById("monitoringAttachment").click()
+                }
               >
                 <RiAttachmentLine className="text-white" />
               </button>
+              {attachments.monitoringAttachment && (
+                <>
+                  <span className="ml-2">
+                    {attachments.monitoringAttachment.name}
+                  </span>
+                  {/* clear button */}
+                  <button
+                    onClick={() =>
+                      setAttachments((prevAttachments) => ({
+                        ...prevAttachments,
+                        monitoringAttachment: null,
+                      }))
+                    }
+                    className="flex items-center text-red-600 bg-none"
+                  >
+                    <IoIosCloseCircleOutline className="ml-2 text-2xl" />
+                  </button>
+                </>
+              )}
             </div>
             <div className="flex items-center gap-2 mb-4">
               <label className="relative cursor-pointer App">
@@ -404,12 +760,46 @@ const ProductionSheetForm = () => {
                   Measurement
                 </span>
               </label>
+              <input
+                type="file"
+                id="measurementAttachment"
+                className="hidden"
+                name="measurementAttachment"
+                accept="application/pdf"
+                onChange={(e) =>
+                  handleFileAttachments(
+                    "measurementAttachment",
+                    e.target.files[0]
+                  )
+                }
+              />
               <button
                 className="flex items-center justify-center w-10 h-10 text-white bg-gray-500 rounded-lg"
-                onClick={() => document.getElementById("attachment").click()}
+                onClick={() =>
+                  document.getElementById("measurementAttachment").click()
+                }
               >
                 <RiAttachmentLine className="text-white" />
               </button>
+              {attachments.measurementAttachment && (
+                <>
+                  <span className="ml-2">
+                    {attachments.measurementAttachment.name}
+                  </span>
+                  {/* clear button */}
+                  <button
+                    onClick={() =>
+                      setAttachments((prevAttachments) => ({
+                        ...prevAttachments,
+                        measurementAttachment: null,
+                      }))
+                    }
+                    className="flex items-center text-red-600 bg-none"
+                  >
+                    <IoIosCloseCircleOutline className="ml-2 text-2xl" />
+                  </button>
+                </>
+              )}
             </div>
             <div className="flex items-center gap-2 mb-4">
               <label className="relative cursor-pointer App">
@@ -424,12 +814,46 @@ const ProductionSheetForm = () => {
                   Inspection
                 </span>
               </label>
+              <input
+                type="file"
+                id="inspectionAttachment"
+                className="hidden"
+                name="inspectionAttachment"
+                accept="application/pdf"
+                onChange={(e) =>
+                  handleFileAttachments(
+                    "inspectionAttachment",
+                    e.target.files[0]
+                  )
+                }
+              />
               <button
                 className="flex items-center justify-center w-10 h-10 text-white bg-gray-500 rounded-lg"
-                onClick={() => document.getElementById("attachment").click()}
+                onClick={() =>
+                  document.getElementById("inspectionAttachment").click()
+                }
               >
                 <RiAttachmentLine className="text-white" />
               </button>
+              {attachments.inspectionAttachment && (
+                <>
+                  <span className="ml-2">
+                    {attachments.inspectionAttachment.name}
+                  </span>
+                  {/* clear button */}
+                  <button
+                    onClick={() =>
+                      setAttachments((prevAttachments) => ({
+                        ...prevAttachments,
+                        inspectionAttachment: null,
+                      }))
+                    }
+                    className="flex items-center text-red-600 bg-none"
+                  >
+                    <IoIosCloseCircleOutline className="ml-2 text-2xl" />
+                  </button>
+                </>
+              )}
             </div>
             <div className="flex items-center gap-2 mb-4">
               <label className="relative cursor-pointer App">
@@ -444,12 +868,46 @@ const ProductionSheetForm = () => {
                   Management
                 </span>
               </label>
+              <input
+                type="file"
+                id="managementAttachment"
+                className="hidden"
+                name="managementAttachment"
+                accept="application/pdf"
+                onChange={(e) =>
+                  handleFileAttachments(
+                    "managementAttachment",
+                    e.target.files[0]
+                  )
+                }
+              />
               <button
                 className="flex items-center justify-center w-10 h-10 text-white bg-gray-500 rounded-lg"
-                onClick={() => document.getElementById("attachment").click()}
+                onClick={() =>
+                  document.getElementById("managementAttachment").click()
+                }
               >
                 <RiAttachmentLine className="text-white" />
               </button>
+              {attachments.managementAttachment && (
+                <>
+                  <span className="ml-2">
+                    {attachments.managementAttachment.name}
+                  </span>
+                  {/* clear button */}
+                  <button
+                    onClick={() =>
+                      setAttachments((prevAttachments) => ({
+                        ...prevAttachments,
+                        managementAttachment: null,
+                      }))
+                    }
+                    className="flex items-center text-red-600 bg-none"
+                  >
+                    <IoIosCloseCircleOutline className="ml-2 text-2xl" />
+                  </button>
+                </>
+              )}
             </div>
             <div className="flex items-center gap-2 mb-4">
               <label className="relative cursor-pointer App">
@@ -464,20 +922,53 @@ const ProductionSheetForm = () => {
                   Records Need to Provide Evidence
                 </span>
               </label>
+              <input
+                type="file"
+                id="recordsEvidenceAttachment"
+                className="hidden"
+                name="recordsEvidenceAttachment"
+                accept="application/pdf"
+                onChange={(e) =>
+                  handleFileAttachments(
+                    "recordsEvidenceAttachment",
+                    e.target.files[0]
+                  )
+                }
+              />
               <button
                 className="flex items-center justify-center w-10 h-10 text-white bg-gray-500 rounded-lg"
-                onClick={() => document.getElementById("attachment").click()}
+                onClick={() => document.getElementById("recordsEvidenceAttachment").click()}
               >
                 <RiAttachmentLine className="text-white" />
               </button>
+              {attachments.recordsEvidenceAttachment && (
+                <>
+                  <span className="ml-2">
+                    {attachments.recordsEvidenceAttachment.name}
+                  </span>
+                  {/* clear button */}
+                  <button
+                    onClick={() =>
+                      setAttachments((prevAttachments) => ({
+                        ...prevAttachments,
+                        recordsEvidenceAttachment: null,
+                      }))
+                    }
+                    className="flex items-center text-red-600 bg-none"
+                  >
+                    <IoIosCloseCircleOutline className="ml-2 text-2xl" />
+                  </button>
+                </>
+              )}
             </div>
-            <div className="flex items-center">
+            {/* <div className="flex items-center">
               <label htmlFor="attachment" className="text-[16px]">
                 Attachment
               </label>
               <input
                 type="file"
                 id="attachment"
+                name="attachment"
                 className="hidden"
                 accept=".pdf"
                 onChange={handleFileSelection}
@@ -487,15 +978,15 @@ const ProductionSheetForm = () => {
                 className="flex items-center px-4 py-2 ml-2 text-black bg-gray-300 rounded"
               >
                 Choose file
-                <FiFile className="ml-2" /> {/* File icon */}
+                <FiFile className="ml-2" />
               </button>
               {selectedFile && (
                 <span className="ml-2">{selectedFile.name}</span>
               )}
-            </div>
-            <p className="ml-2 text-sm text-red-600">
+            </div> */}
+            {/* <p className="ml-2 text-sm text-red-600">
               Only PDF files are allowed and only one file can be selected.
-            </p>
+            </p> */}
           </div>
         </div>
 
