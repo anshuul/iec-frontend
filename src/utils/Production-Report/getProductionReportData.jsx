@@ -17,11 +17,11 @@ export const getProductionReportData = async (updatedCustomerPO, prefix) => {
     );
 
     // Extract the generatedProductionReportId and prefix arrays
-    const generatedProductionReportId = ProductionIds.map(
+    const generatedProductionReportIDData = ProductionIds.map(
       (item) => item.generatedProductionReportId
     );
-    console.log("generatedProductionReportId", generatedProductionReportId);
-    return { generatedProductionReportId };
+    console.log("generatedProductionReportIDData", generatedProductionReportIDData);
+    return { generatedProductionReportIDData };
   } catch (error) {
     console.error("Error getting Production Report data:", error);
     throw error;

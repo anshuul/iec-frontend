@@ -65,12 +65,12 @@ const RoutingSheetFormUpdate = () => {
             procedureNo =
               productionReportSliceDataForRouting[0][0]?.processRows[index]
                 ?.procedures || "";
-            orderQty =
-              productionReportSliceDataForRouting[0][0]?.processRows[index]
-                ?.orderQty || "";
-            processQty =
-              productionReportSliceDataForRouting[0][0]?.processRows[index]
-                ?.processQty || "";
+            // orderQty =
+            //   productionReportSliceDataForRouting[0][0]?.processRows[index]
+            //     ?.orderQty || "";
+            // processQty =
+            //   productionReportSliceDataForRouting[0][0]?.processRows[index]
+            //     ?.processQty || "";
           } else if (row.routingSheetNo.startsWith("Nut")) {
             startTime =
               productionReportSliceDataForRouting[1][1]?.processRows[index]
@@ -87,12 +87,12 @@ const RoutingSheetFormUpdate = () => {
             procedureNo =
               productionReportSliceDataForRouting[1][1]?.processRows[index]
                 ?.procedures || "";
-            orderQty =
-              productionReportSliceDataForRouting[1][1]?.processRows[index]
-                ?.processQty || "";
-            processQty =
-              productionReportSliceDataForRouting[1][1]?.processRows[index]
-                ?.processQty || "";
+            // orderQty =
+            //   productionReportSliceDataForRouting[1][1]?.processRows[index]
+            //     ?.processQty || "";
+            // processQty =
+            //   productionReportSliceDataForRouting[1][1]?.processRows[index]
+            //     ?.processQty || "";
           }
 
           return {
@@ -103,8 +103,8 @@ const RoutingSheetFormUpdate = () => {
             operatorName,
             processDescription,
             procedureNo,
-            orderQty,
-            processQty,
+            // orderQty,
+            // processQty,
             processRowNumber: index + 1,
           };
         });

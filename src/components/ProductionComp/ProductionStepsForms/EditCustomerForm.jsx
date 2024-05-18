@@ -83,12 +83,57 @@ const EditCustomerForm = () => {
 
   const saveFormData = async () => {
     try {
+      const formData = new FormData();
+      formData.append("customerName", customerPO.customerName);
+      formData.append("poNo", customerPO.poNo);
+      formData.append("materialCode", customerPO.materialCode);
+      formData.append("studItemDescription", customerPO.studItemDescription);
+      formData.append("nutItemDescription", customerPO.nutItemDescription);
+      formData.append("selectedItem", customerPO.selectedItem);
+      formData.append("selectedSurface", customerPO.selectedSurface);
+      formData.append("studGrade", customerPO.studGrade);
+      formData.append("nutGrade", customerPO.nutGrade);
+      formData.append(
+        "POsize[diameter][value]",
+        customerPO.POsize.diameter.value
+      );
+      formData.append(
+        "POsize[diameter][dimension]",
+        customerPO.POsize.diameter.dimension
+      );
+      formData.append("POsize[thread]", customerPO.POsize.thread);
+      formData.append("POsize[length][value]", customerPO.POsize.length.value);
+      formData.append(
+        "POsize[length][dimension]",
+        customerPO.POsize.length.dimension
+      );
+      formData.append(
+        "Cuttingsize[cuttingdiameter][value]",
+        customerPO.Cuttingsize.cuttingdiameter.value
+      );
+      formData.append(
+        "Cuttingsize[cuttingthread]",
+        customerPO.Cuttingsize.cuttingthread
+      );
+      formData.append(
+        "Cuttingsize[cuttinglength][value]",
+        customerPO.Cuttingsize.cuttinglength.value
+      );
+      formData.append("quantity", customerPO.quantity);
+      formData.append("orderDate", customerPO.orderDate);
+      formData.append("attachmentPoNo", customerPO.poNo);
+
+      // Append the file if selected
+      if (customerPO.attachment) {
+        formData.append("attachment", customerPO.attachment.file);
+      }
+
       const response = await axios.put(
         `http://localhost:8000/api/customerPO/update/${poNo}`,
-        customerPO,
+        formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data", // Set content type to multipart form data
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -164,37 +209,60 @@ const EditCustomerForm = () => {
       );
       console.log("updateRoutingSheetByID", updateRoutingSheetByID);
 
-      const { generatedProductionReportId } = await getProductionReportData(
+      const { generatedProductionReportIDData } = await getProductionReportData(
         updatedNewCustomerPo,
         prefix
       );
       console.log(
-        "generatedProductionReportId in PO",
-        generatedProductionReportId
+        "generatedProductionReportData in PO",
+        generatedProductionReportIDData
       );
 
       const id0 =
-        generatedProductionReportId[0].generatedProductionReportData
-          .generatedProductionReportId[0];
+        generatedProductionReportIDData[0].generatedProductionReportData
+          .generatedProductionReportId;
       const id1 =
-        generatedProductionReportId[1].generatedProductionReportData
-          .generatedProductionReportId[1];
+        generatedProductionReportIDData[1].generatedProductionReportData
+          .generatedProductionReportId;
+
+      const prefix1 =
+        generatedProductionReportIDData[0].generatedProductionReportData.prefix;
+
+      const prefix2 =
+        generatedProductionReportIDData[1].generatedProductionReportData.prefix;
+
+      const finalPrefix = [prefix1, prefix2];
+      console.log("finalPrefix", finalPrefix);
 
       console.log("productionReportID at index 0:", id0);
       console.log("productionReportID at index 1:", id1);
       // Extract generatedProductionReportId values and store them in an array
-      let productionReportIDs = [id0, id1];
-      console.log("productionReportIDs", productionReportIDs);
-      // Initialize an empty array to store the production report IDs
-      // let productionReportIDs = [];
+      const finalProductionReportId = [id0, id1];
+      console.log("finalProductionReportId", finalProductionReportId);
 
-      // // Iterate over the array of objects
-      // generatedProductionReportId.forEach((item) => {
-      //   // Extract the generatedProductionReportId value from each object and push it to the productionReportIDs array
-      //   productionReportIDs.push(item.generatedProductionReportId);
-      // });
+      const finalArray = [
+        {
+          id: id0,
+          prefix: prefix1,
+        },
+        {
+          id: id1,
+          prefix: prefix2,
+        },
+      ];
+      console.log("finalArray", finalArray);
 
-      // console.log("Production Report IDs:", productionReportIDs);
+      const updateProductionReportByID = await axios.put(
+        `http://localhost:8000/api/productionReport/linkPoNo-productionreport/${finalProductionReportId}`,
+        {
+          newCustomerPo: updatedNewCustomerPo,
+          selectedItem,
+          modifiedQuantity,
+          customPoQuantity,
+          finalArray,
+        }
+      );
+      console.log("updateProductionReportByID", updateProductionReportByID);
 
       localStorage.setItem("updatedNewCustomerPo", updatedNewCustomerPo);
       router.push("/production");

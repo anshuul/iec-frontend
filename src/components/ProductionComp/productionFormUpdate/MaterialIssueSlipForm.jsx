@@ -6,6 +6,7 @@ import { FiArrowLeft, FiFile, FiPrinter, FiSave } from "react-icons/fi";
 import Container from "@/components/common/Container";
 import MaterialIssueSlip from "@/components/PDF/MaterialSlip/MaterialIssueSlip";
 import { PDFDownloadLink } from "@react-pdf/renderer";
+import { IoIosCloseCircleOutline } from "react-icons/io";
 
 const MaterialIssueSlipForm = () => {
   const router = useRouter();
@@ -19,7 +20,7 @@ const MaterialIssueSlipForm = () => {
     itemDescription: "",
     materialGrade: "",
     lotNumber: "",
-    diameter: { value: "", dimension: "mm" }, // Set as an object with 'value' and 'dimension' fields
+    diameter: { value: "", dimension: "mm" },
     length: { value: "", dimension: "mm" },
     thread: "",
     quantityRequired: "",
@@ -32,6 +33,30 @@ const MaterialIssueSlipForm = () => {
   });
 
   const [selectedFile, setSelectedFile] = useState(null);
+
+  const selectedFilePath =
+    selectedFile && `http://localhost:8000/${selectedFile.path}`;
+  console.log("selectedFilePath", selectedFilePath);
+
+  const handleDownloadSelected = async () => {
+    try {
+      const response = await fetch(selectedFilePath);
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = selectedFilePath.split("/").pop(); // Set the file name
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error("Error downloading PDF:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,6 +94,13 @@ const MaterialIssueSlipForm = () => {
           id: responseData._id,
           prefix: responseData.prefix,
         }));
+        // Set selected file data if attachment exists
+        if (responseData.attachment) {
+          setSelectedFile({
+            path: responseData.attachment.path,
+            fileName: responseData.attachment.fileName,
+          });
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -102,10 +134,47 @@ const MaterialIssueSlipForm = () => {
       console.log("newCustomerPO in material", newCustomerPO);
       const selectedItem = newCustomerPO.selectedItem;
       console.log("selectedItem", selectedItem);
+
+      const formData = new FormData();
+
+      formData.append("poNo", newCustomerPO.poNo);
+      formData.append("materialSlipName", materialIssueForm.materialSlipName);
+      formData.append("itemDescription", materialIssueForm.itemDescription);
+      formData.append("materialGrade", materialIssueForm.materialGrade);
+      formData.append("lotNumber", materialIssueForm.lotNumber);
+      formData.append("diameterValue", materialIssueForm.diameter.value);
+      formData.append(
+        "diameterDimension",
+        materialIssueForm.diameter.dimension
+      );
+      formData.append("lengthValue", materialIssueForm.length.value);
+      formData.append("lengthDimension", materialIssueForm.length.dimension);
+      formData.append("thread", materialIssueForm.thread);
+      formData.append("quantityRequired", materialIssueForm.quantityRequired);
+      formData.append("quantityIssued", materialIssueForm.quantityIssued);
+      formData.append("studquantity", materialIssueForm.studquantity);
+      formData.append("nutquantity", materialIssueForm.nutquantity);
+      formData.append("size", materialIssueForm.size);
+      formData.append("id", materialIssueForm.id);
+      formData.append("prefix", materialIssueForm.prefix);
+
+      formData.append("attachmentPoNo", newCustomerPO.poNo);
+
+      // Append the file if selected
+      if (selectedFile) {
+        formData.append("attachment", selectedFile);
+      }
+
       const response = await axios.put(
         `http://localhost:8000/api/materialissueslip/update-materialIssueSlip/${id}`,
-        materialIssueForm
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
+
       console.log("response in material", response.data);
       const UpdatedMaterialIssueSlipData = response.data;
       console.log("UpdatedMaterialIssueSlipData", UpdatedMaterialIssueSlipData);
@@ -470,6 +539,7 @@ const MaterialIssueSlipForm = () => {
             type="file"
             id="attachment"
             className="hidden"
+            name="attachment"
             accept=".pdf"
             onChange={handleFileSelection}
           />
@@ -480,7 +550,20 @@ const MaterialIssueSlipForm = () => {
             Choose file
             <FiFile className="ml-2" />
           </button>
-          {selectedFile && <span className="ml-2">{selectedFile.name}</span>}
+          {/* {selectedFile && <span className="ml-2">{selectedFile.name}</span>} */}
+          {selectedFile !== null && (
+            <>
+              <span className="ml-2">
+                {selectedFile.name || selectedFile.fileName}
+              </span>
+              <button
+                onClick={() => setSelectedFile(null)}
+                className="flex items-center text-red-600 bg-none"
+              >
+                <IoIosCloseCircleOutline className="ml-2 text-2xl" />
+              </button>
+            </>
+          )}
         </div>
         <p className="ml-2 text-sm text-red-600">
           Only PDF files are allowed and only one file can be selected.
@@ -497,6 +580,7 @@ const MaterialIssueSlipForm = () => {
           <PDFDownloadLink
             document={<MaterialIssueSlip data={materialIssueForm} />}
             fileName={`MaterialIssueSlip_${id}.pdf`}
+            onClick={handleDownloadSelected}
           >
             <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
               Print
