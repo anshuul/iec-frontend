@@ -217,7 +217,7 @@ const MaterialIssueSlipForm = () => {
         `http://localhost:8000/api/productionReport/create-updateGenerateProductionReport/${productionReportId}`,
         {
           newCustomerPo: newCustomerPO,
-          UpdatedMaterialIssueSlipData: LatestMaterialIssueSlipData,
+          UpdatedMaterialIssueSlipData: UpdatedMaterialIssueSlipData,
           selectedItem: selectedItem,
           modifiedQuantity: modifiedQuantity,
           customPoQuantity: customPoQuantity,

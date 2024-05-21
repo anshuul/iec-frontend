@@ -86,17 +86,15 @@ const MaterialIssueForm = () => {
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data", // Set content type to multipart form data
+            "Content-Type": "multipart/form-data",
           },
         }
       );
 
       console.log("response", response);
       router.push("/production/material-issue-slip");
-      // Optionally, handle success response, e.g., show a success message to the user
     } catch (error) {
       console.error("Error occurred while saving form data:", error);
-      // Optionally, handle error, e.g., show an error message to the user
     }
   };
 
@@ -216,7 +214,7 @@ const MaterialIssueForm = () => {
           </label>
         </div>
 
-        
+
 
         {/* Cutting Size */}
         <div className="flex flex-col items-start gap-2 my-4 md:items-center md:flex-row">
