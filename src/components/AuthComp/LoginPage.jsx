@@ -2,9 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import axios from "axios";
-import Cookies from 'js-cookie';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
-
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -30,14 +28,15 @@ const LoginPage = () => {
       if (response.status === 200) {
         // If login is successful, redirect or perform any other action
         const userData = response.data;
-        console.log("userData", userData)
+        console.log("userData", userData);
 
         const token = userData.token;
 
         document.cookie = `token=${token}`;
 
-        // Store user email in localStorage
-        localStorage.setItem('userEmail', userData.user.email);
+        // Store user email and username in localStorage
+        localStorage.setItem("userEmail", userData.user.email);
+        localStorage.setItem("userName", userData.user.userName);
 
         console.log("Login successful");
         router.push("/");
@@ -51,8 +50,8 @@ const LoginPage = () => {
   };
 
   const toggleShowPassword = () => {
-    setShowPassword(!showPassword)
-  }
+    setShowPassword(!showPassword);
+  };
   return (
     <div className="flex items-center justify-center h-screen">
       <div className="container w-full px-8 pt-6 pb-8 mx-4 mb-4 bg-white border border-black rounded shadow-md md:max-w-screen-md">
@@ -68,9 +67,7 @@ const LoginPage = () => {
           <h1 className="mb-4 text-3xl font-bold">Log In</h1>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-        >
+        <form onSubmit={handleSubmit}>
           {/* Email Input */}
           <input
             type="email"
@@ -83,12 +80,10 @@ const LoginPage = () => {
 
           {/* Password Input */}
           <div className="relative flex items-center mb-4">
-
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Password"
               className="w-full px-4 py-2 bg-gray-100 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

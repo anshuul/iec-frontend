@@ -46,8 +46,7 @@ const ProductionReportForm = () => {
           setData(routingSheetIdData.data);
 
           // Extract the _id from the response
-          const firstReportId =
-            routingSheetIdData.data.productionReports[0]?._id;
+          const firstReportId = routingSheetIdData.data._id;
           console.log("firstReportId", firstReportId);
 
           response = await axios.get(
@@ -186,6 +185,7 @@ const ProductionReportForm = () => {
   };
 
   const CustomButtonComponent = (props) => {
+    console.log("props.data in production report", props.data);
     console.log("props.data._id", props.data._id);
     console.log("props.data.productionReportId", props.data.productionReportId);
     return (
@@ -245,7 +245,8 @@ const ProductionReportForm = () => {
     { headerName: "Delete", cellRenderer: CustomButtonComponent },
   ];
 
-  console.log("Final output", rowData);
+  console.log("Final output in PR", rowData);
+  console.log("Final data in PR", data);
   return (
     <div className="flex flex-col mx-4 bg-white">
       <button
@@ -278,20 +279,22 @@ const ProductionReportForm = () => {
           <FiSave className="ml-2" />
         </button>
 
-        <PDFDownloadLink
-          document={<ProductionReport data={data?.productionReports[0]} />}
-          fileName={`ProductionReport_${data?.productionReports[0]._id}.pdf`}
-        >
-          <button
-            className="flex items-center px-4 py-2 text-black bg-gray-300 rounded"
-            onClick={() => {
-              console.log(data?.rowData);
-            }}
+        {data && (
+          <PDFDownloadLink
+            document={<ProductionReport data={data} />}
+            fileName={`ProductionReport_${data.poNo}.pdf`}
           >
-            Print
-            <FiPrinter className="ml-2" />
-          </button>
-        </PDFDownloadLink>
+            <button
+              className="flex items-center px-4 py-2 text-black bg-gray-300 rounded"
+              onClick={() => {
+                console.log(data?.rowData);
+              }}
+            >
+              Print
+              <FiPrinter className="ml-2" />
+            </button>
+          </PDFDownloadLink>
+        )}
       </div>
       {showConfirmDelete && (
         <ConfirmPopUp

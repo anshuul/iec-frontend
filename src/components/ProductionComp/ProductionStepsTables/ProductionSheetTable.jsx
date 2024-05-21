@@ -48,7 +48,7 @@ const ProductionSheetTable = ({ productionStep }) => {
               dateStyle: "long",
               timeStyle: "medium",
             }),
-            CreatedBy: item.productionSheetName, // Assuming createdBy should be displayed as Created By
+            CreatedBy: item.createdBy,
           }))
         );
       } catch (error) {

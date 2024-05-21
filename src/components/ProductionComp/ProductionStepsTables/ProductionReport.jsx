@@ -10,6 +10,7 @@ import axios from "axios";
 
 const ProductionReport = ({ productionStep }) => {
   console.log("productionStep", productionStep);
+
   const router = useRouter();
   const [rowData, setRowData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -44,38 +45,42 @@ const ProductionReport = ({ productionStep }) => {
           );
         }
 
-        // http://localhost:8000/api/productionReport/get-production-reportById/66212e4726e3bdaf230b6636
-
         const productionReports = response.data;
         console.log("productionReports in report sheet", productionReports);
-        const formattedData = productionReports.map((issueSlip, index) => {
-          const processRow = issueSlip.processRows[0];
-          let size = "N/A";
-          if (issueSlip.size && issueSlip.size.diameter) {
-            size = `${issueSlip.size.diameter.value}x${issueSlip.size.length.value}`;
-          }
-          console.log("issueSlip", issueSlip);
-          return {
-            srNo: index + 1,
-            _id: issueSlip._id,
-            ProductionPlanning: issueSlip.poNo,
-            CreatedData: processRow.jobDescription,
-            CreatedBy: processRow.operatorName,
-          };
-        });
+
+        const formattedData = [
+          {
+            srNo: 1,
+            ProductionPlanning: productionReports.poNo,
+            CreatedData: new Date(productionReports.date).toLocaleString(
+              undefined,
+              { dateStyle: "long", timeStyle: "medium" }
+            ),
+            CreatedBy: productionReports.createdBy,
+          },
+        ];
+
+        console.log("formattedData in production report", formattedData);
+
         setRowData(formattedData);
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
   }, []);
 
+  const handleEditClick = () => {
+    router.push(`/production/production-report/productionReportFormUpdate`);
+  };
+
   const CustomButtonComponent = (props) => {
     return (
       <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
         <button
-          onClick={() => window.alert("clicked")}
+          onClick={handleEditClick}
           className="p-2 text-green-600 bg-green-200 rounded-lg"
         >
           <MdModeEdit />

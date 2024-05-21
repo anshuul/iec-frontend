@@ -13,7 +13,6 @@ const MaterialIssueSlipForm = () => {
   const searchParams = useSearchParams();
 
   const id = searchParams.get("id");
-  console.log("first", id);
 
   const [materialIssueForm, setMaterialIssueForm] = useState({
     materialSlipName: "",
@@ -36,7 +35,6 @@ const MaterialIssueSlipForm = () => {
 
   const selectedFilePath =
     selectedFile && `http://localhost:8000/${selectedFile.path}`;
-  console.log("selectedFilePath", selectedFilePath);
 
   const handleDownloadSelected = async () => {
     try {
@@ -65,7 +63,6 @@ const MaterialIssueSlipForm = () => {
           `http://localhost:8000/api/materialissueslip/get-materialIssueSlipByID/${id}`
         );
         const responseData = response.data;
-        console.log("responseData", responseData);
 
         setMaterialIssueForm((prevState) => ({
           ...prevState, // Spread previous state
@@ -131,9 +128,8 @@ const MaterialIssueSlipForm = () => {
       const newCustomerPO = JSON.parse(
         localStorage.getItem("selectedCustomerPO")
       );
-      console.log("newCustomerPO in material", newCustomerPO);
+
       const selectedItem = newCustomerPO.selectedItem;
-      console.log("selectedItem", selectedItem);
 
       const formData = new FormData();
 
@@ -142,13 +138,17 @@ const MaterialIssueSlipForm = () => {
       formData.append("itemDescription", materialIssueForm.itemDescription);
       formData.append("materialGrade", materialIssueForm.materialGrade);
       formData.append("lotNumber", materialIssueForm.lotNumber);
-      formData.append("diameterValue", materialIssueForm.diameter.value);
-      formData.append(
-        "diameterDimension",
-        materialIssueForm.diameter.dimension
-      );
-      formData.append("lengthValue", materialIssueForm.length.value);
-      formData.append("lengthDimension", materialIssueForm.length.dimension);
+      // formData.append("diameterValue", materialIssueForm.diameter.value);
+      formData.append("diameterValue", materialIssueForm.diameter);
+      // formData.append(
+      //   "diameterDimension",
+      //   materialIssueForm.diameter.dimension
+      // );
+      formData.append("diameterDimension", "mm");
+      // formData.append("lengthValue", materialIssueForm.length.value);
+      formData.append("lengthValue", materialIssueForm.length);
+      // formData.append("lengthDimension", materialIssueForm.length.dimension);
+      formData.append("lengthDimension", "mm");
       formData.append("thread", materialIssueForm.thread);
       formData.append("quantityRequired", materialIssueForm.quantityRequired);
       formData.append("quantityIssued", materialIssueForm.quantityIssued);
@@ -174,18 +174,12 @@ const MaterialIssueSlipForm = () => {
           },
         }
       );
-
-      console.log("response in material", response.data);
       const UpdatedMaterialIssueSlipData = response.data;
       console.log("UpdatedMaterialIssueSlipData", UpdatedMaterialIssueSlipData);
 
       localStorage.setItem(
         "UpdatedMaterialIssueSlipData",
         JSON.stringify(UpdatedMaterialIssueSlipData)
-      );
-
-      const LatestMaterialIssueSlipData = JSON.parse(
-        localStorage.getItem("UpdatedMaterialIssueSlipData")
       );
 
       const fetchProductionReportId = await axios.get(
@@ -212,7 +206,6 @@ const MaterialIssueSlipForm = () => {
       }
 
       // Update or Create Production Report
-      // const productionReportId2 = "66406b92d772d81ea3a03e52";
       const updateProductionReport = await axios.put(
         `http://localhost:8000/api/productionReport/create-updateGenerateProductionReport/${productionReportId}`,
         {
@@ -230,7 +223,7 @@ const MaterialIssueSlipForm = () => {
     }
   };
   console.log("materialIssueForm in Form", materialIssueForm);
-
+  console.log("materialIssueForm.length.value", materialIssueForm.length);
   const handleCalculate = () => {
     const {
       diameter,
@@ -415,7 +408,7 @@ const MaterialIssueSlipForm = () => {
           {/* Diameter */}
           <label className="relative cursor-pointer App">
             <input
-              id="sizeFirstPart"
+              id="diameter"
               type="text"
               value={materialIssueForm.diameter}
               onChange={(e) => handleInputChange(e, "diameter")}
@@ -426,39 +419,11 @@ const MaterialIssueSlipForm = () => {
               Diameter
             </span>
           </label>
-          {/* <label
-            htmlFor="diameterDimension"
-            className="relative flex items-center cursor-pointer App"
-          >
-            <select
-              id="diameterDimension"
-              value={materialIssueForm.diameterDimension}
-              onChange={(e) => handleInputChange(e, "diameterDimension")}
-              className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
-            >
-              <option value="inch">Inch</option>
-              <option value="mm">MM</option>
-            </select>
-          </label> */}
 
-          {/* Pitch */}
-          {/* <label className="relative cursor-pointer App">
-            <input
-              id="thread"
-              type="text"
-              value={materialIssueForm.thread}
-              onChange={(e) => handleInputChange(e, "thread")}
-              placeholder="Input"
-              className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
-            />
-            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              Pitch
-            </span>
-          </label> */}
           {/* Length */}
           <label className="relative cursor-pointer App">
             <input
-              id="sizeFirstPart"
+              id="length"
               type="text"
               value={materialIssueForm.length}
               onChange={(e) => handleInputChange(e, "length")}
@@ -469,21 +434,6 @@ const MaterialIssueSlipForm = () => {
               Length
             </span>
           </label>
-          {/* <label
-            htmlFor="lengthDimension"
-            className="relative flex items-center cursor-pointer App"
-          >
-            <select
-              id="lengthDimension"
-              value={materialIssueForm.lengthDimension}
-              onChange={(e) => handleInputChange(e, "lengthDimension")}
-              className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
-            >
-              <option value="inch">Inch</option>
-              <option value="mm">MM</option>
-            </select>
-          </label> */}
-
           {/* Calculate button */}
           <button
             onClick={handleCalculate}

@@ -17,6 +17,7 @@ const ProductionForm = () => {
 
   const router = useRouter();
   const [customerName, setCustomerName] = useState("Vishal Doshi");
+  // const [createdBy, setCreatedBy] = useState("");
   const [poNo, setPoNo] = useState("");
   const [materialCode, setMaterialCode] = useState("");
   const [studItemDescription, setStudItemDescription] = useState("");
@@ -39,6 +40,8 @@ const ProductionForm = () => {
   const [quantity, setQuantity] = useState("");
   const [orderDate, setOrderDate] = useState(new Date());
   const [selectedFile, setSelectedFile] = useState(null);
+
+  const userName = localStorage.getItem("userName");
 
   useEffect(() => {
     try {
@@ -98,6 +101,7 @@ const ProductionForm = () => {
       formData.append("Cuttingsize[cuttinglength][value]", cuttingLength);
       formData.append("quantity", quantity);
       formData.append("orderDate", orderDate);
+      formData.append("createdBy", userName);
 
       // Append poNo to the formData
       formData.append("attachmentPoNo", poNo);

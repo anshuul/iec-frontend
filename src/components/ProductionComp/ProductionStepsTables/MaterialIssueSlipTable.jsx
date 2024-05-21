@@ -42,6 +42,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
         }
 
         const materialIssueSlips = response.data;
+        console.log("materialIssueSlips in material", materialIssueSlips)
         // Generate srNo for each material issue slip
         const formattedData = materialIssueSlips.map((issueSlip, index) => {
           let size = "N/A";
@@ -62,7 +63,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
             Remarks: "-",
           };
         });
-
+        console.log("formattedData in material", formattedData);
         setRowData(formattedData);
       } catch (error) {
         console.error("Error fetching data:", error);

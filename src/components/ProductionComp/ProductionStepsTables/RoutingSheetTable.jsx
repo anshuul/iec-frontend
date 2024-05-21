@@ -14,6 +14,7 @@ import { current } from "@reduxjs/toolkit";
 
 const RoutingSheetTable = ({ productionStep }) => {
   console.log("productionStep", productionStep);
+
   const router = useRouter();
   const [rowData, setRowData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -49,7 +50,7 @@ const RoutingSheetTable = ({ productionStep }) => {
             _id: item._id,
             RoutingSheets: item.processRows[0].routingSheetNo,
             CreatedData: item.processDescription || "DATA",
-            CreatedBy: item.operatorName || "Vishal",
+            CreatedBy: item.createdBy,
           }))
         );
       } catch (error) {

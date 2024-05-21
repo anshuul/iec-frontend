@@ -21,6 +21,9 @@ const productionForm = ({ params }) => {
       {productionForm === "routingSheetFormUpdate" && (
         <RoutingSheetFormUpdate productionForm={productionForm} />
       )}
+      {productionForm === "productionReportFormUpdate" && (
+        <ProductionReportForm productionForm={productionForm} />
+      )}
       {productionForm === "materialIssueFormUpdate" && (
         <MaterialIssueSlipForm productionForm={productionForm} />
       )}
@@ -54,9 +57,9 @@ const productionForm = ({ params }) => {
       {productionForm === "routingSheetForm" && (
         <RoutingSheetForm productionForm={productionForm} />
       )}
-      {productionForm === "productionReportForm" && (
+      {/* {productionForm === "productionReportForm" && (
         <ProductionReportForm productionForm={productionForm} />
-      )}
+      )} */}
       {productionForm === "dimensionReportForm" && (
         <DimensionReportForm productionForm={productionForm} />
       )}

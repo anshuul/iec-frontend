@@ -22,7 +22,10 @@ const RoutingSheetFormUpdate = () => {
   const productionReportSliceDataForRouting = useSelector(
     (state) => state.productionReport.data
   );
-console.log("productionReportSliceDataForRouting", productionReportSliceDataForRouting)
+  console.log(
+    "productionReportSliceDataForRouting in routing",
+    productionReportSliceDataForRouting
+  );
   const handleGoBack = () => {
     router.back();
   };
@@ -40,7 +43,7 @@ console.log("productionReportSliceDataForRouting", productionReportSliceDataForR
         const responseData = Array.isArray(response.data)
           ? response.data
           : [response.data];
-        console.log("responseData routing", responseData);
+        console.log("responseData routing", responseData[0]);
 
         const newRows = responseData[0]?.processRows.map((row, index) => {
           let startTime = "";
@@ -48,54 +51,40 @@ console.log("productionReportSliceDataForRouting", productionReportSliceDataForR
           let operatorName = "";
           let processDescription = "";
           let procedureNo = "";
-          // let orderQty = "";
-          // let processQty = "";
-
+          console.log("start new Rows");
           // Check if routingSheetNo starts with "Stud" or "Nut"
           if (row.routingSheetNo.startsWith("Stud")) {
             startTime =
-              productionReportSliceDataForRouting[0][0]?.processRows[index]
+              productionReportSliceDataForRouting[0]?.processRows[index]
                 ?.startTime || "";
             endTime =
-              productionReportSliceDataForRouting[0][0]?.processRows[index]
+              productionReportSliceDataForRouting[0]?.processRows[index]
                 ?.endTime || "";
             operatorName =
-              productionReportSliceDataForRouting[0][0]?.processRows[index]
+              productionReportSliceDataForRouting[0]?.processRows[index]
                 ?.operatorName || "";
             processDescription =
-              productionReportSliceDataForRouting[0][0]?.processRows[index]
+              productionReportSliceDataForRouting[0]?.processRows[index]
                 ?.jobDescription || "";
             procedureNo =
-              productionReportSliceDataForRouting[0][0]?.processRows[index]
+              productionReportSliceDataForRouting[0]?.processRows[index]
                 ?.procedures || "";
-            // orderQty =
-            //   productionReportSliceDataForRouting[0][0]?.processRows[index]
-            //     ?.orderQty || "";
-            // processQty =
-            //   productionReportSliceDataForRouting[0][0]?.processRows[index]
-            //     ?.processQty || "";
           } else if (row.routingSheetNo.startsWith("Nut")) {
             startTime =
-              productionReportSliceDataForRouting[0][1]?.processRows[index]
+              productionReportSliceDataForRouting[1]?.processRows[index]
                 ?.startTime || "";
             endTime =
-              productionReportSliceDataForRouting[0][1]?.processRows[index]
+              productionReportSliceDataForRouting[1]?.processRows[index]
                 ?.endTime || "";
             operatorName =
-              productionReportSliceDataForRouting[0][1]?.processRows[index]
+              productionReportSliceDataForRouting[1]?.processRows[index]
                 ?.operatorName || "";
             processDescription =
-              productionReportSliceDataForRouting[0][1]?.processRows[index]
+              productionReportSliceDataForRouting[1]?.processRows[index]
                 ?.jobDescription || "";
             procedureNo =
-              productionReportSliceDataForRouting[0][1]?.processRows[index]
+              productionReportSliceDataForRouting[1]?.processRows[index]
                 ?.procedures || "";
-            // orderQty =
-            //   productionReportSliceDataForRouting[1][1]?.processRows[index]
-            //     ?.processQty || "";
-            // processQty =
-            //   productionReportSliceDataForRouting[1][1]?.processRows[index]
-            //     ?.processQty || "";
           }
 
           return {
@@ -106,15 +95,14 @@ console.log("productionReportSliceDataForRouting", productionReportSliceDataForR
             operatorName,
             processDescription,
             procedureNo,
-            // orderQty,
-            // processQty,
             processRowNumber: index + 1,
           };
         });
 
-        setRowData(newRows || []);
-        setRoutingSheet(responseData[0]);
+        console.log("newRows in Routing", newRows);
 
+        setRowData(newRows);
+        setRoutingSheet(responseData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -164,17 +152,17 @@ console.log("productionReportSliceDataForRouting", productionReportSliceDataForR
       // alert("Routing sheet updated successfully");
       const formData = new FormData();
       const updatedData = { ...routingSheet, processRows: rowData };
-      formData.append('routingSheetId', id);
-      formData.append('newData', JSON.stringify(updatedData));
+      formData.append("routingSheetId", id);
+      formData.append("newData", JSON.stringify(updatedData));
       if (attachment) {
-        formData.append('attachment', attachment);
-        formData.append('attachmentPoNo', routingSheet.poNo); // Include the poNo for the file destination
+        formData.append("attachment", attachment);
+        formData.append("attachmentPoNo", routingSheet.poNo); // Include the poNo for the file destination
       }
 
       await axios.put(
         `http://localhost:8000/api/routingSheet/update-generated-routingsheet/${id}`,
         formData,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
       alert("Routing sheet updated successfully");
     } catch (error) {
@@ -222,6 +210,7 @@ console.log("productionReportSliceDataForRouting", productionReportSliceDataForR
     { headerName: "REMARKS", field: "remarks", editable: true },
   ];
   console.log("PDF Row Data", rowData);
+  console.log("routingSheet PDF Row Data", routingSheet);
   return (
     <div className="flex flex-col mx-4 bg-white">
       <button
@@ -266,9 +255,7 @@ console.log("productionReportSliceDataForRouting", productionReportSliceDataForR
           </button>
           {attachment && (
             <div className="flex items-center">
-              <span className="mr-2">
-                {attachment.name}
-              </span>
+              <span className="mr-2">{attachment.name}</span>
               <button
                 onClick={() => setAttachment(null)}
                 className="flex items-center text-red-600 bg-none"

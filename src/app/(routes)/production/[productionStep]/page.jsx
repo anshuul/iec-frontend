@@ -1,3 +1,4 @@
+"use client";
 import DimensionReportHome from "@/components/ProductionComp/DimensionInspection/DimensionInspectionReportHome";
 import ProductionReportForm from "@/components/ProductionComp/ProductionStepsForms/ProductionReportForm";
 import DimensionReport from "@/components/ProductionComp/ProductionStepsTables/DimensionReport";
@@ -5,25 +6,46 @@ import MaterialIssueSlipTable from "@/components/ProductionComp/ProductionStepsT
 import ProductionReport from "@/components/ProductionComp/ProductionStepsTables/ProductionReport";
 import ProductionSheetTable from "@/components/ProductionComp/ProductionStepsTables/ProductionSheetTable";
 import RoutingSheetTable from "@/components/ProductionComp/ProductionStepsTables/RoutingSheetTable";
+import { useEffect, useState } from "react";
 
 const ProducitonStep = ({ params }) => {
   const { productionStep } = params;
   console.log("productionStep", productionStep);
 
+  const [userEmailName, setUserEmailName] = useState("");
+
+  useEffect(() => {
+    // Retrieve user email from localStorage
+    const userEmail = localStorage.getItem("userEmail");
+    // Extract name from email
+    const name = userEmail ? userEmail.split("@")[0] : ""; // Split email by '@' and get the first part
+    setUserEmailName(name);
+  }, []);
+  console.log("userEmailName in ProducitonStep", userEmailName);
+
   return (
     <div className="bg-gray-300">
       {productionStep === "production-planning-sheets" && (
-        <ProductionSheetTable productionStep={productionStep} />
+        <ProductionSheetTable
+          productionStep={productionStep}
+          userEmailName={userEmailName}
+        />
       )}
       {productionStep === "material-issue-slip" && (
         <MaterialIssueSlipTable productionStep={productionStep} />
       )}
       {productionStep === "routing-sheet" && (
-        <RoutingSheetTable productionStep={productionStep} />
+        <RoutingSheetTable
+          productionStep={productionStep}
+          userEmailName={userEmailName}
+        />
       )}
       {productionStep === "production-report" && (
-        <ProductionReportForm productionStep={productionStep} />
-        // <ProductionReport productionStep={productionStep} />
+        // <ProductionReportForm productionStep={productionStep} />
+        <ProductionReport
+          productionStep={productionStep}
+          userEmailName={userEmailName}
+        />
       )}
       {/* {productionStep === "production-report" && (
         <ProductionReport productionStep={productionStep} />
