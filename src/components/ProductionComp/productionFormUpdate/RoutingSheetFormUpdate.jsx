@@ -12,6 +12,8 @@ import RoutingSheetNut from "@/components/PDF/RoutingSheet/RoutingSheetNut";
 import RoutingSheetStud from "@/components/PDF/RoutingSheet/RoutingSheetStud";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { IoIosCloseCircleOutline } from "react-icons/io";
+import { RiDeleteBin5Line } from "react-icons/ri";
+import ConfirmPopUp from "@/components/common/ConfirmPopUp";
 
 const RoutingSheetFormUpdate = () => {
   const router = useRouter();
@@ -34,6 +36,9 @@ const RoutingSheetFormUpdate = () => {
   const [routingSheet, setRoutingSheet] = useState({});
   const [attachment, setAttachment] = useState(null);
 
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [processRowToDelete, setProcessRowToDelete] = useState(null);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -49,7 +54,6 @@ const RoutingSheetFormUpdate = () => {
           let startTime = "";
           let endTime = "";
           let operatorName = "";
-          let processDescription = "";
           let procedureNo = "";
           console.log("start new Rows");
           // Check if routingSheetNo starts with "Stud" or "Nut"
@@ -63,9 +67,9 @@ const RoutingSheetFormUpdate = () => {
             operatorName =
               productionReportSliceDataForRouting[0]?.processRows[index]
                 ?.operatorName || "";
-            processDescription =
-              productionReportSliceDataForRouting[0]?.processRows[index]
-                ?.jobDescription || "";
+            // processDescription =
+            //   productionReportSliceDataForRouting[0]?.processRows[index]
+            //     ?.jobDescription || "";
             procedureNo =
               productionReportSliceDataForRouting[0]?.processRows[index]
                 ?.procedures || "";
@@ -79,9 +83,9 @@ const RoutingSheetFormUpdate = () => {
             operatorName =
               productionReportSliceDataForRouting[1]?.processRows[index]
                 ?.operatorName || "";
-            processDescription =
-              productionReportSliceDataForRouting[1]?.processRows[index]
-                ?.jobDescription || "";
+            // processDescription =
+            //   productionReportSliceDataForRouting[1]?.processRows[index]
+            //     ?.jobDescription || "";
             procedureNo =
               productionReportSliceDataForRouting[1]?.processRows[index]
                 ?.procedures || "";
@@ -93,9 +97,9 @@ const RoutingSheetFormUpdate = () => {
             startTime,
             endTime,
             operatorName,
-            processDescription,
             procedureNo,
             processRowNumber: index + 1,
+            routingSheetId: responseData[0]._id,
           };
         });
 
@@ -144,16 +148,11 @@ const RoutingSheetFormUpdate = () => {
 
   const handleSave = async () => {
     try {
-      // const updatedData = { ...routingSheet, processRows: rowData };
-      // await axios.put(
-      //   `http://localhost:8000/api/routingSheet/update-generated-routingsheet/${id}`,
-      //   { routingSheetId: id, newData: updatedData }
-      // );
-      // alert("Routing sheet updated successfully");
       const formData = new FormData();
       const updatedData = { ...routingSheet, processRows: rowData };
+      console.log("updatedData in routing sheet handleSave", updatedData);
       formData.append("routingSheetId", id);
-      formData.append("newData", JSON.stringify(updatedData));
+      formData.append("newData", updatedData);
       if (attachment) {
         formData.append("attachment", attachment);
         formData.append("attachmentPoNo", routingSheet.poNo); // Include the poNo for the file destination
@@ -169,6 +168,46 @@ const RoutingSheetFormUpdate = () => {
       console.error("Error updating routing sheet:", error);
       alert("Failed to update routing sheet");
     }
+  };
+
+  const handleDelete = (processRowId, routingSheetId) => {
+    setProcessRowToDelete({ processRowId, routingSheetId });
+    setShowConfirmDelete(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    const { processRowId, routingSheetId } = processRowToDelete;
+    try {
+      console.log("Deleting process row:", processRowId);
+      await axios.delete(
+        `http://localhost:8000/api/routingSheet/delete-processRow/${routingSheetId}/${processRowId}`
+      );
+      const updatedRowData = rowData.filter((row) => row._id !== processRowId);
+      setRowData(updatedRowData);
+      console.log("Process row deleted successfully");
+    } catch (error) {
+      console.log("Error deleting process row:", error);
+    }
+    setShowConfirmDelete(false);
+  };
+
+  const handleCancelDelete = () => {
+    setShowConfirmDelete(false);
+  };
+
+  const CustomButtonComponent = (props) => {
+    return (
+      <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
+        <button
+          onClick={() =>
+            handleDelete(props.data._id, props.data.routingSheetId)
+          }
+          className="p-2 text-red-600 bg-red-200 rounded-lg"
+        >
+          <RiDeleteBin5Line />
+        </button>
+      </div>
+    );
   };
 
   const columnDefs = [
@@ -208,6 +247,7 @@ const RoutingSheetFormUpdate = () => {
     { headerName: "END TIME", field: "endTime", editable: true },
     { headerName: "OPT SIGN", field: "optSign", editable: true },
     { headerName: "REMARKS", field: "remarks", editable: true },
+    { headerName: "Delete", cellRenderer: CustomButtonComponent },
   ];
   console.log("PDF Row Data", rowData);
   console.log("routingSheet PDF Row Data", routingSheet);
@@ -288,6 +328,12 @@ const RoutingSheetFormUpdate = () => {
           </PDFDownloadLink>
         </div>
       </div>
+      {showConfirmDelete && (
+        <ConfirmPopUp
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+        />
+      )}
     </div>
   );
 };

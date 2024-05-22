@@ -16,7 +16,7 @@ const ProductionForm = () => {
   console.log("first", CustomerPO);
 
   const router = useRouter();
-  const [customerName, setCustomerName] = useState("Vishal Doshi");
+  const [customerName, setCustomerName] = useState("");
   // const [createdBy, setCreatedBy] = useState("");
   const [poNo, setPoNo] = useState("");
   const [materialCode, setMaterialCode] = useState("");
