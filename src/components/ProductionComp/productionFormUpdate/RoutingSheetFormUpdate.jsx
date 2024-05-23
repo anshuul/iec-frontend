@@ -55,6 +55,9 @@ const RoutingSheetFormUpdate = () => {
           let endTime = "";
           let operatorName = "";
           let procedureNo = "";
+          let orderQty = "";
+          let processQty = "";
+
           console.log("start new Rows");
           // Check if routingSheetNo starts with "Stud" or "Nut"
           if (row.routingSheetNo.startsWith("Stud")) {
@@ -73,6 +76,12 @@ const RoutingSheetFormUpdate = () => {
             procedureNo =
               productionReportSliceDataForRouting[0]?.processRows[index]
                 ?.procedures || "";
+            orderQty =
+              productionReportSliceDataForRouting[0]?.processRows[index]
+                ?.orderQty || "";
+            processQty =
+              productionReportSliceDataForRouting[0]?.processRows[index]
+                ?.processQty || "";
           } else if (row.routingSheetNo.startsWith("Nut")) {
             startTime =
               productionReportSliceDataForRouting[1]?.processRows[index]
@@ -89,6 +98,12 @@ const RoutingSheetFormUpdate = () => {
             procedureNo =
               productionReportSliceDataForRouting[1]?.processRows[index]
                 ?.procedures || "";
+            orderQty =
+              productionReportSliceDataForRouting[1]?.processRows[index]
+                ?.orderQty || "";
+            processQty =
+              productionReportSliceDataForRouting[1]?.processRows[index]
+                ?.processQty || "";
           }
 
           return {
@@ -98,6 +113,8 @@ const RoutingSheetFormUpdate = () => {
             endTime,
             operatorName,
             procedureNo,
+            orderQty,
+            processQty,
             processRowNumber: index + 1,
             routingSheetId: responseData[0]._id,
           };

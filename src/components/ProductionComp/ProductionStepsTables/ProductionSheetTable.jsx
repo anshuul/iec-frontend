@@ -216,7 +216,7 @@ const ProductionSheetTable = ({ productionStep }) => {
       field: "srNo",
       minWidth: 50,
       maxWidth: 80,
-      sort: "desc",
+      // sort: "desc",
     },
     {
       headerName: "Action",

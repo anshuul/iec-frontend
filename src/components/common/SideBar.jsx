@@ -47,15 +47,6 @@ const SideBar = () => {
           open ? "w-72" : "w-20 "
         } bg-dark-purple h-screen p-5 pt-4 relative duration-300`}
       >
-        {/* <div className=""> */}
-        {/* <MdOutlineKeyboardArrowLeft
-          className={`absolute cursor-pointer -right-3 top-4 h-[42px] w-[42px] rounded-full  ${
-            !open && "rotate-180"
-          }`}
-          onClick={() => setOpen(!open)}
-        /> */}
-        {/* </div> */}
-        {/* <Link href={"/"}> */}
         <div className="flex items-center gap-x-4">
           <img
             src="/homelogo.jpeg"
@@ -72,22 +63,19 @@ const SideBar = () => {
             IEC
           </h1>
         </div>
-        {/* </Link> */}
 
         {open && <hr className="mt-8" />}
         <ul className="pt-6">
           {Menus.map((Menu, index) => {
-            const isActive = pathname === Menu.href;
+            const isActive = pathname.startsWith(Menu.href);
             return (
-              <Link href={Menu.href}>
+              <Link key={index} href={Menu.href}>
                 <li
-                  key={index}
                   className={`flex rounded-md p-2 cursor-pointer text-gray-900 text-lg items-center gap-x-4 
               mt-2 ${index === 0 && "bg-light-white"} ${
                     isActive ? "bg-gray-300" : "hover:bg-gray-200"
                   }`}
                 >
-                  {/* <img src={`./src/assets/${Menu.src}.png`} /> */}
                   <span className="text-lg text-black">{Menu.icon}</span>
                   <span
                     className={`${!open && "hidden"} origin-left duration-1000`}
