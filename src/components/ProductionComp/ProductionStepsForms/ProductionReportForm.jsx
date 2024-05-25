@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
-import { FiArrowLeft, FiPrinter, FiSave } from "react-icons/fi";
+import { FiArrowLeft, FiFile, FiPrinter, FiSave } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { RiDeleteBin5Line } from "react-icons/ri";
@@ -11,6 +11,7 @@ import ConfirmPopUp from "@/components/common/ConfirmPopUp";
 import ProductionReport from "@/components/PDF/ProductionReport/ProductionReport";
 import ProductionReportMain from "@/components/PDF/ProductionReport/ProductionReportMain";
 import { PDFDownloadLink } from "@react-pdf/renderer";
+import { IoIosCloseCircleOutline } from "react-icons/io";
 
 const ProductionReportForm = () => {
   const router = useRouter();
@@ -24,6 +25,18 @@ const ProductionReportForm = () => {
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [processRowToDelete, setProcessRowToDelete] = useState(null);
   const [data, setData] = useState(null);
+
+  const [attachment, setAttachment] = useState(null);
+
+  const handleFileSelection = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type === "application/pdf") {
+      setAttachment(file);
+    } else {
+      setAttachment(null);
+      alert("Please select a PDF file.");
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -138,16 +151,47 @@ const ProductionReportForm = () => {
     try {
       // Toggle the loading state
       setLoading(true);
+
       // Iterate over rowData to find the changed row
       for (const row of rowData) {
+        console.log("row data in production report", row);
         // Check if the row has been modified
         if (row.modified) {
           const { productionReportId, _id, ...updatedProcessRowData } = row;
+
+          // Create a FormData object
+          const formData = new FormData();
+
+          // Append the updated process row data
+          for (const key in updatedProcessRowData) {
+            if (updatedProcessRowData.hasOwnProperty(key)) {
+              formData.append(key, updatedProcessRowData[key]);
+            }
+          }
+
+          // Append the production report ID and process row ID
+          formData.append("productionReportId", productionReportId);
+          formData.append("processRowId", _id);
+
+          // Append the attachment if it exists
+          if (attachment) {
+            formData.append("attachment", attachment);
+            // formData.append("attachmentPoNo", updatedProcessRowData.poNo); // Include the poNo for the file destination
+            // Get poNo from data state
+            console.log("data in handle save", data)
+            console.log("data in handle save PONO", data.poNo)
+            const poNo = data ? data.poNo : null;
+            formData.append("attachmentPoNo", poNo);
+          }
+
           await axios.put(
             `http://localhost:8000/api/productionReport/${productionReportId}/${_id}`,
-            updatedProcessRowData
+            formData,
+            { headers: { "Content-Type": "multipart/form-data" } }
           );
+
           console.log("Process row updated successfully:", row);
+
           // Reset the modified flag
           row.modified = false;
         }
@@ -267,34 +311,64 @@ const ProductionReportForm = () => {
       </div>
       <hr className="my-4 border-t border-gray-300" />
       {/* <Container> */}
-      <div className="flex justify-end mx-4 mb-4 max-w-screen-full">
-        <button
-          onClick={handleSave}
-          disabled={loading}
-          className={`flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded ${
-            loading ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-        >
-          {loading ? "Saving..." : "Save"}
-          <FiSave className="ml-2" />
-        </button>
-
-        {data && (
-          <PDFDownloadLink
-            document={<ProductionReport data={data} />}
-            fileName={`ProductionReport_${data.poNo}.pdf`}
+      <div className="flex justify-between mx-4 mb-4 max-w-screen-full">
+        <div className="flex items-center">
+          <input
+            type="file"
+            id="attachment"
+            className="hidden"
+            name="attachment"
+            accept="application/pdf"
+            onChange={handleFileSelection}
+          />
+          <button
+            onClick={() => document.getElementById("attachment").click()}
+            className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded"
           >
-            <button
-              className="flex items-center px-4 py-2 text-black bg-gray-300 rounded"
-              onClick={() => {
-                console.log(data?.rowData);
-              }}
+            Attachment
+            <FiFile className="ml-2" />
+          </button>
+          {attachment && (
+            <div className="flex items-center">
+              <span className="mr-2">{attachment.name || attachment.fileName}</span>
+              <button
+                onClick={() => setAttachment(null)}
+                className="flex items-center text-red-600 bg-none"
+              >
+                <IoIosCloseCircleOutline className="ml-2 text-2xl" />
+              </button>
+            </div>
+          )}
+        </div>
+        <div className="flex">
+          <button
+            onClick={handleSave}
+            disabled={loading}
+            className={`flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+          >
+            {loading ? "Saving..." : "Save"}
+            <FiSave className="ml-2" />
+          </button>
+
+          {data && (
+            <PDFDownloadLink
+              document={<ProductionReport data={data} />}
+              fileName={`ProductionReport_${data.poNo}.pdf`}
             >
-              Print
-              <FiPrinter className="ml-2" />
-            </button>
-          </PDFDownloadLink>
-        )}
+              <button
+                className="flex items-center px-4 py-2 text-black bg-gray-300 rounded"
+                onClick={() => {
+                  console.log(data?.rowData);
+                }}
+              >
+                Print
+                <FiPrinter className="ml-2" />
+              </button>
+            </PDFDownloadLink>
+          )}
+        </div>
       </div>
       {showConfirmDelete && (
         <ConfirmPopUp
