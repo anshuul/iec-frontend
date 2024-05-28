@@ -7,6 +7,11 @@ const HistoryTablePopup = ({
   historyRowData,
   closeModal,
 }) => {
+  console.log("GET DATA in HistoryTablePopup", {
+    HistoryColumnDefs,
+    historyRowData,
+    closeModal,
+  });
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="relative w-full max-w-5xl p-6 bg-white rounded-lg shadow-lg">

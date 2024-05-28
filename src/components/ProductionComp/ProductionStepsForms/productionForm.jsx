@@ -16,7 +16,8 @@ const ProductionForm = () => {
   console.log("first", CustomerPO);
 
   const router = useRouter();
-  const [customerName, setCustomerName] = useState("Vishal Doshi");
+  const [customerName, setCustomerName] = useState("");
+  // const [createdBy, setCreatedBy] = useState("");
   const [poNo, setPoNo] = useState("");
   const [materialCode, setMaterialCode] = useState("");
   const [studItemDescription, setStudItemDescription] = useState("");
@@ -40,6 +41,8 @@ const ProductionForm = () => {
   const [orderDate, setOrderDate] = useState(new Date());
   const [selectedFile, setSelectedFile] = useState(null);
 
+  const userName = localStorage.getItem("userName");
+
   useEffect(() => {
     try {
       const fetchData = async () => {
@@ -62,6 +65,7 @@ const ProductionForm = () => {
 
   const handleFileSelection = (e) => {
     const file = e.target.files[0];
+    console.log("Selected file:", file);
     if (file && file.type === "application/pdf") {
       setSelectedFile(file);
     } else {
@@ -77,41 +81,41 @@ const ProductionForm = () => {
 
   const saveFormData = async () => {
     try {
+      const formData = new FormData();
+      formData.append("customerName", customerName);
+      formData.append("poNo", poNo);
+      formData.append("materialCode", materialCode);
+      formData.append("studItemDescription", studItemDescription);
+      formData.append("nutItemDescription", nutItemDescription);
+      formData.append("selectedItem", selectedItem);
+      formData.append("selectedSurface", selectedSurface);
+      formData.append("studGrade", studGrade);
+      formData.append("nutGrade", nutGrade);
+      formData.append("POsize[diameter][value]", diameter);
+      formData.append("POsize[diameter][dimension]", diameterDimension);
+      formData.append("POsize[thread]", thread);
+      formData.append("POsize[length][value]", length);
+      formData.append("POsize[length][dimension]", lengthDimension);
+      formData.append("Cuttingsize[cuttingdiameter][value]", cuttingDiameter);
+      formData.append("Cuttingsize[cuttingthread]", cuttingthread);
+      formData.append("Cuttingsize[cuttinglength][value]", cuttingLength);
+      formData.append("quantity", quantity);
+      formData.append("orderDate", orderDate);
+      formData.append("createdBy", userName);
+
+      // Append poNo to the formData
+      formData.append("attachmentPoNo", poNo);
+      if (selectedFile) {
+        formData.append("attachment", selectedFile);
+      }
+
       const response = await axios.post(
         "http://localhost:8000/api/customerPO/createCustomerPO",
+        formData,
         {
-          customerName,
-          poNo,
-          materialCode,
-          studItemDescription,
-          nutItemDescription,
-          selectedItem,
-          selectedSurface,
-          studGrade,
-          nutGrade,
-          POsize: {
-            diameter: {
-              value: diameter,
-              dimension: diameterDimension,
-            },
-            thread,
-            length: {
-              value: length,
-              dimension: lengthDimension,
-            },
+          headers: {
+            "Content-Type": "multipart/form-data", // Set content type to multipart form data
           },
-
-          Cuttingsize: {
-            cuttingdiameter: {
-              value: cuttingDiameter,
-            },
-            cuttingthread,
-            cuttinglength: {
-              value: cuttingLength,
-            },
-          },
-          quantity,
-          orderDate,
         }
       );
       console.log("response ", response);
@@ -120,6 +124,52 @@ const ProductionForm = () => {
       console.log(error);
     }
   };
+
+  // const saveFormData = async () => {
+  //   try {
+  //     const response = await axios.post(
+  //       "http://localhost:8000/api/customerPO/createCustomerPO",
+  //       {
+  //         customerName,
+  //         poNo,
+  //         materialCode,
+  //         studItemDescription,
+  //         nutItemDescription,
+  //         selectedItem,
+  //         selectedSurface,
+  //         studGrade,
+  //         nutGrade,
+  //         POsize: {
+  //           diameter: {
+  //             value: diameter,
+  //             dimension: diameterDimension,
+  //           },
+  //           thread,
+  //           length: {
+  //             value: length,
+  //             dimension: lengthDimension,
+  //           },
+  //         },
+
+  //         Cuttingsize: {
+  //           cuttingdiameter: {
+  //             value: cuttingDiameter,
+  //           },
+  //           cuttingthread,
+  //           cuttinglength: {
+  //             value: cuttingLength,
+  //           },
+  //         },
+  //         quantity,
+  //         orderDate,
+  //       }
+  //     );
+  //     console.log("response ", response);
+  //     router.push("/production");
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const handleOrderDateChange = (date) => {
     setOrderDate(date);
@@ -529,7 +579,8 @@ const ProductionForm = () => {
             type="file"
             id="attachment"
             className="hidden"
-            accept=".pdf"
+            name="attachment"
+            accept="application/pdf"
             onChange={handleFileSelection}
           />
           <button

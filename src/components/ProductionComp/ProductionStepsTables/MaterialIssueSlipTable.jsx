@@ -42,6 +42,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
         }
 
         const materialIssueSlips = response.data;
+        console.log("materialIssueSlips in material", materialIssueSlips)
         // Generate srNo for each material issue slip
         const formattedData = materialIssueSlips.map((issueSlip, index) => {
           let size = "N/A";
@@ -62,7 +63,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
             Remarks: "-",
           };
         });
-
+        console.log("formattedData in material", formattedData);
         setRowData(formattedData);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -96,7 +97,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
       );
       console.log("Response data material:", response.data);
       console.log(
-        "response.data.historyRecords:",
+        "response.data.historyRecords material:",
         response.data.historyRecords
       );
 
@@ -130,11 +131,12 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
               timeStyle: "medium",
             }
           ), // Convert to pretty format
-          historyId: record.previousData.id,
+          historyId: record._id,
         };
       });
       console.log("historyData", historyData);
       setHistoryRowData(historyData);
+      console.log("historyRowData in materail issue", historyRowData);
       setShowHistoryTable(true);
       setLoading(false);
     } catch (error) {
@@ -202,7 +204,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
 
   const HistoryButton = (props) => {
     const data = props.data;
-    console.log("history data", data);
+    console.log("history data material", data);
     return (
       <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
         {/* View Button */}
@@ -232,6 +234,12 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
   ];
 
   const HistoryColumnDefs = [
+    {
+      headerName: "Action",
+      cellRenderer: HistoryButton,
+      minWidth: 150,
+      maxWidth: 200,
+    },
     { headerName: "Sr No", field: "srNo", maxWidth: 80, sort: "desc" },
     { headerName: "PO Number", field: "PONumber" },
     { headerName: "MaterialSlip Name", field: "MaterialSlipName" },
@@ -241,12 +249,6 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
     { headerName: "Quantity Required", field: "QuantityRequired" },
     { headerName: "Quantity Issued", field: "QuantityIssued" },
     { headerName: "Remarks", field: "Remarks" },
-    {
-      headerName: "Action",
-      cellRenderer: HistoryButton,
-      minWidth: 150,
-      maxWidth: 200,
-    },
   ];
 
   return (

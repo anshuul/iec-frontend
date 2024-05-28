@@ -3,11 +3,12 @@ import { useEffect, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
-import { FiArrowLeft, FiPrinter, FiSave } from "react-icons/fi";
+import { FiArrowLeft, FiFile, FiPrinter, FiSave } from "react-icons/fi";
 import { TiPlus } from "react-icons/ti";
 
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { IoIosCloseCircleOutline } from "react-icons/io";
 
 const RoutingSheetForm = () => {
   const router = useRouter();
@@ -30,6 +31,7 @@ const RoutingSheetForm = () => {
     optSign: "",
     remarks: "",
   });
+  const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,21 +64,56 @@ const RoutingSheetForm = () => {
       srNo: rowData.length + 1,
       remarks: "-",
     };
-    console.log("newRowData", newRowData)
+    console.log("newRowData", newRowData);
     setRowData([...rowData, newRowData]);
     setNewRow(newRowData);
   };
-  
 
   const saveData = async () => {
     try {
+      const selectedCustomerPODataForpoNo = JSON.parse(
+        localStorage.getItem("selectedCustomerPO")
+      );
+      // Create a FormData object
+      const formData = new FormData();
+      formData.append("poNo", selectedCustomerPODataForpoNo.poNo);
+
+      // Append the new row data to the FormData object
+      Object.entries(newRow).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+
+      // Append the selected file to the FormData object
+      if (selectedFile) {
+        formData.append("attachment", selectedFile);
+      }
+
+      // Send the FormData object to the server
       await axios.post(
         "http://localhost:8000/api/routingSheet/create-routingSheet",
-        newRow // Send only the newly added row data
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data", // Set content type to multipart/form-data
+          },
+        }
       );
       console.log("Data saved successfully");
+      router.push("/production/routing-sheet");
     } catch (error) {
       console.error("Error saving data:", error);
+    }
+  };
+
+  const handleFileSelection = (e) => {
+    const file = e.target.files[0];
+    console.log("Selected file:", file);
+    if (file && file.type === "application/pdf") {
+      setSelectedFile(file);
+    } else {
+      // Optionally, you can display an error message or perform other actions here
+      setSelectedFile(null);
+      alert("Please select a PDF file.");
     }
   };
 
@@ -142,20 +179,54 @@ const RoutingSheetForm = () => {
           onCellValueChanged={handleCellValueChanged}
         />
       </div>
+
       <hr className="my-4 border-t border-gray-300" />
-      {/* <Container> */}
-      <div className="flex justify-end max-w-screen-full mx-4">
-        <button
-          onClick={saveData}
-          className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded"
-        >
-          Save
-          <FiSave className="ml-2" />
-        </button>
-        <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
-          Print
-          <FiPrinter className="ml-2" />
-        </button>
+
+      <div className="flex justify-between max-w-screen-full mx-4 mb-4">
+        <div className="flex items-center">
+          <input
+            type="file"
+            id="attachment"
+            className="hidden"
+            name="attachment"
+            accept="application/pdf"
+            onChange={handleFileSelection}
+          />
+          <button
+            onClick={() => document.getElementById("attachment").click()}
+            className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded"
+          >
+            Attachment
+            <FiFile className="ml-2" />
+          </button>
+          {selectedFile && (
+            <div className="flex items-center">
+              <span className="mr-2">
+                {selectedFile.name || selectedFile.fileName}
+              </span>
+              <button
+                onClick={() => setSelectedFile(null)}
+                className="flex items-center text-red-600 bg-none"
+              >
+                <IoIosCloseCircleOutline className="ml-2 text-2xl" />
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div className="flex">
+          <button
+            onClick={saveData}
+            className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded"
+          >
+            Save
+            <FiSave className="ml-2" />
+          </button>
+          <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
+            Print
+            <FiPrinter className="ml-2" />
+          </button>
+        </div>
       </div>
     </div>
   );

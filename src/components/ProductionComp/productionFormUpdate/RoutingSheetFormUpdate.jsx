@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
-import { FiArrowLeft, FiPrinter, FiSave } from "react-icons/fi";
+import { FiArrowLeft, FiFile, FiPrinter, FiSave } from "react-icons/fi";
 import { TiPlus } from "react-icons/ti";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
@@ -11,6 +11,9 @@ import { useSelector } from "react-redux";
 import RoutingSheetNut from "@/components/PDF/RoutingSheet/RoutingSheetNut";
 import RoutingSheetStud from "@/components/PDF/RoutingSheet/RoutingSheetStud";
 import { PDFDownloadLink } from "@react-pdf/renderer";
+import { IoIosCloseCircleOutline } from "react-icons/io";
+import { RiDeleteBin5Line } from "react-icons/ri";
+import ConfirmPopUp from "@/components/common/ConfirmPopUp";
 
 const RoutingSheetFormUpdate = () => {
   const router = useRouter();
@@ -25,12 +28,16 @@ const RoutingSheetFormUpdate = () => {
     "productionReportSliceDataForRouting in routing",
     productionReportSliceDataForRouting
   );
-
   const handleGoBack = () => {
     router.back();
   };
 
   const [rowData, setRowData] = useState([]);
+  const [routingSheet, setRoutingSheet] = useState({});
+  const [attachment, setAttachment] = useState(null);
+
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [processRowToDelete, setProcessRowToDelete] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,153 +48,82 @@ const RoutingSheetFormUpdate = () => {
         const responseData = Array.isArray(response.data)
           ? response.data
           : [response.data];
-        console.log("responseData routing", responseData);
+        console.log("responseData routing", responseData[0]);
 
         const newRows = responseData[0]?.processRows.map((row, index) => {
-          // Set default values for startTime and endTime
-          // let startTime = "";
-          // let endTime = "";
-
-          // // Check if routingSheetNo starts with "Stud" or "Nut"
-          // if (row.routingSheetNo.startsWith("Stud")) {
-          //   startTime =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.startTime || "";
-          //   endTime =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.endTime || "";
-          // } else if (row.routingSheetNo.startsWith("Nut")) {
-          //   // startTime =
-          //   //   productionReportSliceDataForRouting.productionReports[1]
-          //   //     ?.processRows[index]?.startTime || productionReports[0]
-          //   //     ?.processRows[index]?.startTime;
-          //   // endTime =
-          //   //   productionReportSliceDataForRouting.productionReports[1]
-          //   //     ?.processRows[index]?.endTime || productionReports[0]
-          //   //     ?.processRows[index]?.endTime;
-          //   startTime =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.startTime || "";
-          //   endTime =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.endTime || "";
-          // }
-
-          // let operatorName = "";
-          // let processDescription = "";
-          // let procedureNo = "";
-          // let orderQty = "";
-          // let processQty = "";
-          // // Check if routingSheetNo starts with "Stud" or "Nut"
-          // if (row.routingSheetNo.startsWith("Stud")) {
-          //   operatorName =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.operatorName || "";
-          //   processDescription =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.jobDescription || "";
-          //   procedureNo =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.procedures || "";
-          //   orderQty =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.orderQty || "";
-          //   processQty =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.processQty || "";
-          // } else if (row.routingSheetNo.startsWith("Nut")) {
-          //   operatorName =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.operatorName || "";
-          //   processDescription =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.jobDescription || "";
-          //   procedureNo =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.procedures || "";
-          //   orderQty =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.orderQty || "";
-          //   processQty =
-          //     productionReportSliceDataForRouting.productionReports[0]
-          //       ?.processRows[index]?.processQty || "";
-          // }
-
-          // return {
-          //   ...row,
-          //   srNo: index + 1,
-          //   startTime,
-          //   endTime,
-          //   operatorName,
-          //   processDescription,
-          //   procedureNo,
-          //   orderQty,
-          //   processQty,
-          //   processRowNumber: index + 1,
-          // };
-
           let startTime = "";
           let endTime = "";
+          let operatorName = "";
+          let procedureNo = "";
+          let orderQty = "";
+          let processQty = "";
 
+          console.log("start new Rows");
           // Check if routingSheetNo starts with "Stud" or "Nut"
           if (row.routingSheetNo.startsWith("Stud")) {
             startTime =
-              productionReportSliceDataForRouting.productionReports[0]
-                ?.processRows[index]?.startTime || "";
+              productionReportSliceDataForRouting[0]?.processRows[index]
+                ?.startTime || "";
             endTime =
-              productionReportSliceDataForRouting.productionReports[0]
-                ?.processRows[index]?.endTime || "";
+              productionReportSliceDataForRouting[0]?.processRows[index]
+                ?.endTime || "";
+            operatorName =
+              productionReportSliceDataForRouting[0]?.processRows[index]
+                ?.operatorName || "";
+            // processDescription =
+            //   productionReportSliceDataForRouting[0]?.processRows[index]
+            //     ?.jobDescription || "";
+            procedureNo =
+              productionReportSliceDataForRouting[0]?.processRows[index]
+                ?.procedures || "";
+            orderQty =
+              productionReportSliceDataForRouting[0]?.processRows[index]
+                ?.orderQty || "";
+            processQty =
+              productionReportSliceDataForRouting[0]?.processRows[index]
+                ?.processQty || "";
           } else if (row.routingSheetNo.startsWith("Nut")) {
             startTime =
-              productionReportSliceDataForRouting.productionReports[1]
-                ?.processRows[index]?.startTime || "";
+              productionReportSliceDataForRouting[1]?.processRows[index]
+                ?.startTime || "";
             endTime =
-              productionReportSliceDataForRouting.productionReports[1]
-                ?.processRows[index]?.endTime || "";
+              productionReportSliceDataForRouting[1]?.processRows[index]
+                ?.endTime || "";
+            operatorName =
+              productionReportSliceDataForRouting[1]?.processRows[index]
+                ?.operatorName || "";
+            // processDescription =
+            //   productionReportSliceDataForRouting[1]?.processRows[index]
+            //     ?.jobDescription || "";
+            procedureNo =
+              productionReportSliceDataForRouting[1]?.processRows[index]
+                ?.procedures || "";
+            orderQty =
+              productionReportSliceDataForRouting[1]?.processRows[index]
+                ?.orderQty || "";
+            processQty =
+              productionReportSliceDataForRouting[1]?.processRows[index]
+                ?.processQty || "";
           }
-
-          // let operatorName = "";
-          // let processDescription = "";
-          // let procedureNo = "";
-          // let orderQty = "";
-          // let processQty = "";
-          // // Check if routingSheetNo starts with "Stud" or "Nut"
-          // if (row.routingSheetNo.startsWith("Stud")) {
-          //   operatorName =
-          //     responseData[0]?.processRows[index]?.operatorName || "";
-          //   processDescription =
-          //   responseData[0]?.processRows[index]?.processDescription || "";
-          //   procedureNo = responseData[0]?.processRows[index]?.procedures || "";
-          //   orderQty = responseData[0]?.processRows[index]?.orderQty || "";
-          //   processQty = responseData[0]?.processRows[index]?.processQty || "";
-          // } else if (row.routingSheetNo.startsWith("Nut")) {
-          //   operatorName =
-          //     responseData[0]?.processRows[index]?.operatorName || "";
-          //   processDescription =
-          //   responseData[0]?.processRows[index]?.processDescription || "";
-          //   procedureNo =
-          //   responseData[0]?.processRows[index]?.procedures || "";
-          //   orderQty =
-          //   responseData[0]?.processRows[index]?.orderQty || "";
-          //   processQty =
-          //   responseData[0]?.processRows[index]?.processQty || "";
-          // }
 
           return {
             ...row,
             srNo: index + 1,
             startTime,
             endTime,
-            // operatorName,
-            // processDescription,
-            // procedureNo,
-            // orderQty,
-            // processQty,
+            operatorName,
+            procedureNo,
+            orderQty,
+            processQty,
             processRowNumber: index + 1,
+            routingSheetId: responseData[0]._id,
           };
         });
 
-        setRowData(newRows || []);
+        console.log("newRows in Routing", newRows);
+
+        setRowData(newRows);
+        setRoutingSheet(responseData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -217,6 +153,80 @@ const RoutingSheetFormUpdate = () => {
     setRowData([...rowData, newRowData]);
   };
 
+  const handleFileSelection = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type === "application/pdf") {
+      setAttachment(file);
+    } else {
+      setAttachment(null);
+      alert("Please select a PDF file.");
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      const formData = new FormData();
+      const updatedData = { ...routingSheet, processRows: rowData };
+      console.log("updatedData in routing sheet handleSave", updatedData);
+      formData.append("routingSheetId", id);
+      formData.append("newData", updatedData);
+      if (attachment) {
+        formData.append("attachment", attachment);
+        formData.append("attachmentPoNo", routingSheet.poNo); // Include the poNo for the file destination
+      }
+
+      await axios.put(
+        `http://localhost:8000/api/routingSheet/update-generated-routingsheet/${id}`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+      alert("Routing sheet updated successfully");
+    } catch (error) {
+      console.error("Error updating routing sheet:", error);
+      alert("Failed to update routing sheet");
+    }
+  };
+
+  const handleDelete = (processRowId, routingSheetId) => {
+    setProcessRowToDelete({ processRowId, routingSheetId });
+    setShowConfirmDelete(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    const { processRowId, routingSheetId } = processRowToDelete;
+    try {
+      console.log("Deleting process row:", processRowId);
+      await axios.delete(
+        `http://localhost:8000/api/routingSheet/delete-processRow/${routingSheetId}/${processRowId}`
+      );
+      const updatedRowData = rowData.filter((row) => row._id !== processRowId);
+      setRowData(updatedRowData);
+      console.log("Process row deleted successfully");
+    } catch (error) {
+      console.log("Error deleting process row:", error);
+    }
+    setShowConfirmDelete(false);
+  };
+
+  const handleCancelDelete = () => {
+    setShowConfirmDelete(false);
+  };
+
+  const CustomButtonComponent = (props) => {
+    return (
+      <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
+        <button
+          onClick={() =>
+            handleDelete(props.data._id, props.data.routingSheetId)
+          }
+          className="p-2 text-red-600 bg-red-200 rounded-lg"
+        >
+          <RiDeleteBin5Line />
+        </button>
+      </div>
+    );
+  };
+
   const columnDefs = [
     {
       headerName: "Sr No",
@@ -226,7 +236,6 @@ const RoutingSheetFormUpdate = () => {
       maxWidth: 80,
       pinned: "left",
     },
-    // { headerName: "Date", field: "date", editable: true },
     {
       headerName: "Operator Name/Supplier",
       field: "operatorName",
@@ -255,8 +264,10 @@ const RoutingSheetFormUpdate = () => {
     { headerName: "END TIME", field: "endTime", editable: true },
     { headerName: "OPT SIGN", field: "optSign", editable: true },
     { headerName: "REMARKS", field: "remarks", editable: true },
+    { headerName: "Delete", cellRenderer: CustomButtonComponent },
   ];
   console.log("PDF Row Data", rowData);
+  console.log("routingSheet PDF Row Data", routingSheet);
   return (
     <div className="flex flex-col mx-4 bg-white">
       <button
@@ -282,24 +293,64 @@ const RoutingSheetFormUpdate = () => {
         />
       </div>
       <hr className="my-4 border-t border-gray-300" />
-      <div className="flex justify-end mx-4 max-w-screen-full">
-        <button className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded">
-          Save
-          <FiSave className="ml-2" />
-        </button>
-        <PDFDownloadLink
-          document={<RoutingSheetStud data={rowData} />}
-          fileName={`RoutingSheet_${id}.pdf`}
-        >
+      <div className="flex justify-between mx-4 mb-4 max-w-screen-full">
+        <div className="flex items-center">
+          <input
+            type="file"
+            id="attachment"
+            className="hidden"
+            name="attachment"
+            accept="application/pdf"
+            onChange={handleFileSelection}
+          />
           <button
-            className="flex items-center px-4 py-2 text-black bg-gray-300 rounded"
-            onClick={() => console.log(rowData)}
+            onClick={() => document.getElementById("attachment").click()}
+            className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded"
           >
-            Print
-            <FiPrinter className="ml-2" />
+            Attachment
+            <FiFile className="ml-2" />
           </button>
-        </PDFDownloadLink>
+          {attachment && (
+            <div className="flex items-center">
+              <span className="mr-2">{attachment.name}</span>
+              <button
+                onClick={() => setAttachment(null)}
+                className="flex items-center text-red-600 bg-none"
+              >
+                <IoIosCloseCircleOutline className="ml-2 text-2xl" />
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div className="flex">
+          <button
+            onClick={handleSave}
+            className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded"
+          >
+            Save
+            <FiSave className="ml-2" />
+          </button>
+          <PDFDownloadLink
+            document={<RoutingSheetStud data={rowData} />}
+            fileName={`RoutingSheet_${id}.pdf`}
+          >
+            <button
+              className="flex items-center px-4 py-2 text-black bg-gray-300 rounded"
+              onClick={() => console.log(rowData)}
+            >
+              Print
+              <FiPrinter className="ml-2" />
+            </button>
+          </PDFDownloadLink>
+        </div>
       </div>
+      {showConfirmDelete && (
+        <ConfirmPopUp
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+        />
+      )}
     </div>
   );
 };

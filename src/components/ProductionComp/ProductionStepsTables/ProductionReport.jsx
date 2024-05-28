@@ -7,12 +7,19 @@ import { RiDeleteBin5Line } from "react-icons/ri";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { BsInfoCircle } from "react-icons/bs";
+import HistoryTablePopup from "@/components/HomeComp/HistoryTablePopup";
+import { IoSearch } from "react-icons/io5";
 
 const ProductionReport = ({ productionStep }) => {
   console.log("productionStep", productionStep);
+
   const router = useRouter();
   const [rowData, setRowData] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const [historyRowData, setHistoryRowData] = useState([]);
+  const [showHistoryTable, setShowHistoryTable] = useState(false);
 
   const handleClick = () => {
     router.push(`/production/${productionStep}/productionReportForm`);
@@ -44,47 +51,168 @@ const ProductionReport = ({ productionStep }) => {
           );
         }
 
-        // http://localhost:8000/api/productionReport/get-production-reportById/66212e4726e3bdaf230b6636
-
         const productionReports = response.data;
         console.log("productionReports in report sheet", productionReports);
-        const formattedData = productionReports.map((issueSlip, index) => {
-          const processRow = issueSlip.processRows[0];
-          let size = "N/A";
-          if (issueSlip.size && issueSlip.size.diameter) {
-            size = `${issueSlip.size.diameter.value}x${issueSlip.size.length.value}`;
-          }
-          console.log("issueSlip", issueSlip);
-          return {
-            srNo: index + 1,
-            _id: issueSlip._id,
-            ProductionPlanning: issueSlip.poNo,
-            CreatedData: processRow.jobDescription,
-            CreatedBy: processRow.operatorName,
-          };
-        });
+
+        const formattedData = [
+          {
+            srNo: 1,
+            ProductionPlanning: productionReports.poNo,
+            productionReportID: productionReports._id,
+            CreatedData: new Date(productionReports.date).toLocaleString(
+              undefined,
+              { dateStyle: "long", timeStyle: "medium" }
+            ),
+            CreatedBy: productionReports.createdBy,
+          },
+        ];
+
+        console.log("formattedData in production report", formattedData);
+
         setRowData(formattedData);
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
   }, []);
 
-  const CustomButtonComponent = (props) => {
+  const handleEditClick = () => {
+    router.push(`/production/production-report/productionReportFormUpdate`);
+  };
+
+  const handleDeleteClick = async (data) => {
+    console.log("data", data);
+    try {
+      setLoading(true);
+      await axios.delete(
+        `http://localhost:8000/api/productionReport/delete-productionReport/${data.productionReportID}`
+      );
+      const updatedRows = rowData.filter((row) => row !== data);
+      setRowData(updatedRows);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      setLoading(false);
+    }
+  };
+
+  const handleHistoryClick = async (productionReportID) => {
+    console.log("object productionReportID routing sheet", productionReportID);
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `http://localhost:8000/api/productionReport/get-productionReportHistory/${productionReportID}`
+      );
+
+      console.log(
+        "Response data Production Report historyRecords:",
+        response.data.historyRecords
+      );
+
+      // Flatten the processRowsHistory from all historyRecords
+      const historyData = {
+        _id: response.data.historyRecords[0]._id,
+        date: response.data.historyRecords[0].date,
+        productionReportId: response.data.historyRecords[0].productionReportId,
+        processRows: response.data.historyRecords.flatMap((record) =>
+          record.processRowsHistory.map((processRow) => ({
+            operatorName: processRow.previousData.operatorName || "N/A",
+            machineNo: processRow.previousData.machineNo || "N/A",
+            jobDescription: processRow.previousData.jobDescription || "N/A",
+            procedures: processRow.previousData.procedures || "N/A",
+            orderQty: processRow.previousData.orderQty || "N/A",
+            processQty: processRow.previousData.processQty || "N/A",
+            startTime: processRow.previousData.startTime || "N/A",
+            endTime: processRow.previousData.endTime || "N/A",
+            remarks: processRow.previousData.remarks || "N/A",
+          }))
+        ),
+      };
+
+      console.log("historyData production report", historyData);
+      setHistoryRowData(historyData);
+      // setHistoryRowData(historyData.processRows);
+      console.log("first historyRowData production report", historyRowData);
+      setShowHistoryTable(true);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching history data:", error);
+      setLoading(false);
+    }
+  };
+
+  const HistoryButton = (props) => {
+    const data = props.data;
+    console.log("data in routing for history", data);
     return (
       <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
+        {/* View Button */}
         <button
-          onClick={() => window.alert("clicked")}
+          // onClick={() => {
+          //   handleViewClick(data.currentId);
+          // }}
+          className="p-2 text-red-600 bg-yellow-200 rounded-lg"
+        >
+          <IoSearch />
+        </button>
+      </div>
+    );
+  };
+
+  const closeModal = () => {
+    setShowHistoryTable(false);
+  };
+
+  const HistoryColumnDefs = [
+    {
+      headerName: "Action",
+      cellRenderer: HistoryButton,
+      minWidth: 150,
+      maxWidth: 200,
+    },
+    {
+      headerName: "Sr No",
+      field: "srNo",
+      minWidth: 50,
+      maxWidth: 80,
+      sort: "desc",
+    },
+    { headerName: "Production Report", field: "productionReportId", flex: 1 },
+    { headerName: "Created Data", field: "date", flex: 1 },
+    { headerName: "Updated Date", field: "date", flex: 1 },
+  ];
+
+  const CustomButtonComponent = (props) => {
+    const data = props.data;
+    console.log("Production Report Data", data);
+
+    return (
+      <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
+        {/* Edit button */}
+        <button
+          onClick={handleEditClick}
           className="p-2 text-green-600 bg-green-200 rounded-lg"
         >
           <MdModeEdit />
         </button>
+
+        {/* Delete Button */}
         <button
-          onClick={() => window.alert("clicked")}
+          onClick={() => handleDeleteClick(data)}
           className="p-2 text-red-600 bg-red-200 rounded-lg"
         >
           <RiDeleteBin5Line />
+        </button>
+
+        {/* History Button */}
+        <button
+          onClick={() => handleHistoryClick(data.productionReportID)}
+          className="p-2 text-red-600 bg-yellow-200 rounded-lg"
+        >
+          <BsInfoCircle />
         </button>
       </div>
     );
@@ -120,6 +248,14 @@ const ProductionReport = ({ productionStep }) => {
           paginationPageSize={10}
         />
       </div>
+
+      {showHistoryTable && (
+        <HistoryTablePopup
+          HistoryColumnDefs={HistoryColumnDefs}
+          historyRowData={historyRowData}
+          closeModal={closeModal}
+        />
+      )}
     </div>
   );
 };

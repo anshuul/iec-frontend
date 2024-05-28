@@ -11,6 +11,7 @@ import MaterialIssueSlipForm from "@/components/ProductionComp/productionFormUpd
 import RoutingSheetFormUpdate from "@/components/ProductionComp/productionFormUpdate/RoutingSheetFormUpdate";
 import ProductionPlanningHistoryForm from "@/components/ProductionComp/RevisionHistoryForms/ProductionPlanningHistoryForm";
 import MaterialIssueSlipHistoryForm from "@/components/ProductionComp/RevisionHistoryForms/MaterialIssueSlipHistoryForm";
+import RoutingSheetHistoryForm from "@/components/ProductionComp/RevisionHistoryForms/RoutingSheetHistoryForm";
 
 const productionForm = ({ params }) => {
   const { productionForm } = params;
@@ -19,6 +20,9 @@ const productionForm = ({ params }) => {
     <div className="bg-gray-300">
       {productionForm === "routingSheetFormUpdate" && (
         <RoutingSheetFormUpdate productionForm={productionForm} />
+      )}
+      {productionForm === "productionReportFormUpdate" && (
+        <ProductionReportForm productionForm={productionForm} />
       )}
       {productionForm === "materialIssueFormUpdate" && (
         <MaterialIssueSlipForm productionForm={productionForm} />
@@ -31,6 +35,9 @@ const productionForm = ({ params }) => {
       )}
       {productionForm === "planningSheet-history" && (
         <ProductionPlanningHistoryForm productionForm={productionForm} />
+      )}
+      {productionForm === "routing-sheet-history" && (
+        <RoutingSheetHistoryForm productionForm={productionForm} />
       )}
       {productionForm === "materialissueslip-history" && (
         <MaterialIssueSlipHistoryForm productionForm={productionForm} />
@@ -50,9 +57,9 @@ const productionForm = ({ params }) => {
       {productionForm === "routingSheetForm" && (
         <RoutingSheetForm productionForm={productionForm} />
       )}
-      {productionForm === "productionReportForm" && (
+      {/* {productionForm === "productionReportForm" && (
         <ProductionReportForm productionForm={productionForm} />
-      )}
+      )} */}
       {productionForm === "dimensionReportForm" && (
         <DimensionReportForm productionForm={productionForm} />
       )}

@@ -6,19 +6,20 @@ import { FiArrowLeft, FiFile, FiPrinter, FiSave } from "react-icons/fi";
 import Container from "@/components/common/Container";
 import MaterialIssueSlip from "@/components/PDF/MaterialSlip/MaterialIssueSlip";
 import { PDFDownloadLink } from "@react-pdf/renderer";
+import { IoIosCloseCircleOutline } from "react-icons/io";
 
 const MaterialIssueSlipForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const id = searchParams.get("id");
-  console.log("first", id);
 
   const [materialIssueForm, setMaterialIssueForm] = useState({
     materialSlipName: "",
     itemDescription: "",
     materialGrade: "",
-    diameter: { value: "", dimension: "mm" }, // Set as an object with 'value' and 'dimension' fields
+    lotNumber: "",
+    diameter: { value: "", dimension: "mm" },
     length: { value: "", dimension: "mm" },
     thread: "",
     quantityRequired: "",
@@ -32,6 +33,29 @@ const MaterialIssueSlipForm = () => {
 
   const [selectedFile, setSelectedFile] = useState(null);
 
+  const selectedFilePath =
+    selectedFile && `http://localhost:8000/${selectedFile.path}`;
+
+  const handleDownloadSelected = async () => {
+    try {
+      const response = await fetch(selectedFilePath);
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = selectedFilePath.split("/").pop(); // Set the file name
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error("Error downloading PDF:", error);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -39,13 +63,13 @@ const MaterialIssueSlipForm = () => {
           `http://localhost:8000/api/materialissueslip/get-materialIssueSlipByID/${id}`
         );
         const responseData = response.data;
-        console.log("responseData", responseData);
 
         setMaterialIssueForm((prevState) => ({
           ...prevState, // Spread previous state
           materialSlipName: responseData.materialSlipName,
           itemDescription: responseData.itemDescription,
           materialGrade: responseData.materialGrade,
+          lotNumber: responseData.lotNumber,
           diameter: responseData.size.diameter
             ? responseData.size.diameter.value
             : "",
@@ -67,6 +91,13 @@ const MaterialIssueSlipForm = () => {
           id: responseData._id,
           prefix: responseData.prefix,
         }));
+        // Set selected file data if attachment exists
+        if (responseData.attachment) {
+          setSelectedFile({
+            path: responseData.attachment.path,
+            fileName: responseData.attachment.fileName,
+          });
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -97,24 +128,58 @@ const MaterialIssueSlipForm = () => {
       const newCustomerPO = JSON.parse(
         localStorage.getItem("selectedCustomerPO")
       );
-      console.log("newCustomerPO in material", newCustomerPO);
+
       const selectedItem = newCustomerPO.selectedItem;
-      console.log("selectedItem", selectedItem);
+
+      const formData = new FormData();
+
+      formData.append("poNo", newCustomerPO.poNo);
+      formData.append("materialSlipName", materialIssueForm.materialSlipName);
+      formData.append("itemDescription", materialIssueForm.itemDescription);
+      formData.append("materialGrade", materialIssueForm.materialGrade);
+      formData.append("lotNumber", materialIssueForm.lotNumber);
+      // formData.append("diameterValue", materialIssueForm.diameter.value);
+      formData.append("diameterValue", materialIssueForm.diameter);
+      // formData.append(
+      //   "diameterDimension",
+      //   materialIssueForm.diameter.dimension
+      // );
+      formData.append("diameterDimension", "mm");
+      // formData.append("lengthValue", materialIssueForm.length.value);
+      formData.append("lengthValue", materialIssueForm.length);
+      // formData.append("lengthDimension", materialIssueForm.length.dimension);
+      formData.append("lengthDimension", "mm");
+      formData.append("thread", materialIssueForm.thread);
+      formData.append("quantityRequired", materialIssueForm.quantityRequired);
+      formData.append("quantityIssued", materialIssueForm.quantityIssued);
+      formData.append("studquantity", materialIssueForm.studquantity);
+      formData.append("nutquantity", materialIssueForm.nutquantity);
+      formData.append("size", materialIssueForm.size);
+      formData.append("id", materialIssueForm.id);
+      formData.append("prefix", materialIssueForm.prefix);
+
+      formData.append("attachmentPoNo", newCustomerPO.poNo);
+
+      // Append the file if selected
+      if (selectedFile) {
+        formData.append("attachment", selectedFile);
+      }
+
       const response = await axios.put(
         `http://localhost:8000/api/materialissueslip/update-materialIssueSlip/${id}`,
-        materialIssueForm
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
-      console.log("response in material", response.data);
       const UpdatedMaterialIssueSlipData = response.data;
       console.log("UpdatedMaterialIssueSlipData", UpdatedMaterialIssueSlipData);
 
       localStorage.setItem(
         "UpdatedMaterialIssueSlipData",
         JSON.stringify(UpdatedMaterialIssueSlipData)
-      );
-
-      const LatestMaterialIssueSlipData = JSON.parse(
-        localStorage.getItem("UpdatedMaterialIssueSlipData")
       );
 
       const fetchProductionReportId = await axios.get(
@@ -141,12 +206,11 @@ const MaterialIssueSlipForm = () => {
       }
 
       // Update or Create Production Report
-      // const productionReportId2 = "66406b92d772d81ea3a03e52";
       const updateProductionReport = await axios.put(
         `http://localhost:8000/api/productionReport/create-updateGenerateProductionReport/${productionReportId}`,
         {
           newCustomerPo: newCustomerPO,
-          UpdatedMaterialIssueSlipData: LatestMaterialIssueSlipData,
+          UpdatedMaterialIssueSlipData: UpdatedMaterialIssueSlipData,
           selectedItem: selectedItem,
           modifiedQuantity: modifiedQuantity,
           customPoQuantity: customPoQuantity,
@@ -159,7 +223,7 @@ const MaterialIssueSlipForm = () => {
     }
   };
   console.log("materialIssueForm in Form", materialIssueForm);
-
+  console.log("materialIssueForm.length.value", materialIssueForm.length);
   const handleCalculate = () => {
     const {
       diameter,
@@ -316,6 +380,27 @@ const MaterialIssueSlipForm = () => {
           </label>
         </div>
 
+        {/* lotNumber */}
+        <div className="flex items-center my-4">
+          <label className="relative cursor-pointer App">
+            <input
+              type="text"
+              value={materialIssueForm.lotNumber}
+              onChange={(e) =>
+                setMaterialIssueForm({
+                  ...materialIssueForm,
+                  lotNumber: e.target.value,
+                })
+              }
+              placeholder="Input"
+              className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+            />
+            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+              Lot Number
+            </span>
+          </label>
+        </div>
+
         <div className="flex items-center gap-2 my-4">
           <label htmlFor="size" className="text-[16px] mr-4">
             Size:
@@ -323,7 +408,7 @@ const MaterialIssueSlipForm = () => {
           {/* Diameter */}
           <label className="relative cursor-pointer App">
             <input
-              id="sizeFirstPart"
+              id="diameter"
               type="text"
               value={materialIssueForm.diameter}
               onChange={(e) => handleInputChange(e, "diameter")}
@@ -334,39 +419,11 @@ const MaterialIssueSlipForm = () => {
               Diameter
             </span>
           </label>
-          {/* <label
-            htmlFor="diameterDimension"
-            className="relative flex items-center cursor-pointer App"
-          >
-            <select
-              id="diameterDimension"
-              value={materialIssueForm.diameterDimension}
-              onChange={(e) => handleInputChange(e, "diameterDimension")}
-              className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
-            >
-              <option value="inch">Inch</option>
-              <option value="mm">MM</option>
-            </select>
-          </label> */}
 
-          {/* Pitch */}
-          {/* <label className="relative cursor-pointer App">
-            <input
-              id="thread"
-              type="text"
-              value={materialIssueForm.thread}
-              onChange={(e) => handleInputChange(e, "thread")}
-              placeholder="Input"
-              className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
-            />
-            <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-              Pitch
-            </span>
-          </label> */}
           {/* Length */}
           <label className="relative cursor-pointer App">
             <input
-              id="sizeFirstPart"
+              id="length"
               type="text"
               value={materialIssueForm.length}
               onChange={(e) => handleInputChange(e, "length")}
@@ -377,21 +434,6 @@ const MaterialIssueSlipForm = () => {
               Length
             </span>
           </label>
-          {/* <label
-            htmlFor="lengthDimension"
-            className="relative flex items-center cursor-pointer App"
-          >
-            <select
-              id="lengthDimension"
-              value={materialIssueForm.lengthDimension}
-              onChange={(e) => handleInputChange(e, "lengthDimension")}
-              className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
-            >
-              <option value="inch">Inch</option>
-              <option value="mm">MM</option>
-            </select>
-          </label> */}
-
           {/* Calculate button */}
           <button
             onClick={handleCalculate}
@@ -447,6 +489,7 @@ const MaterialIssueSlipForm = () => {
             type="file"
             id="attachment"
             className="hidden"
+            name="attachment"
             accept=".pdf"
             onChange={handleFileSelection}
           />
@@ -457,7 +500,20 @@ const MaterialIssueSlipForm = () => {
             Choose file
             <FiFile className="ml-2" />
           </button>
-          {selectedFile && <span className="ml-2">{selectedFile.name}</span>}
+          {/* {selectedFile && <span className="ml-2">{selectedFile.name}</span>} */}
+          {selectedFile !== null && (
+            <>
+              <span className="ml-2">
+                {selectedFile.name || selectedFile.fileName}
+              </span>
+              <button
+                onClick={() => setSelectedFile(null)}
+                className="flex items-center text-red-600 bg-none"
+              >
+                <IoIosCloseCircleOutline className="ml-2 text-2xl" />
+              </button>
+            </>
+          )}
         </div>
         <p className="ml-2 text-sm text-red-600">
           Only PDF files are allowed and only one file can be selected.
@@ -474,6 +530,7 @@ const MaterialIssueSlipForm = () => {
           <PDFDownloadLink
             document={<MaterialIssueSlip data={materialIssueForm} />}
             fileName={`MaterialIssueSlip_${id}.pdf`}
+            onClick={handleDownloadSelected}
           >
             <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
               Print

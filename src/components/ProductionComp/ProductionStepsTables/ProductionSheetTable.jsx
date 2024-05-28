@@ -48,7 +48,7 @@ const ProductionSheetTable = ({ productionStep }) => {
               dateStyle: "long",
               timeStyle: "medium",
             }),
-            CreatedBy: item.productionSheetName, // Assuming createdBy should be displayed as Created By
+            CreatedBy: item.createdBy,
           }))
         );
       } catch (error) {
@@ -121,7 +121,7 @@ const ProductionSheetTable = ({ productionStep }) => {
           dateStyle: "long",
           timeStyle: "medium",
         }),
-        historyId: record.previousData.id,
+        historyId: record._id,
       }));
       console.log("historyData planning", historyData);
       setHistoryRowData(historyData);
@@ -211,7 +211,13 @@ const ProductionSheetTable = ({ productionStep }) => {
   };
 
   const columnDefs = [
-    { headerName: "Sr No", field: "srNo", minWidth: 50, maxWidth: 80 },
+    {
+      headerName: "Sr No",
+      field: "srNo",
+      minWidth: 50,
+      maxWidth: 80,
+      // sort: "desc",
+    },
     {
       headerName: "Action",
       cellRenderer: CustomButtonComponent,
@@ -224,7 +230,13 @@ const ProductionSheetTable = ({ productionStep }) => {
   ];
 
   const HistoryColumnDefs = [
-    { headerName: "Sr No", field: "srNo", minWidth: 50, maxWidth: 80, sort: "desc", },
+    {
+      headerName: "Sr No",
+      field: "srNo",
+      minWidth: 50,
+      maxWidth: 80,
+      sort: "desc",
+    },
     {
       headerName: "Production Planning",
       field: "ProductionSheetName",

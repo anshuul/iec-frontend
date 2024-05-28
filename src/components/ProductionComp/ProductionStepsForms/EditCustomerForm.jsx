@@ -6,6 +6,11 @@ import { FiArrowLeft, FiFile, FiPrinter, FiSave } from "react-icons/fi";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { getPlanningSheetData } from "@/utils/Planning-Sheet/getPlanningSheetData";
+import { getMaterialIssueSlipData } from "@/utils/Material-Issue-Slip/getMaterialIssueSlipData";
+import { getRoutingSheetData } from "@/utils/Routing-Sheet/getRoutingSheetData";
+import { getProductionReportData } from "@/utils/Production-Report/getProductionReportData";
+import { IoIosCloseCircleOutline } from "react-icons/io";
 
 const EditCustomerForm = () => {
   const searchParams = useSearchParams();
@@ -36,8 +41,9 @@ const EditCustomerForm = () => {
     },
     quantity: "",
     orderDate: "",
+    attachment: null,
   });
-  const [selectedFile, setSelectedFile] = useState(null);
+
   console.log("customerPO: ", customerPO);
 
   useEffect(() => {
@@ -61,10 +67,12 @@ const EditCustomerForm = () => {
   const handleFileSelection = (e) => {
     const file = e.target.files[0];
     if (file && file.type === "application/pdf") {
-      setSelectedFile(file);
+      setCustomerPO((prevState) => ({
+        ...prevState,
+        attachment: { file, fileName: file.name },
+      }));
     } else {
       // Optionally, you can display an error message or perform other actions here
-      setSelectedFile(null);
       alert("Please select a PDF file.");
     }
   };
@@ -75,13 +83,186 @@ const EditCustomerForm = () => {
 
   const saveFormData = async () => {
     try {
+      const formData = new FormData();
+      formData.append("customerName", customerPO.customerName);
+      formData.append("poNo", customerPO.poNo);
+      formData.append("materialCode", customerPO.materialCode);
+      formData.append("studItemDescription", customerPO.studItemDescription);
+      formData.append("nutItemDescription", customerPO.nutItemDescription);
+      formData.append("selectedItem", customerPO.selectedItem);
+      formData.append("selectedSurface", customerPO.selectedSurface);
+      formData.append("studGrade", customerPO.studGrade);
+      formData.append("nutGrade", customerPO.nutGrade);
+      formData.append(
+        "POsize[diameter][value]",
+        customerPO.POsize.diameter.value
+      );
+      formData.append(
+        "POsize[diameter][dimension]",
+        customerPO.POsize.diameter.dimension
+      );
+      formData.append("POsize[thread]", customerPO.POsize.thread);
+      formData.append("POsize[length][value]", customerPO.POsize.length.value);
+      formData.append(
+        "POsize[length][dimension]",
+        customerPO.POsize.length.dimension
+      );
+      formData.append(
+        "Cuttingsize[cuttingdiameter][value]",
+        customerPO.Cuttingsize.cuttingdiameter.value
+      );
+      formData.append(
+        "Cuttingsize[cuttingthread]",
+        customerPO.Cuttingsize.cuttingthread
+      );
+      formData.append(
+        "Cuttingsize[cuttinglength][value]",
+        customerPO.Cuttingsize.cuttinglength.value
+      );
+      formData.append("quantity", customerPO.quantity);
+      formData.append("orderDate", customerPO.orderDate);
+      formData.append("attachmentPoNo", customerPO.poNo);
+
+      // Append the file if selected
+      if (customerPO.attachment) {
+        formData.append("attachment", customerPO.attachment.file);
+      }
+
       const response = await axios.put(
         `http://localhost:8000/api/customerPO/update/${poNo}`,
-        customerPO // Send the updated customer PO data
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
+      console.log("response noraml data ", response.data);
       console.log("response cutting data ", response.data.updatedCustomerPO);
       const updatedNewCustomerPo = response.data.updatedCustomerPO;
       console.log("updatedNewCustomerPo", updatedNewCustomerPo);
+
+      let prefix;
+
+      if (
+        updatedNewCustomerPo?.selectedItem?.toLowerCase().startsWith("studwith")
+      ) {
+        prefix = ["Stud", "Nut"];
+        console.log("prefixArray:", prefix);
+      } else if (updatedNewCustomerPo?.selectedItem === "Stud") {
+        prefix = ["Stud"];
+        console.log("prefixArray For Stud:", prefix);
+      } else if (updatedNewCustomerPo?.selectedItem === "Nut") {
+        prefix = ["Nut"];
+        console.log("prefixArray For Nut:", prefix);
+      } else {
+        console.log("selectedItem does not start with 'studwith'");
+      }
+
+      const {
+        planningSheetID,
+        selectedItem,
+        selectedSurface,
+        modifiedQuantity,
+        customPoQuantity,
+      } = await getPlanningSheetData(updatedNewCustomerPo);
+
+      const updatePlanningSheetByID = await axios.put(
+        `http://localhost:8000/api/production/update-GeneratePlanningSheets/${planningSheetID}`,
+        {
+          customerPO: updatedNewCustomerPo,
+          selectedItem,
+          selectedSurface,
+          modifiedQuantity,
+          customPoQuantity,
+        }
+      );
+      console.log("updatePlanningSheetByID", updatePlanningSheetByID);
+
+      const { MaterialIssueSlipId } = await getMaterialIssueSlipData(
+        updatedNewCustomerPo
+      );
+
+      const updateMaterailIssueSliptByID = await axios.put(
+        `http://localhost:8000/api/materialissueslip/update-GenerateMaterialIssueSlips/${MaterialIssueSlipId}`,
+        {
+          customerPO: updatedNewCustomerPo,
+          selectedItem,
+          modifiedQuantity,
+          customPoQuantity,
+        }
+      );
+      console.log("updateMaterailIssueSliptByID", updateMaterailIssueSliptByID);
+
+      const { routingingSheetID } = await getRoutingSheetData(
+        updatedNewCustomerPo
+      );
+      console.log("routingingSheetID in Update PO", routingingSheetID);
+      const updateRoutingSheetByID = await axios.put(
+        `http://localhost:8000/api/routingSheet/update-GeneratedRoutingSheetByIDs/${routingingSheetID}`,
+        {
+          newCustomerPo: updatedNewCustomerPo,
+          selectedItem,
+          modifiedQuantity,
+          customPoQuantity,
+        }
+      );
+      console.log("updateRoutingSheetByID", updateRoutingSheetByID);
+
+      const { generatedProductionReportIDData } = await getProductionReportData(
+        updatedNewCustomerPo,
+        prefix
+      );
+      console.log(
+        "generatedProductionReportData in PO",
+        generatedProductionReportIDData
+      );
+
+      const id0 =
+        generatedProductionReportIDData[0].generatedProductionReportData
+          .generatedProductionReportId;
+      const id1 =
+        generatedProductionReportIDData[1].generatedProductionReportData
+          .generatedProductionReportId;
+
+      const prefix1 =
+        generatedProductionReportIDData[0].generatedProductionReportData.prefix;
+
+      const prefix2 =
+        generatedProductionReportIDData[1].generatedProductionReportData.prefix;
+
+      const finalPrefix = [prefix1, prefix2];
+      console.log("finalPrefix", finalPrefix);
+
+      console.log("productionReportID at index 0:", id0);
+      console.log("productionReportID at index 1:", id1);
+      // Extract generatedProductionReportId values and store them in an array
+      const finalProductionReportId = [id0, id1];
+      console.log("finalProductionReportId", finalProductionReportId);
+
+      const finalArray = [
+        {
+          id: id0,
+          prefix: prefix1,
+        },
+        {
+          id: id1,
+          prefix: prefix2,
+        },
+      ];
+      console.log("finalArray", finalArray);
+
+      const updateProductionReportByID = await axios.put(
+        `http://localhost:8000/api/productionReport/linkPoNo-productionreport/${finalProductionReportId}`,
+        {
+          newCustomerPo: updatedNewCustomerPo,
+          selectedItem,
+          modifiedQuantity,
+          customPoQuantity,
+          finalArray,
+        }
+      );
+      console.log("updateProductionReportByID", updateProductionReportByID);
 
       localStorage.setItem("updatedNewCustomerPo", updatedNewCustomerPo);
       router.push("/production");
@@ -249,7 +430,7 @@ const EditCustomerForm = () => {
             }
             className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
           >
-             <option value="select">Surface Finish</option>
+            <option value="select">Surface Finish</option>
             <option value="PhosphatingBlack">Phosphating(Black)</option>
             <option value="ZincPlating">Zinc Plating</option>
             <option value="HDG">HotDip Galvanizing(HDG)</option>
@@ -621,7 +802,23 @@ const EditCustomerForm = () => {
             Choose file
             <FiFile className="ml-2" />
           </button>
-          {selectedFile && <span className="ml-2">{selectedFile.name}</span>}
+          {/* {selectedFile && <span className="ml-2">{selectedFile.name}</span>} */}
+          {customerPO.attachment && (
+            <>
+              <span className="ml-2">{customerPO.attachment.fileName}</span>
+              <button
+                onClick={() =>
+                  setCustomerPO((prevState) => ({
+                    ...prevState,
+                    attachment: null,
+                  }))
+                }
+                className="flex items-center text-red-600 bg-none"
+              >
+                <IoIosCloseCircleOutline className="ml-2 text-2xl" />
+              </button>
+            </>
+          )}
         </div>
 
         <p className="ml-2 text-sm text-red-600">
