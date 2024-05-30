@@ -10,6 +10,7 @@ const ProductionLayout = ({ children }) => {
   const validPaths = [
     "/production",
     "/production/productionSheetForm",
+    "/production/po-list-item",
     "/production/production-planning-sheets",
     "/production/material-issue-slip",
     "/production/routing-sheet",

@@ -1,4 +1,5 @@
 "use client";
+import ProductionTable from "@/components/HomeComp/ProductionTable";
 import DimensionReportHome from "@/components/ProductionComp/DimensionInspection/DimensionInspectionReportHome";
 import ProductionReportForm from "@/components/ProductionComp/ProductionStepsForms/ProductionReportForm";
 import DimensionReport from "@/components/ProductionComp/ProductionStepsTables/DimensionReport";
@@ -25,6 +26,12 @@ const ProducitonStep = ({ params }) => {
 
   return (
     <div className="bg-gray-300">
+      {productionStep === "po-list-item" && (
+        <ProductionSheetTable
+          productionStep={productionStep}
+          userEmailName={userEmailName}
+        />
+      )}
       {productionStep === "production-planning-sheets" && (
         <ProductionSheetTable
           productionStep={productionStep}

@@ -1,33 +1,40 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSelectedLink } from "@/context/SelectedItemContext";
+import { useSelectedLink } from "@/context/SelectedItemQuantityContext";
 
-const ProductionHeader = () => {
+const QualityHeader = () => {
   const pathName = usePathname();
   const { selectedLink, selectLink } = useSelectedLink();
 
   const links = [
     {
-      href: "/production/po-list-item",
-      text: "PO List Items",
+      href: "/quality/heat-treatment",
+      text: "Heat Treatment",
     },
     {
-      href: "/production/production-planning-sheets",
-      text: "Production Planning Sheets",
+      href: "/quality/hardness-test-report",
+      text: "Hardness Test Report",
     },
     {
-      href: "/production/material-issue-slip",
-      text: "Material Issue Slip",
-    },
-    { href: "/production/routing-sheet", text: "Routing Sheet" },
-    {
-      href: "/production/production-report",
-      text: "Production Report",
+      href: "/quality/magnetic-particle-inspection",
+      text: "Magnetic Particle Inspection",
     },
     {
-      href: "/production/dimension-report",
-      text: "Dimension Report",
+      href: "/quality/test-certificate",
+      text: "Test Certificate",
+    },
+    {
+      href: "/quality/certificate-compliance",
+      text: "Certificate Of Compliance",
+    },
+    {
+      href: "/quality/inspection-release-note",
+      text: "Inspection",
+    },
+    {
+      href: "/quality/dispatch",
+      text: "Dispatch",
     },
   ];
 
@@ -58,4 +65,4 @@ const ProductionHeader = () => {
   );
 };
 
-export default ProductionHeader;
+export default QualityHeader;

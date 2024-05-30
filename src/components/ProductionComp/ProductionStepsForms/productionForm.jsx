@@ -8,6 +8,7 @@ import { IoIosCloseCircleOutline } from "react-icons/io";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { TiPlus } from "react-icons/ti";
 
 const ProductionForm = () => {
   const searchParams = useSearchParams();
@@ -42,26 +43,6 @@ const ProductionForm = () => {
   const [selectedFile, setSelectedFile] = useState(null);
 
   const userName = localStorage.getItem("userName");
-
-  useEffect(() => {
-    try {
-      const fetchData = async () => {
-        try {
-          const response = await axios.get(
-            `http://localhost:8000/api/customerPO/${CustomerPO}`
-          );
-          setRowData(response);
-          // router.push("/production");
-          console.log("response", response);
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        }
-      };
-      fetchData();
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
 
   const handleFileSelection = (e) => {
     const file = e.target.files[0];
@@ -294,6 +275,13 @@ const ProductionForm = () => {
           </label>
         </div>
 
+        {/* Add list item button */}
+        <button
+          className="flex items-center px-4 py-2 mb-2 text-lg font-bold text-black"
+        >
+          <TiPlus className="mr-2" />
+          Add List Item
+        </button>
         <div className="flex items-center gap-2 my-4">
           <label className="relative cursor-pointer App">
             <input
