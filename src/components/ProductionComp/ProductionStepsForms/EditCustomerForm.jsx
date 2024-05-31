@@ -50,7 +50,7 @@ const EditCustomerForm = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/customerPO/${poNo}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/${poNo}`
         );
         console.log("response", response.data.customerPO);
         setCustomerPO(response.data.customerPO); // Set the customer PO data in state
@@ -129,7 +129,7 @@ const EditCustomerForm = () => {
       }
 
       const response = await axios.put(
-        `http://localhost:8000/api/customerPO/update/${poNo}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/update/${poNo}`,
         formData,
         {
           headers: {
@@ -168,7 +168,7 @@ const EditCustomerForm = () => {
       } = await getPlanningSheetData(updatedNewCustomerPo);
 
       const updatePlanningSheetByID = await axios.put(
-        `http://localhost:8000/api/production/update-GeneratePlanningSheets/${planningSheetID}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/production/update-GeneratePlanningSheets/${planningSheetID}`,
         {
           customerPO: updatedNewCustomerPo,
           selectedItem,
@@ -184,7 +184,7 @@ const EditCustomerForm = () => {
       );
 
       const updateMaterailIssueSliptByID = await axios.put(
-        `http://localhost:8000/api/materialissueslip/update-GenerateMaterialIssueSlips/${MaterialIssueSlipId}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/materialissueslip/update-GenerateMaterialIssueSlips/${MaterialIssueSlipId}`,
         {
           customerPO: updatedNewCustomerPo,
           selectedItem,
@@ -199,7 +199,7 @@ const EditCustomerForm = () => {
       );
       console.log("routingingSheetID in Update PO", routingingSheetID);
       const updateRoutingSheetByID = await axios.put(
-        `http://localhost:8000/api/routingSheet/update-GeneratedRoutingSheetByIDs/${routingingSheetID}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/update-GeneratedRoutingSheetByIDs/${routingingSheetID}`,
         {
           newCustomerPo: updatedNewCustomerPo,
           selectedItem,
@@ -253,7 +253,7 @@ const EditCustomerForm = () => {
       console.log("finalArray", finalArray);
 
       const updateProductionReportByID = await axios.put(
-        `http://localhost:8000/api/productionReport/linkPoNo-productionreport/${finalProductionReportId}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/linkPoNo-productionreport/${finalProductionReportId}`,
         {
           newCustomerPo: updatedNewCustomerPo,
           selectedItem,
@@ -309,7 +309,7 @@ const EditCustomerForm = () => {
       let response;
       if (POsize.diameter.dimension === "mm") {
         response = await axios.get(
-          `http://localhost:8000/api/helperRoutes/cuttingRawDataMM`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/helperRoutes/cuttingRawDataMM`,
           {
             params: {
               diameter: `${POsize.diameter.value}`,
@@ -319,7 +319,7 @@ const EditCustomerForm = () => {
         );
       } else if (POsize.diameter.dimension === "inch") {
         response = await axios.get(
-          `http://localhost:8000/api/helperRoutes/cuttingRawDataInch`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/helperRoutes/cuttingRawDataInch`,
           {
             params: {
               diameter: `${POsize.diameter.value}`,

@@ -37,7 +37,7 @@ const RoutingSheetForm = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8000/api/routingSheet"
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet`
         );
         const dataWithSrNo = response.data.map((row, index) => ({
           ...row,
@@ -90,7 +90,7 @@ const RoutingSheetForm = () => {
 
       // Send the FormData object to the server
       await axios.post(
-        "http://localhost:8000/api/routingSheet/create-routingSheet",
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/create-routingSheet`,
         formData,
         {
           headers: {

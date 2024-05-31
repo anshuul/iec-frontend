@@ -43,7 +43,7 @@ const CutomerPoHistoryForm = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/customerPO/customerPOHistory/${poNo}/${historyId}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/customerPOHistory/${poNo}/${historyId}`
         );
         console.log(
           "response in history",
@@ -113,7 +113,7 @@ const CutomerPoHistoryForm = () => {
       let response;
       if (POsize.diameter.dimension === "mm") {
         response = await axios.get(
-          `http://localhost:8000/api/helperRoutes/cuttingRawDataMM`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/helperRoutes/cuttingRawDataMM`,
           {
             params: {
               diameter: `${POsize.diameter.value}`,
@@ -123,7 +123,7 @@ const CutomerPoHistoryForm = () => {
         );
       } else if (POsize.diameter.dimension === "inch") {
         response = await axios.get(
-          `http://localhost:8000/api/helperRoutes/cuttingRawDataInch`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/helperRoutes/cuttingRawDataInch`,
           {
             params: {
               diameter: `${POsize.diameter.value}`,

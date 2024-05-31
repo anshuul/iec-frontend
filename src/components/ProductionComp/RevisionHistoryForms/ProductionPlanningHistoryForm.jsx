@@ -55,7 +55,7 @@ const ProductionPlanningHistoryForm = () => {
       try {
         console.log("start");
         const response = await axios.get(
-          `http://localhost:8000/api/production/getSingle-productionPlanningHistoryBypreviousDataId/${historyId}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/production/getSingle-productionPlanningHistoryBypreviousDataId/${historyId}`
         );
         console.log("response.data", response.data);
         console.log("response history", response.data[0].previousData);
@@ -91,7 +91,7 @@ const ProductionPlanningHistoryForm = () => {
   const saveFormData = async () => {
     try {
       const response = await axios.put(
-        `http://localhost:8000/api/production/update-planningSheet/${id}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/production/update-planningSheet/${id}`,
         planningSheetForm
       );
       console.log("response ", response);

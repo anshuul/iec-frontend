@@ -118,7 +118,7 @@ const DimensionReportHome = () => {
         console.log("newStudInputValues 1st", newStudInputValues);
 
         const response = await axios.post(
-          "http://localhost:8000/api/dimensinReport/createDimensionReport",
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/dimensinReport/createDimensionReport`,
           newStudInputValues
         );
         console.log(
@@ -132,7 +132,7 @@ const DimensionReportHome = () => {
 
         // Fetch data using the retrieved ID
         const dimensionReportResponse = await axios.get(
-          `http://localhost:8000/api/dimensinReport/${id}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/dimensinReport/${id}`
         );
         console.log(
           "Fetched dimension report data:",
@@ -190,7 +190,7 @@ const DimensionReportHome = () => {
 
         // Send an HTTP POST request to submit the stud data
         const response = await axios.post(
-          "http://localhost:8000/api/dimensinReport/dimensionNut/createDimensionReportNut",
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/dimensinReport/dimensionNut/createDimensionReportNut`,
           newNutInputValues
         );
         console.log(
@@ -204,7 +204,7 @@ const DimensionReportHome = () => {
 
         // Fetch data using the retrieved ID
         const dimensionReportResponseForNut = await axios.get(
-          `http://localhost:8000/api/dimensinReport/dimensionNut/${id}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/dimensinReport/dimensionNut/${id}`
         );
         console.log(
           "Nut Fetched dimension report data:",

@@ -37,10 +37,10 @@ const RoutingSheetTable = ({ productionStep }) => {
           const parsedCustomerPO = JSON.parse(selectedCustomerPO);
           console.log("poNo", parsedCustomerPO.poNo);
           response = await axios.get(
-            `http://localhost:8000/api/routingSheet/get-routingSheet/${parsedCustomerPO.poNo}`
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/get-routingSheet/${parsedCustomerPO.poNo}`
           );
         } else {
-          response = await axios.get("http://localhost:8000/api/routingSheet");
+          response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet`);
         }
 
         console.log("response", response.data);
@@ -69,7 +69,7 @@ const RoutingSheetTable = ({ productionStep }) => {
         console.log("Fetching production reports for each row...");
         const promises = rowData.map(async (item) => {
           const response = await axios.get(
-            `http://localhost:8000/api/productionReport/get-production-report-by-routing-sheet/${item._id}`
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/get-production-report-by-routing-sheet/${item._id}`
           );
           console.log("response.data", response.data);
           return response.data;
@@ -86,7 +86,7 @@ const RoutingSheetTable = ({ productionStep }) => {
         const fetchedData = await Promise.all(
           firstReportIds.map(async (firstReportId) => {
             const response = await axios.get(
-              `http://localhost:8000/api/productionReport/get-production-reportById/${firstReportId}`
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/get-production-reportById/${firstReportId}`
             );
             const { startTime, endTime } = response.data;
             // Store startTime and endTime in localStorage
@@ -112,7 +112,7 @@ const RoutingSheetTable = ({ productionStep }) => {
     try {
       setLoading(true);
       await axios.delete(
-        `http://localhost:8000/api/routingSheet/delete-routingSheet/${data._id}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/delete-routingSheet/${data._id}`
       );
       const updatedRows = rowData.filter((row) => row !== data);
       setRowData(updatedRows);
@@ -133,7 +133,7 @@ const RoutingSheetTable = ({ productionStep }) => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:8000/api/routingSheet/get-getRoutingHistoryByroutingId/${_id}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/get-getRoutingHistoryByroutingId/${_id}`
       );
       console.log("Response data Routing Sheet:", response.data);
       console.log(

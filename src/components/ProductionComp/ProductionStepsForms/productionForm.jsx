@@ -48,7 +48,7 @@ const ProductionForm = () => {
       const fetchData = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:8000/api/customerPO/${CustomerPO}`
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/${CustomerPO}`
           );
           setRowData(response);
           // router.push("/production");
@@ -110,7 +110,7 @@ const ProductionForm = () => {
       }
 
       const response = await axios.post(
-        "http://localhost:8000/api/customerPO/createCustomerPO",
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/createCustomerPO`,
         formData,
         {
           headers: {
@@ -217,7 +217,7 @@ const ProductionForm = () => {
       let response;
       if (diameterDimension === "mm") {
         response = await axios.get(
-          `http://localhost:8000/api/helperRoutes/cuttingRawDataMM`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/helperRoutes/cuttingRawDataMM`,
           {
             params: {
               diameter: `${diameter}`,
@@ -227,7 +227,7 @@ const ProductionForm = () => {
         );
       } else if (diameterDimension === "inch") {
         response = await axios.get(
-          `http://localhost:8000/api/helperRoutes/cuttingRawDataInch`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/helperRoutes/cuttingRawDataInch`,
           {
             params: {
               diameter: `${diameter}`,

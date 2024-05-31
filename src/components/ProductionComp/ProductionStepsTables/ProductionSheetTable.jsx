@@ -31,11 +31,11 @@ const ProductionSheetTable = ({ productionStep }) => {
           const parsedCustomerPO = JSON.parse(selectedCustomerPO);
           console.log("poNo", parsedCustomerPO.poNo);
           response = await axios.get(
-            `http://localhost:8000/api/production/get-planningSheet/${parsedCustomerPO.poNo}`
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/production/get-planningSheet/${parsedCustomerPO.poNo}`
           );
         } else {
           response = await axios.get(
-            "http://localhost:8000/api/production/get-planningSheet"
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/production/get-planningSheet`
           );
         }
         setRowData(
@@ -75,7 +75,7 @@ const ProductionSheetTable = ({ productionStep }) => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:8000/api/production/productionPlanningHistoryBypreviousDataId/${_id}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/production/productionPlanningHistoryBypreviousDataId/${_id}`
       );
       console.log("Response data:", response.data);
 
@@ -137,7 +137,7 @@ const ProductionSheetTable = ({ productionStep }) => {
     try {
       setLoading(true);
       await axios.delete(
-        `http://localhost:8000/api/production/delete-planningSheetById/${data._id}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/production/delete-planningSheetById/${data._id}`
       );
       const updatedRows = rowData.filter((row) => row !== data);
       setRowData(updatedRows);

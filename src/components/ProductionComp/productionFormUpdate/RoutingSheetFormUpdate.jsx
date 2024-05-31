@@ -43,7 +43,7 @@ const RoutingSheetFormUpdate = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/routingSheet/get-routingSheetById/${id}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/get-routingSheetById/${id}`
         );
         const responseData = Array.isArray(response.data)
           ? response.data
@@ -176,7 +176,7 @@ const RoutingSheetFormUpdate = () => {
       }
 
       await axios.put(
-        `http://localhost:8000/api/routingSheet/update-generated-routingsheet/${id}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/update-generated-routingsheet/${id}`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -197,7 +197,7 @@ const RoutingSheetFormUpdate = () => {
     try {
       console.log("Deleting process row:", processRowId);
       await axios.delete(
-        `http://localhost:8000/api/routingSheet/delete-processRow/${routingSheetId}/${processRowId}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/delete-processRow/${routingSheetId}/${processRowId}`
       );
       const updatedRowData = rowData.filter((row) => row._id !== processRowId);
       setRowData(updatedRowData);

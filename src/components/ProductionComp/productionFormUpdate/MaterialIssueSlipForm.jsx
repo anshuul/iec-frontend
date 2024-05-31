@@ -34,7 +34,7 @@ const MaterialIssueSlipForm = () => {
   const [selectedFile, setSelectedFile] = useState(null);
 
   const selectedFilePath =
-    selectedFile && `http://localhost:8000/${selectedFile.path}`;
+    selectedFile && `${process.env.NEXT_PUBLIC_BACKEND_URL}/${selectedFile.path}`;
 
   const handleDownloadSelected = async () => {
     try {
@@ -60,7 +60,7 @@ const MaterialIssueSlipForm = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/materialissueslip/get-materialIssueSlipByID/${id}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/materialissueslip/get-materialIssueSlipByID/${id}`
         );
         const responseData = response.data;
 
@@ -166,7 +166,7 @@ const MaterialIssueSlipForm = () => {
       }
 
       const response = await axios.put(
-        `http://localhost:8000/api/materialissueslip/update-materialIssueSlip/${id}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/materialissueslip/update-materialIssueSlip/${id}`,
         formData,
         {
           headers: {
@@ -183,7 +183,7 @@ const MaterialIssueSlipForm = () => {
       );
 
       const fetchProductionReportId = await axios.get(
-        `http://localhost:8000/api/productionReport/get-generatedProductionReportId/${UpdatedMaterialIssueSlipData.poNo}/${UpdatedMaterialIssueSlipData.prefix}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/get-generatedProductionReportId/${UpdatedMaterialIssueSlipData.poNo}/${UpdatedMaterialIssueSlipData.prefix}`
       );
       console.log("fetchProductionReportId", fetchProductionReportId.data);
       const productionReportId =
@@ -207,7 +207,7 @@ const MaterialIssueSlipForm = () => {
 
       // Update or Create Production Report
       const updateProductionReport = await axios.put(
-        `http://localhost:8000/api/productionReport/create-updateGenerateProductionReport/${productionReportId}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/create-updateGenerateProductionReport/${productionReportId}`,
         {
           newCustomerPo: newCustomerPO,
           UpdatedMaterialIssueSlipData: UpdatedMaterialIssueSlipData,

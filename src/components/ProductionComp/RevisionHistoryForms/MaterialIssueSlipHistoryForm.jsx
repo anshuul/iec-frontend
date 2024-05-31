@@ -36,7 +36,7 @@ const MaterialIssueSlipHistoryForm = () => {
       try {
         console.log("start");
         const response = await axios.get(
-          `http://localhost:8000/api/materialissueslip/materialIssueSlipHistory-single/${id}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/materialissueslip/materialIssueSlipHistory-single/${id}`
         );
         console.log("response.data material", response.data);
         console.log("response history material", response.data[0].previousData);
