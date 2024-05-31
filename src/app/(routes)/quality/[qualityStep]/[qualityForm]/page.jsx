@@ -18,7 +18,7 @@ const QualityForm = ({ params }) => {
         <HardnessReportForm qualityForm={qualityForm} />
       )}
       {/* MPIReportForm */}
-      {qualityForm === "magnetic-particle-inspection" && (
+      {qualityForm === "magneticParticleInspectionForm" && (
         <MPIReportForm qualityForm={qualityForm} />
       )}
     </div>

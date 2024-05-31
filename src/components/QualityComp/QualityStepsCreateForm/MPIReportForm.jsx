@@ -14,6 +14,7 @@ import { FcGallery } from "react-icons/fc";
 // Date Picker
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import InputField from "@/components/common/InpuField";
 
 const MPIReportForm = () => {
   const router = useRouter();
@@ -38,6 +39,15 @@ const MPIReportForm = () => {
   const [technique, setTechnique] = useState("Wet Fluorescent");
   const [testweight, setTestweight] = useState("");
   const [magnetizingProcess, setMagnetizingProcess] = useState("");
+  const [magnetizingCurrent, setMagnetizingCurrent] = useState("");
+  const [method, setMethod] = useState("");
+  const [magneticFieldIndicator, setMagneticFieldIndicator] = useState(
+    "Bumah Castrol Strip"
+  );
+  const [blackLightIntensity, setBlackLightIntensity] = useState("XXXX");
+  const [demagnetization, setDemagnetization] = useState("");
+  const [powderConcertation, setPowderConcertation] = useState("XXXX");
+  const [scopeOfWork, setScopeOfWork] = useState("XXXX");
 
   const [htrNo, setHtrNo] = useState("");
   const [itemDescription, setItemDescription] = useState("");
@@ -125,7 +135,7 @@ const MPIReportForm = () => {
 
   return (
     <Container>
-      <div className="w-full p-8 mx-auto bg-white rounded shadow-md">
+      <div className="w-full p-8 mx-auto bg-white rounded shadow-md h-[85vh] overflow-y-auto">
         <button
           onClick={handleGoBack}
           className="flex items-center mb-4 text-lg font-bold text-black"
@@ -140,211 +150,289 @@ const MPIReportForm = () => {
           {/* First Column */}
           <div className="flex flex-col items-start">
             {/* HTR NO */}
-            <div className="flex items-center my-4">
-              <label className="relative cursor-pointer App">
-                <input
-                  id="htrNo"
-                  type="text"
-                  value={htrNo}
-                  onChange={(e) => setHtrNo(e.target.value)}
-                  placeholder="Input"
-                  className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
-                />
-                <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-                  HTR No
-                </span>
-              </label>
+            <InputField
+              id="mpirNo"
+              value={mpirNo}
+              onChange={(e) => setMpirNo(e.target.value)}
+              firstInput={true}
+              placeholder="Input"
+              label="MPIR No"
+            />
+
+            {/* Product Name */}
+            <InputField
+              id="productName"
+              value={productName}
+              onChange={(e) => setProductName(e.target.value)}
+              placeholder="Input"
+              label="Product Name"
+            />
+
+            {/* QA NO */}
+            <InputField
+              id="qaNO"
+              value={qaNO}
+              onChange={(e) => setQaNO(e.target.value)}
+              placeholder="Input"
+              label="QA No"
+            />
+
+            {/* MPI NO */}
+            <InputField
+              id="mpiNo"
+              value={mpiNo}
+              onChange={(e) => setMPINO(e.target.value)}
+              placeholder="Input"
+              label="Magnetic Particle Inspection Procedure No."
+            />
+
+            {/* Acceptance Standard */}
+            <InputField
+              id="acceptanceStandard"
+              value={acceptanceStandard}
+              onChange={(e) => setAcceptanceStandard(e.target.value)}
+              placeholder="Input"
+              label="Acceptance Standard"
+            />
+
+            {/* Material Specification */}
+            <InputField
+              id="materialSpecification"
+              value={materialSpecification}
+              onChange={(e) => setMaterialSpecification(e.target.value)}
+              placeholder="Input"
+              label="Material Specification"
+            />
+
+            {/* Test Temperature */}
+            <InputField
+              id="testTemperature"
+              value={testTemperature}
+              onChange={(e) => setTestTemperature(e.target.value)}
+              placeholder="Input"
+              label="Test Temperature"
+            />
+
+            {/* Equipment Name */}
+            <InputField
+              id="equipmentName"
+              value={equipmentName}
+              onChange={(e) => setEquipmentName(e.target.value)}
+              placeholder="Input"
+              label="Equipment Name"
+            />
+
+            {/* Technique */}
+            <InputField
+              id="technique"
+              value={technique}
+              onChange={(e) => setTechnique(e.target.value)}
+              placeholder="Input"
+              label="Technique"
+            />
+
+            {/* Magnetizing Part */}
+            {/* Magnetizing Process */}
+            <div className="flex items-center gap-2 mb-4">
+              <label>Magnetizing Process:-</label>
+              <select
+                id="selectedMagnetizingProcess"
+                className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
+              >
+                <option value="Continuous">Continuous</option>
+                <option value="Residual">Residual</option>
+              </select>
             </div>
 
-            {/* Process */}
-            <div className="flex items-center mb-4">
-              <label className="relative cursor-pointer App">
-                <input
-                  id="process"
-                  type="text"
-                  value={process}
-                  onChange={(e) => setProcess(e.target.value)}
-                  placeholder="Input"
-                  className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
-                />
-                <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-                  Process
-                </span>
-              </label>
+            {/* Magnetizing */}
+            <div className="flex items-center gap-2 mb-4">
+              <label>Magnetizing Process:-</label>
+              <select
+                id="selectedMagnetizingProcess"
+                className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
+              >
+                <option value="Coil">Coil</option>
+                <option value="Amp">Amp</option>
+                <option value="Yoke">Yoke</option>
+              </select>
             </div>
 
-            {/* manufacturingEquipment */}
-            <div className="flex items-center mb-4">
-              <label className="relative cursor-pointer App">
-                <input
-                  id="manufacturingEquipment"
-                  type="text"
-                  value={manufacturingEquipment}
-                  onChange={(e) => setManufacturingEquipment(e.target.value)}
-                  placeholder="Input"
-                  className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
-                />
-                <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-                  Manufacturing Equipment With ID No.
-                </span>
-              </label>
-            </div>
+            {/* MagneticField Indicator */}
+            <InputField
+              id="magneticFieldIndicator"
+              value={magneticFieldIndicator}
+              onChange={(e) => setMagneticFieldIndicator(e.target.value)}
+              placeholder="Input"
+              label="MagneticField Indicator"
+            />
 
-            {/* heatNo */}
-            <div className="flex items-center mb-4">
-              <label className="relative cursor-pointer App">
-                <input
-                  id="heatNo"
-                  type="text"
-                  value={heatNo}
-                  onChange={(e) => setHeatNo(e.target.value)}
-                  placeholder="Input"
-                  className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
-                />
-                <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-                  Heat No.
-                </span>
-              </label>
-            </div>
-
-            {/* hardeningProcessNot */}
-            <div className="flex items-center mb-4">
-              <label className="relative cursor-pointer App">
-                <input
-                  id="hardeningProcessNot"
-                  type="text"
-                  value={hardeningProcessNot}
-                  onChange={(e) => setHardeningProcessNot(e.target.value)}
-                  placeholder="Input"
-                  className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
-                />
-                <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-                  Hardening Process
-                </span>
-              </label>
-            </div>
+            {/* Powder Concertation */}
+            <InputField
+              id="powderConcertation"
+              value={powderConcertation}
+              onChange={(e) => setPowderConcertation(e.target.value)}
+              placeholder="Input"
+              label="Powder Concertation"
+            />
 
             {/* achieved */}
-            <div className="flex items-center mb-4">
-              <label className="relative cursor-pointer App">
-                <input
-                  id="achieved"
-                  type="text"
-                  value={achieved}
-                  onChange={(e) => setAchieved(e.target.value)}
-                  placeholder="Input"
-                  className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
-                />
-                <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-                  Achieved
-                </span>
-              </label>
-            </div>
+            <InputField
+              id="achieved"
+              value={achieved}
+              onChange={(e) => setAchieved(e.target.value)}
+              placeholder="Input"
+              label="Achieved"
+            />
           </div>
 
           {/* Second Column */}
           <div className="flex flex-col items-start">
-            {/* Item Description */}
-            <div className="flex items-center my-4">
-              <label className="relative cursor-pointer App">
-                <input
-                  id="itemDescription"
-                  type="text"
-                  value={itemDescription}
-                  onChange={(e) => setItemDescription(e.target.value)}
-                  placeholder="Input"
-                  className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
-                />
-                <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-                  Item Description
-                </span>
-              </label>
-            </div>
+            {/* DrawingNo */}
+            <InputField
+              id="drawingNo"
+              value={drawingNo}
+              onChange={(e) => setDrawingNo(e.target.value)}
+              firstInput={true}
+              placeholder="Input"
+              label="Drawing No"
+            />
 
             {/* Quantity */}
-            <div className="flex items-center mb-4">
-              <label className="relative cursor-pointer App">
-                <input
-                  id="quantity"
-                  type="text"
-                  value={quantity}
-                  onChange={(e) => setQuantity(e.target.value)}
-                  placeholder="Input"
-                  className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
-                />
-                <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-                  Quantity
-                </span>
-              </label>
+            <InputField
+              id="quantity"
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+              placeholder="Input"
+              label="Quantity"
+            />
+
+            {/* Material Type */}
+            <InputField
+              id="materialType"
+              value={materialType}
+              onChange={(e) => setMaterialType(e.target.value)}
+              placeholder="Input"
+              label="Material Type"
+            />
+
+            {/* heatNo */}
+            <InputField
+              id="heatNo"
+              value={heatNo}
+              onChange={(e) => setHeatNo(e.target.value)}
+              placeholder="Input"
+              label="Heat No."
+            />
+
+            {/* Material */}
+            <InputField
+              id="material"
+              value={material}
+              onChange={(e) => setMaterial(e.target.value)}
+              placeholder="Input"
+              label="Material"
+            />
+
+            {/* Surface Condition */}
+            <InputField
+              id="surfaceCondition"
+              value={surfaceCondition}
+              onChange={(e) => setSurfaceCondition(e.target.value)}
+              placeholder="Input"
+              label="Surface Condition"
+            />
+
+            {/* Illumination */}
+            <InputField
+              id="illumination"
+              value={illumination}
+              onChange={(e) => setIllumination(e.target.value)}
+              placeholder="Input"
+              label="Illumination"
+            />
+
+            {/* Illumination Location */}
+            <InputField
+              id="illuminationLocation"
+              value={illuminationLocation}
+              onChange={(e) => setIlluminationLocation(e.target.value)}
+              placeholder="Input"
+              label="Illumination Location"
+            />
+
+            {/* Test Weight */}
+            <InputField
+              id="testweight"
+              value={testweight}
+              onChange={(e) => setTestweight(e.target.value)}
+              placeholder="Input"
+              label="Test Weight"
+            />
+
+            {/* Magnetizing Part */}
+            {/* Magnetizing Current */}
+            <div className="flex items-center gap-2 mb-4">
+              <label>Magnetizing Current:-</label>
+              <select
+                id="selectedMagnetizingCurrent"
+                className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
+              >
+                <option value="Altemating">Altemating</option>
+                <option value="HalfWave">Half Wave</option>
+                <option value="Direct">Direct</option>
+              </select>
             </div>
 
-            {/* TestingInstrumentId */}
-            <div className="flex items-center mb-4">
-              <label className="relative cursor-pointer App">
-                <input
-                  id="testingInstrumentId"
-                  type="text"
-                  value={testingInstrumentId}
-                  onChange={(e) => setTestingInstrumentId(e.target.value)}
-                  placeholder="Input"
-                  className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
-                />
-                <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-                  Testing Instrument with ID No
-                </span>
-              </label>
+            {/* Method */}
+            <div className="flex items-center gap-2 mb-4">
+              <label>Method:-</label>
+              <select
+                id="selectedMagnetizingCurrent"
+                className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
+              >
+                <option value="Permanent">Permanent</option>
+                <option value="DailyLiftCheck">Daily Lift Check</option>
+              </select>
             </div>
 
-            {/* material */}
-            <div className="flex items-center mb-4">
-              <label className="relative cursor-pointer App">
-                <input
-                  id="material"
-                  type="text"
-                  value={material}
-                  onChange={(e) => setMaterial(e.target.value)}
-                  placeholder="Input"
-                  className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
-                />
-                <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-                  Testing Instrument with ID No
-                </span>
-              </label>
+            {/* Demagnetization */}
+            <div className="flex items-center gap-2 mb-4">
+              <label>Demagnetization:-</label>
+              <select
+                id="selectedMagnetizingCurrent"
+                className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
+              >
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
             </div>
+
+            {/* Black Light Intensity */}
+            <InputField
+              id="blackLightIntensity"
+              value={blackLightIntensity}
+              onChange={(e) => setBlackLightIntensity(e.target.value)}
+              placeholder="Input"
+              label="Black Light Intensity"
+            />
 
             {/* requiredHardness */}
-            <div className="flex items-center mb-4">
-              <label className="relative cursor-pointer App">
-                <input
-                  id="requiredHardness"
-                  type="text"
-                  value={requiredHardness}
-                  onChange={(e) => setRequiredHardness(e.target.value)}
-                  placeholder="Input"
-                  className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
-                />
-                <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-                  Required Hardness
-                </span>
-              </label>
-            </div>
+            <InputField
+              id="requiredHardness"
+              value={requiredHardness}
+              onChange={(e) => setRequiredHardness(e.target.value)}
+              placeholder="Input"
+              label="Required Hardness"
+            />
 
-            {/* temperingProcessNot */}
-            <div className="flex items-center mb-4">
-              <label className="relative cursor-pointer App">
-                <input
-                  id="temperingProcessNot"
-                  type="text"
-                  value={temperingProcessNot}
-                  onChange={(e) => setTemperingProcessNot(e.target.value)}
-                  placeholder="Input"
-                  className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
-                />
-                <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
-                  Tempering Process
-                </span>
-              </label>
-            </div>
+            {/* Tempering ProcessNot */}
+            <InputField
+              id="temperingProcessNot"
+              value={temperingProcessNot}
+              onChange={(e) => setTemperingProcessNot(e.target.value)}
+              placeholder="Input"
+              label="Tempering Process"
+            />
           </div>
         </div>
 

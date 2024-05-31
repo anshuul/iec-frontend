@@ -82,7 +82,7 @@ const MPIReportTable = ({ qualityStep }) => {
   ];
 
   const handleClick = () => {
-    router.push(`/quality/${qualityStep}/heatTreatmentForm`);
+    router.push(`/quality/${qualityStep}/magneticParticleInspectionForm`);
   };
 
   return (
