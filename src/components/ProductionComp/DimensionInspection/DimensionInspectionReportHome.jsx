@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 import StudDimensionReportPopUp from "./StudDimensionReport/StudDimensionReportPopUp";
-import NutDimensionReportPopup from "./NutDimensionReportPopup";
 import StudDimensionForm from "./StudDimensionReport/StudDimensionForm";
 import NutDimensionForm from "./NutDimensionReport/NutDimensionForm";
 import { FiPrinter } from "react-icons/fi";
@@ -22,6 +21,7 @@ import {
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
+import NutDimensionReportPopup from "./NutDimensionReportPopUp";
 const styles = StyleSheet.create({
   page: {
     flexDirection: "row",
