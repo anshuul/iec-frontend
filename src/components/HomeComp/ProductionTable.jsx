@@ -211,7 +211,7 @@ const ProductionTable = () => {
                   const id = routingSheet._id;
                   console.log("routing sheet id:", id);
                   const reportResponse = await axios.get(
-                    `${process.env.NEXT_PUBLIC_BACKEND_URL}http://localhost:8000/api/productionReport/get-production-report-by-routing-sheet/${id}`
+                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/get-production-report-by-routing-sheet/${id}`
                   );
                   console.log(
                     "report response for routing sheet id:",
