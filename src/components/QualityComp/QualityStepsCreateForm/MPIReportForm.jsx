@@ -6,9 +6,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 // Icons
-import { FiArrowLeft, FiFile, FiPrinter, FiSave } from "react-icons/fi";
+import { FiArrowLeft, FiPrinter, FiSave } from "react-icons/fi";
 import { IoIosCloseCircleOutline } from "react-icons/io";
-import { TiPlus } from "react-icons/ti";
 import { FcGallery } from "react-icons/fc";
 
 // Date Picker
@@ -38,32 +37,97 @@ const MPIReportForm = () => {
   const [illuminationLocation, setIlluminationLocation] = useState("XXXX");
   const [technique, setTechnique] = useState("Wet Fluorescent");
   const [testweight, setTestweight] = useState("");
-  const [magnetizingProcess, setMagnetizingProcess] = useState("");
-  const [magnetizingCurrent, setMagnetizingCurrent] = useState("");
-  const [method, setMethod] = useState("");
+
+  const [selectedMagnetizingProcess, setSelectedMagnetizingProcess] =
+    useState("Continuous");
+  const [selectedMagnetizing, setSelectedMagnetizing] = useState("Coil");
+
+  const handleMagnetizingProcessChange = (e) => {
+    setSelectedMagnetizingProcess(e.target.value);
+  };
+  const handleMagnetizingChange = (e) => {
+    setSelectedMagnetizing(e.target.value);
+  };
+
+  const [selectedMagnetizingCurrent, setSelectedMagnetizingCurrent] =
+    useState("Altemating");
+  const [selectedMethod, setSelectedMethod] = useState("Permanent");
+
+  const handleMagnetizingCurrentChange = (e) => {
+    setSelectedMagnetizingCurrent(e.target.value);
+  };
+  const handleMethodChange = (e) => {
+    setSelectedMethod(e.target.value);
+  };
+
+  const [selectedDemagnetization, setSelectedDemagnetization] = useState("Yes");
+
+  const handleDemagnetizationChange = (e) => {
+    setSelectedDemagnetization(e.target.value);
+  };
+
   const [magneticFieldIndicator, setMagneticFieldIndicator] = useState(
     "Bumah Castrol Strip"
   );
   const [blackLightIntensity, setBlackLightIntensity] = useState("XXXX");
-  const [demagnetization, setDemagnetization] = useState("");
   const [powderConcertation, setPowderConcertation] = useState("XXXX");
-  const [scopeOfWork, setScopeOfWork] = useState("XXXX");
-
-  const [htrNo, setHtrNo] = useState("");
-  const [itemDescription, setItemDescription] = useState("");
-  const [process, setProcess] = useState("Quenching and Tempering");
-  const [testingInstrumentId, setTestingInstrumentId] = useState("HARDNESS");
-  const [manufacturingEquipment, setManufacturingEquipment] =
-    useState("PIT FURNANCE");
-
   const [requiredHardness, setRequiredHardness] = useState("");
   const [achieved, setAchieved] = useState("");
-  const [hardeningProcessNot, setHardeningProcessNot] = useState(
-    "Temp / Time and Quenching Media"
-  );
-  const [temperingProcessNot, setTemperingProcessNot] = useState(
-    "Time /Temperature and Cooling media"
-  );
+
+  // State for "whiteContrastPaint MakeType"
+  const [whiteContrastPaintMakeType, setWhiteContrastPaintMakeType] =
+    useState("");
+  const [whiteContrastPaintLotNo, setWhiteContrastPaintLotNo] = useState("");
+
+  // State for "Black Magnetic ink"
+  const [blackMagneticInkMakeType, setBlackMagneticInkMakeType] = useState("");
+  const [blackMagneticInkLotNo, setBlackMagneticInkLotNo] = useState("");
+
+  // State for "Wet Fluorescent"
+  const [wetFluorescentMakeType, setWetFluorescentMakeType] = useState("");
+  const [wetFluorescentLotNo, setWetFluorescentLotNo] = useState("");
+
+  // State for "Dry Powder"
+  const [dryPowderMakeType, setDryPowderMakeType] = useState("");
+  const [dryPowderLotNo, setDryPowderLotNo] = useState("");
+
+  // Scope Of Work
+  const [scopeOfWork, setScopeOfWork] = useState("XXXX");
+  const [component, setComponent] = useState("XXXX");
+  const [componentResult, setComponentResult] = useState("XXXX");
+  const [defect, setDefect] = useState("XXXX");
+  const [observation, setObservation] = useState("XXXX");
+
+  // Equipment Used During Inspection
+  // State for "AC/DC Yoke"
+  const [acdcYokeEquipmentID, setACDCYokeEquipmentID] = useState("");
+  const [acdcYokeCalibrationValidity, setACDCYokeCalibrationValidity] =
+    useState("");
+
+  // State for Black Light
+  const [blackLightEquipmentID, setBlackLightEquipmentID] = useState("");
+  const [blackLightCalibrationValidity, setBlackLightCalibrationValidity] =
+    useState("");
+
+  // State for Lux Meter
+  const [luxMeterEquipmentID, setLuxMeterEquipmentID] = useState("");
+  const [luxMeterCalibrationValidity, setLuxMeterCalibrationValidity] =
+    useState("");
+
+  // State for Dry Powder
+  const [dryPowderEquipmentID, setDryPowderEquipmentID] = useState("");
+  const [dryPowderCalibrationValidity, setDryPowderCalibrationValidity] =
+    useState("");
+
+  // State for UV Meter
+  const [uvMeterEquipmentID, setUVMeterEquipmentID] = useState("");
+  const [uvMeterCalibrationValidity, setUVMeterCalibrationValidity] =
+    useState("");
+
+  // State for Pie Gauge
+  const [pieGaugeEquipmentID, setPieGaugeEquipmentID] = useState("");
+  const [pieGaugeCalibrationValidity, setPieGaugeCalibrationValidity] =
+    useState("");
 
   const [date, setDate] = useState("");
   const [selectedImages, setSelectedImages] = useState([]);
@@ -91,18 +155,74 @@ const MPIReportForm = () => {
   const saveFormData = async () => {
     try {
       const formData = new FormData();
-      formData.append("htrNo", htrNo);
-      formData.append("itemDescription", itemDescription);
+      formData.append("mpirNo", mpirNo);
+      formData.append("productName", productName);
+      formData.append("drawingNo", drawingNo);
       formData.append("quantity", quantity);
-      formData.append("process", process);
-      formData.append("testingInstrumentId", testingInstrumentId);
-      formData.append("manufacturingEquipment", manufacturingEquipment);
-      formData.append("material", material);
+      formData.append("materialType", materialType);
+      formData.append("qaNO", qaNO);
+      formData.append("mpiNo", mpiNo);
       formData.append("heatNo", heatNo);
+      formData.append("acceptanceStandard", acceptanceStandard);
+      formData.append("material", material);
+      formData.append("materialSpecification", materialSpecification);
+      formData.append("surfaceCondition", surfaceCondition);
+      formData.append("testTemperature", testTemperature);
+      formData.append("illumination", illumination);
+      formData.append("equipmentName", equipmentName);
+      formData.append("illuminationLocation", illuminationLocation);
+      formData.append("technique", technique);
+      formData.append("testweight", testweight);
+      formData.append("selectedMagnetizingProcess", selectedMagnetizingProcess);
+      formData.append("selectedMagnetizing", selectedMagnetizing);
+      formData.append("selectedMagnetizingCurrent", selectedMagnetizingCurrent);
+      formData.append("selectedMethod", selectedMethod);
+      formData.append("selectedDemagnetization", selectedDemagnetization);
+      formData.append("magneticFieldIndicator", magneticFieldIndicator);
+      formData.append("blackLightIntensity", blackLightIntensity);
+      formData.append("powderConcertation", powderConcertation);
       formData.append("requiredHardness", requiredHardness);
       formData.append("achieved", achieved);
-      formData.append("hardeningProcessNot", hardeningProcessNot);
-      formData.append("temperingProcessNot", temperingProcessNot);
+      formData.append("whiteContrastPaintMakeType", whiteContrastPaintMakeType);
+      formData.append("whiteContrastPaintLotNo", whiteContrastPaintLotNo);
+      formData.append("blackMagneticInkMakeType", blackMagneticInkMakeType);
+      formData.append("blackMagneticInkLotNo", blackMagneticInkLotNo);
+      formData.append("wetFluorescentMakeType", wetFluorescentMakeType);
+      formData.append("wetFluorescentLotNo", wetFluorescentLotNo);
+      formData.append("dryPowderMakeType", dryPowderMakeType);
+      formData.append("dryPowderLotNo", dryPowderLotNo);
+      formData.append("scopeOfWork", scopeOfWork);
+      formData.append("component", component);
+      formData.append("componentResult", componentResult);
+      formData.append("defect", defect);
+      formData.append("observation", observation);
+      formData.append("acdcYokeEquipmentID", acdcYokeEquipmentID);
+      formData.append(
+        "acdcYokeCalibrationValidity",
+        acdcYokeCalibrationValidity
+      );
+      formData.append("blackLightEquipmentID", blackLightEquipmentID);
+      formData.append(
+        "blackLightCalibrationValidity",
+        blackLightCalibrationValidity
+      );
+      formData.append("luxMeterEquipmentID", luxMeterEquipmentID);
+      formData.append(
+        "luxMeterCalibrationValidity",
+        luxMeterCalibrationValidity
+      );
+      formData.append("dryPowderEquipmentID", dryPowderEquipmentID);
+      formData.append(
+        "dryPowderCalibrationValidity",
+        dryPowderCalibrationValidity
+      );
+      formData.append("uvMeterEquipmentID", uvMeterEquipmentID);
+      formData.append("uvMeterCalibrationValidity", uvMeterCalibrationValidity);
+      formData.append("pieGaugeEquipmentID", pieGaugeEquipmentID);
+      formData.append(
+        "pieGaugeCalibrationValidity",
+        pieGaugeCalibrationValidity
+      );
       formData.append("date", date);
       selectedImages.forEach((image, index) => {
         formData.append(`image_${index}`, image);
@@ -110,7 +230,7 @@ const MPIReportForm = () => {
 
       // Call your API endpoint here with axios
       const response = await axios.post(
-        "http://localhost:8000/api/quality/heatTreatment/create-heatTreatment-report",
+        "http://localhost:8000/api/quality/mpi/create-mpi-report",
         formData,
         {
           headers: {
@@ -119,7 +239,7 @@ const MPIReportForm = () => {
         }
       );
       console.log("response in quality module heat treat report", response);
-      router.push("/quality");
+      router.push("/quality/magnetic-particle-inspection");
     } catch (error) {
       console.error("Error occurred while saving form data:", error);
     }
@@ -237,6 +357,8 @@ const MPIReportForm = () => {
               <label>Magnetizing Process:-</label>
               <select
                 id="selectedMagnetizingProcess"
+                value={selectedMagnetizingProcess}
+                onChange={handleMagnetizingProcessChange}
                 className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
               >
                 <option value="Continuous">Continuous</option>
@@ -246,9 +368,11 @@ const MPIReportForm = () => {
 
             {/* Magnetizing */}
             <div className="flex items-center gap-2 mb-4">
-              <label>Magnetizing Process:-</label>
+              <label>Magnetizing:-</label>
               <select
-                id="selectedMagnetizingProcess"
+                id="selectedMagnetizing"
+                value={selectedMagnetizing}
+                onChange={handleMagnetizingChange}
                 className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
               >
                 <option value="Coil">Coil</option>
@@ -375,6 +499,8 @@ const MPIReportForm = () => {
               <label>Magnetizing Current:-</label>
               <select
                 id="selectedMagnetizingCurrent"
+                value={selectedMagnetizingCurrent}
+                onChange={handleMagnetizingCurrentChange}
                 className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
               >
                 <option value="Altemating">Altemating</option>
@@ -387,7 +513,9 @@ const MPIReportForm = () => {
             <div className="flex items-center gap-2 mb-4">
               <label>Method:-</label>
               <select
-                id="selectedMagnetizingCurrent"
+                id="selectedMethod"
+                value={selectedMethod}
+                onChange={handleMethodChange}
                 className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
               >
                 <option value="Permanent">Permanent</option>
@@ -399,7 +527,9 @@ const MPIReportForm = () => {
             <div className="flex items-center gap-2 mb-4">
               <label>Demagnetization:-</label>
               <select
-                id="selectedMagnetizingCurrent"
+                id="selectedDemagnetization"
+                value={selectedDemagnetization}
+                onChange={handleDemagnetizationChange}
                 className="h-10 w-44 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
               >
                 <option value="Yes">Yes</option>
@@ -424,19 +554,257 @@ const MPIReportForm = () => {
               placeholder="Input"
               label="Required Hardness"
             />
-
-            {/* Tempering ProcessNot */}
-            <InputField
-              id="temperingProcessNot"
-              value={temperingProcessNot}
-              onChange={(e) => setTemperingProcessNot(e.target.value)}
-              placeholder="Input"
-              label="Tempering Process"
-            />
           </div>
         </div>
 
-        {/* Second Form */}
+        <hr className="my-2 border-t border-gray-300" />
+        <h1 className="font-bold text-xl">Consumables</h1>
+        {/* White Contrast Paint */}
+        <div className="flex flex-row flex-wrap items-start space-x-0 md:space-x-4 mb-4">
+          <InputField
+            id="whiteContrastPaintMakeType"
+            value={whiteContrastPaintMakeType}
+            onChange={(e) => setWhiteContrastPaintMakeType(e.target.value)}
+            placeholder="Input"
+            label="Make / Type"
+            text="White Contrast Paint"
+            firstInput={true}
+          />
+          <InputField
+            id="whiteContrastPaintLotNo"
+            value={whiteContrastPaintLotNo}
+            onChange={(e) => setWhiteContrastPaintLotNo(e.target.value)}
+            placeholder="Input"
+            label="Lot No / Batch No"
+            firstInput={true}
+          />
+        </div>
+        {/* Black Magnetic ink */}
+        <div className="flex flex-row items-center space-x-4">
+          <InputField
+            id="blackMagneticInkMakeType"
+            value={blackMagneticInkMakeType}
+            onChange={(e) => setBlackMagneticInkMakeType(e.target.value)}
+            placeholder="Input"
+            label="Make / Type"
+            text="Black Magnetic ink"
+          />
+          <InputField
+            id="blackMagneticInkLotNo"
+            value={blackMagneticInkLotNo}
+            onChange={(e) => setBlackMagneticInkLotNo(e.target.value)}
+            placeholder="Input"
+            label="Lot No / Batch No"
+          />
+        </div>
+        {/* Wet Fluorescent */}
+        <div className="flex flex-row items-center space-x-4">
+          <InputField
+            id="wetFluorescentMakeType"
+            value={wetFluorescentMakeType}
+            onChange={(e) => setWetFluorescentMakeType(e.target.value)}
+            placeholder="Input"
+            label="Make / Type"
+            text="Wet Fluorescent"
+          />
+          <InputField
+            id="wetFluorescentLotNo"
+            value={wetFluorescentLotNo}
+            onChange={(e) => setWetFluorescentLotNo(e.target.value)}
+            placeholder="Input"
+            label="Lot No / Batch No"
+          />
+        </div>
+        {/* Dry Powder */}
+        <div className="flex flex-row items-center space-x-4">
+          <InputField
+            id="dryPowderMakeType"
+            value={dryPowderMakeType}
+            onChange={(e) => setDryPowderMakeType(e.target.value)}
+            placeholder="Input"
+            label="Make / Type"
+            text="Dry Powder"
+          />
+          <InputField
+            id="dryPowderLotNo"
+            value={dryPowderLotNo}
+            onChange={(e) => setDryPowderLotNo(e.target.value)}
+            placeholder="Input"
+            label="Lot No / Batch No"
+          />
+        </div>
+
+        <hr className="my-2 border-t border-gray-300" />
+        <h1 className="font-bold text-xl">Scope of Work</h1>
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2 lg:grid-cols-1 md:grid-cols-2">
+          {/* First Column */}
+          <div className="flex flex-col items-start">
+            {/* Scope of Work */}
+            <InputField
+              id="scopeOfWork"
+              value={scopeOfWork}
+              onChange={(e) => setScopeOfWork(e.target.value)}
+              placeholder="Input"
+              label="Scope of Work"
+              firstInput={true}
+            />
+
+            {/* Component */}
+            <InputField
+              id="component"
+              value={component}
+              onChange={(e) => setComponent(e.target.value)}
+              placeholder="Input"
+              label="Component"
+            />
+
+            {/* Comments / Result  */}
+            <InputField
+              id="componentResult"
+              value={componentResult}
+              onChange={(e) => setComponentResult(e.target.value)}
+              placeholder="Input"
+              label="Comments / Result"
+            />
+          </div>
+
+          {/* Second Column */}
+          <div className="flex flex-col items-start">
+            {/* Defect */}
+            <InputField
+              id="defect"
+              value={defect}
+              onChange={(e) => setDefect(e.target.value)}
+              placeholder="Input"
+              label="Defect"
+              firstInput={true}
+            />
+
+            {/* Observation */}
+            <InputField
+              id="observation"
+              value={observation}
+              onChange={(e) => setObservation(e.target.value)}
+              placeholder="Input"
+              label="Observation"
+            />
+          </div>
+        </div>
+        <hr className="my-2 border-t border-gray-300" />
+        <h1 className="font-bold text-xl">Equipment Used During Inspection</h1>
+        {/* AC/DC Yoke */}
+        <div className="flex flex-row flex-wrap items-start space-x-0 md:space-x-4 mb-4">
+          <InputField
+            id="acdcYokeEquipmentID"
+            value={acdcYokeEquipmentID}
+            onChange={(e) => setACDCYokeEquipmentID(e.target.value)}
+            placeholder="Input"
+            label="Equipment ID No / Sr. No"
+            text="AC/DC Yoke"
+            firstInput={true}
+          />
+          <InputField
+            id="acdcYokeCalibrationValidity"
+            value={acdcYokeCalibrationValidity}
+            onChange={(e) => setACDCYokeCalibrationValidity(e.target.value)}
+            placeholder="Input"
+            label="Calibration Validity"
+            firstInput={true}
+          />
+        </div>
+        {/* Black Light */}
+        <div className="flex flex-row items-center space-x-4">
+          <InputField
+            id="blackLightEquipmentID"
+            value={blackLightEquipmentID}
+            onChange={(e) => setBlackLightEquipmentID(e.target.value)}
+            placeholder="Input"
+            label="Equipment ID No / Sr. No"
+            text="Black Light"
+          />
+          <InputField
+            id="blackLightCalibrationValidity"
+            value={blackLightCalibrationValidity}
+            onChange={(e) => setBlackLightCalibrationValidity(e.target.value)}
+            placeholder="Input"
+            label="Calibration Validity"
+          />
+        </div>
+        {/* Lux Meter */}
+        <div className="flex flex-row items-center space-x-4">
+          <InputField
+            id="luxMeterEquipmentID"
+            value={luxMeterEquipmentID}
+            onChange={(e) => setLuxMeterEquipmentID(e.target.value)}
+            placeholder="Input"
+            label="Equipment ID No / Sr. No"
+            text="Lux Meter"
+          />
+          <InputField
+            id="luxMeterCalibrationValidity"
+            value={luxMeterCalibrationValidity}
+            onChange={(e) => setLuxMeterCalibrationValidity(e.target.value)}
+            placeholder="Input"
+            label="Calibration Validity"
+          />
+        </div>
+        {/* Dry Powder */}
+        <div className="flex flex-row items-center space-x-4">
+          <InputField
+            id="dryPowderEquipmentID"
+            value={dryPowderEquipmentID}
+            onChange={(e) => setDryPowderEquipmentID(e.target.value)}
+            placeholder="Input"
+            label="Equipment ID No / Sr. No"
+            text="Test Weight"
+          />
+          <InputField
+            id="dryPowderCalibrationValidity"
+            value={dryPowderCalibrationValidity}
+            onChange={(e) => setDryPowderCalibrationValidity(e.target.value)}
+            placeholder="Input"
+            label="Calibration Validity"
+          />
+        </div>
+        {/* UV meter */}
+        <div className="flex flex-row items-center space-x-4">
+          <InputField
+            id="uvMeterEquipmentID"
+            value={uvMeterEquipmentID}
+            onChange={(e) => setUVMeterEquipmentID(e.target.value)}
+            placeholder="Input"
+            label="Equipment ID No / Sr. No"
+            text="UV meter"
+          />
+          <InputField
+            id="uvMeterCalibrationValidity"
+            value={uvMeterCalibrationValidity}
+            onChange={(e) => setUVMeterCalibrationValidity(e.target.value)}
+            placeholder="Input"
+            label="Calibration Validity"
+          />
+        </div>
+        {/* Pie Gauge */}
+        <div className="flex flex-row items-center space-x-4">
+          <InputField
+            id="pieGaugeEquipmentID"
+            value={pieGaugeEquipmentID}
+            onChange={(e) => setPieGaugeEquipmentID(e.target.value)}
+            placeholder="Input"
+            label="Equipment ID No / Sr. No"
+            text="Pie Gauge"
+          />
+          <InputField
+            id="pieGaugeCalibrationValidity"
+            value={pieGaugeCalibrationValidity}
+            onChange={(e) => setPieGaugeCalibrationValidity(e.target.value)}
+            placeholder="Input"
+            label="Calibration Validity"
+          />
+        </div>
+
+        <hr className="my-2 border-t border-gray-300" />
+        {/* Last part of  Form */}
         <div className="w-full ">
           <div className="grid grid-cols-1 gap-4 xl:grid-cols-2 lg:grid-cols-1 md:grid-cols-2">
             {/* First Column */}

@@ -6,10 +6,14 @@ const InputField = ({
   onChange,
   placeholder,
   label,
+  text,
   firstInput,
+  marginBottomClass = "mb-4",
 }) => {
   return (
-    <div className={`flex items-center ${firstInput ? "my-4" : "mb-4"}`}>
+    <div className={`flex items-center ${firstInput ? "my-4" : marginBottomClass}`}>
+      <label className={`${text ? "mr-2" : "mr-0"}`}>{text}</label>
+
       <label className="relative cursor-pointer App">
         <input
           id={id}

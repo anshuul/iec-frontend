@@ -1,5 +1,8 @@
+import CertificateOfCompilanceForm from "@/components/QualityComp/QualityStepsCreateForm/CertificateOfCompilanceForm";
+import DispatchForm from "@/components/QualityComp/QualityStepsCreateForm/DispatchForm";
 import HardnessReportForm from "@/components/QualityComp/QualityStepsCreateForm/HardnessReportForm";
 import HeatTreatmentForm from "@/components/QualityComp/QualityStepsCreateForm/HeatTreatmentForm";
+import InspectionReleaseNoteForm from "@/components/QualityComp/QualityStepsCreateForm/InspectionReleaseNoteForm";
 import MPIReportForm from "@/components/QualityComp/QualityStepsCreateForm/MPIReportForm";
 
 const QualityForm = ({ params }) => {
@@ -20,6 +23,18 @@ const QualityForm = ({ params }) => {
       {/* MPIReportForm */}
       {qualityForm === "magneticParticleInspectionForm" && (
         <MPIReportForm qualityForm={qualityForm} />
+      )}
+      {/* CertificateOfCompilanceForm */}
+      {qualityForm === "certificateOfCompilanceForm" && (
+        <CertificateOfCompilanceForm qualityForm={qualityForm} />
+      )}
+      {/* InspectionReleaseNoteForm */}
+      {qualityForm === "inspectionReleaseNoteForm" && (
+        <InspectionReleaseNoteForm qualityForm={qualityForm} />
+      )}
+      {/* DispatchForm */}
+      {qualityForm === "dispatchForm" && (
+        <DispatchForm qualityForm={qualityForm} />
       )}
     </div>
   );
