@@ -632,7 +632,7 @@ const ProductionForm = () => {
         <div className="flex justify-end">
           <button
             onClick={saveFormData}
-            className={`flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded ${loading ? 'cursor-not-allowed' : ''}`}
+            className={`flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded ${loading ? 'cursor-not-allowed opacity-50' : ''}`}
             disabled={loading}
           >
             Save
