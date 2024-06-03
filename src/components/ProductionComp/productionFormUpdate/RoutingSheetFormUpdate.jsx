@@ -28,6 +28,7 @@ const RoutingSheetFormUpdate = () => {
     "productionReportSliceDataForRouting in routing",
     productionReportSliceDataForRouting
   );
+
   const handleGoBack = () => {
     router.back();
   };
@@ -83,27 +84,43 @@ const RoutingSheetFormUpdate = () => {
               productionReportSliceDataForRouting[0]?.processRows[index]
                 ?.processQty || "";
           } else if (row.routingSheetNo.startsWith("Nut")) {
-            startTime =
-              productionReportSliceDataForRouting[1]?.processRows[index]
-                ?.startTime || "";
-            endTime =
-              productionReportSliceDataForRouting[1]?.processRows[index]
-                ?.endTime || "";
-            operatorName =
-              productionReportSliceDataForRouting[1]?.processRows[index]
-                ?.operatorName || "";
-            // processDescription =
-            //   productionReportSliceDataForRouting[1]?.processRows[index]
-            //     ?.jobDescription || "";
-            procedureNo =
-              productionReportSliceDataForRouting[1]?.processRows[index]
-                ?.procedures || "";
-            orderQty =
-              productionReportSliceDataForRouting[1]?.processRows[index]
-                ?.orderQty || "";
-            processQty =
-              productionReportSliceDataForRouting[1]?.processRows[index]
-                ?.processQty || "";
+            // Handle the single-element case efficiently
+            if (productionReportSliceDataForRouting.length === 1) {
+              const processRow =
+                productionReportSliceDataForRouting[0]?.processRows?.[index];
+              if (processRow) {
+                startTime = processRow.startTime || "";
+                endTime = processRow.endTime || "";
+                operatorName = processRow.operatorName || "";
+                procedureNo = processRow.procedures || "";
+                orderQty = processRow.orderQty || "";
+                processQty = processRow.processQty || "";
+              } else {
+                console.warn(
+                  "No matching process row found for 'Nut' routing sheet (single element)"
+                );
+              }
+            } else {
+              // Handle multiple elements (including case with length 2)
+              const matchingProcessRow =
+                productionReportSliceDataForRouting.find(
+                  (dataItem) => dataItem?.processRows?.[index]
+                );
+
+              if (matchingProcessRow) {
+                const processRow = matchingProcessRow.processRows[index];
+                startTime = processRow.startTime || "";
+                endTime = processRow.endTime || "";
+                operatorName = processRow.operatorName || "";
+                procedureNo = processRow.procedures || "";
+                orderQty = processRow.orderQty || "";
+                processQty = processRow.processQty || "";
+              } else {
+                console.warn(
+                  "No matching process row found for 'Nut' routing sheet (multiple elements)"
+                );
+              }
+            }
           }
 
           return {
