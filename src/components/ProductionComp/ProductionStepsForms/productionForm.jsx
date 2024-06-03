@@ -191,24 +191,40 @@ const ProductionForm = () => {
       } else if (lengthDimension === "inch") {
         // Handle potential format "X.Y/Z inch"
         const parts = length.split("/");
+
         if (parts.length === 2) {
-          const numerator = parseFloat(parts[0]);
-          console.log("numerator", numerator);
-          const denominator = parseFloat(parts[1]);
-          console.log("denominator", denominator);
-          const lengthInInch = numerator / denominator;
-          console.log("lengthInInch", lengthInInch);
-          adjustedLength = lengthInInch * 25.4 + 5;
-          console.log("adjustedLength", adjustedLength);
+          const wholeAndFraction = parts[0].split(".");
+
+          if (wholeAndFraction.length === 2) {
+            // If format is "X.Y/Z inch"
+            const wholeNumber = parseFloat(wholeAndFraction[0]);
+            console.log("wholeNumber", wholeNumber)
+            const numerator = parseFloat(wholeAndFraction[1]);
+            console.log("numerator", numerator)
+            const denominator = parseFloat(parts[1]);
+            console.log("denominator", denominator)
+            
+            const fractionalInch = numerator / denominator;
+            console.log("fractionalInch", fractionalInch)
+            const lengthInInch = wholeNumber + fractionalInch;
+            console.log("lengthInInch", lengthInInch)
+            adjustedLength = lengthInInch * 25.4 + 5;
+            console.log("adjustedLength", adjustedLength)
+          } else {
+            // If format is "X/Y inch"
+            const numerator = parseFloat(parts[0]);
+            const denominator = parseFloat(parts[1]);
+
+            const lengthInInch = numerator / denominator;
+            adjustedLength = lengthInInch * 25.4 + 5;
+          }
         } else {
           // If not in the format "X.Y/Z inch", assume plain inch value
           adjustedLength = parseFloat(length) * 25.4 + 5;
         }
       } else {
         // Raise an error for invalid dimension
-        throw new ValueError(
-          "Invalid length dimension. Must be 'mm' or 'inch'."
-        );
+        throw new Error("Invalid length dimension. Must be 'mm' or 'inch'.");
       }
 
       // Set the adjusted length to the cuttingLength state
