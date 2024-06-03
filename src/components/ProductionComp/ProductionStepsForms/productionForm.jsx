@@ -41,6 +41,8 @@ const ProductionForm = () => {
   const [orderDate, setOrderDate] = useState(new Date());
   const [selectedFile, setSelectedFile] = useState(null);
 
+  const [loading, setLoading] = useState(false);
+
   const userName = localStorage.getItem("userName");
 
   useEffect(() => {
@@ -80,6 +82,7 @@ const ProductionForm = () => {
   };
 
   const saveFormData = async () => {
+    setLoading(true);
     try {
       const formData = new FormData();
       formData.append("customerName", customerName);
@@ -122,6 +125,8 @@ const ProductionForm = () => {
       router.push("/production");
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false); // Enable button after success or error
     }
   };
 
@@ -627,7 +632,8 @@ const ProductionForm = () => {
         <div className="flex justify-end">
           <button
             onClick={saveFormData}
-            className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded"
+            className={`flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded ${loading ? 'cursor-not-allowed' : ''}`}
+            disabled={loading}
           >
             Save
             <FiSave className="ml-2" />
