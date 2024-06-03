@@ -198,25 +198,25 @@ const ProductionForm = () => {
           if (wholeAndFraction.length === 2) {
             // If format is "X.Y/Z inch"
             const wholeNumber = parseFloat(wholeAndFraction[0]);
-            console.log("wholeNumber", wholeNumber)
+            console.log("wholeNumber", wholeNumber);
             const numerator = parseFloat(wholeAndFraction[1]);
-            console.log("numerator", numerator)
+            console.log("numerator", numerator);
             const denominator = parseFloat(parts[1]);
-            console.log("denominator", denominator)
-            
+            console.log("denominator", denominator);
+
             const fractionalInch = numerator / denominator;
-            console.log("fractionalInch", fractionalInch)
+            console.log("fractionalInch", fractionalInch);
             const lengthInInch = wholeNumber + fractionalInch;
-            console.log("lengthInInch", lengthInInch)
-            adjustedLength = lengthInInch * 25.4 + 5;
-            console.log("adjustedLength", adjustedLength)
+            console.log("lengthInInch", lengthInInch);
+            adjustedLength = (lengthInInch * 25.4 + 5).toFixed(2);
+            console.log("adjustedLength", adjustedLength);
           } else {
             // If format is "X/Y inch"
             const numerator = parseFloat(parts[0]);
             const denominator = parseFloat(parts[1]);
 
             const lengthInInch = numerator / denominator;
-            adjustedLength = lengthInInch * 25.4 + 5;
+            adjustedLength = (lengthInInch * 25.4 + 5).toFixed(2);
           }
         } else {
           // If not in the format "X.Y/Z inch", assume plain inch value
