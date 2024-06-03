@@ -23,16 +23,19 @@ const DispatchTable = ({ qualityStep }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:8000/api/quality/hardness");
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/dispatch`
+        );
         console.log("response.data", response.data);
         const heatTreatmentData = response.data;
 
         const formattedData = heatTreatmentData.map((item, index) => {
           return {
             srNo: index + 1,
-            HDR: item.hdrNo,
+            DANO: item.daNo,
             CustomerName: item.customerName,
             CreatedDate: new Date(item.date).toLocaleDateString(),
+            id: item._id,
           };
         });
         setRowData(formattedData);
@@ -46,13 +49,37 @@ const DispatchTable = ({ qualityStep }) => {
     fetchData();
   }, []);
 
-  const CustomButtonComponent = () => {
+  const handleEditClick = (id) => {
+    router.push(`/quality/dispatch/dispatchUpdateForm?id=${id}`);
+  };
+
+  const handleDeleteClick = async (data) => {
+    try {
+      setLoading(true);
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/dispatch/deleteByID/${data.id}`
+      );
+      const updatedRows = rowData.filter((row) => row !== data);
+      setRowData(updatedRows);
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      setLoading(false);
+    }
+  };
+
+  const CustomButtonComponent = ({ data }) => {
     return (
       <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
-        <button className="p-2 text-green-600 bg-green-200 rounded-lg">
+        <button
+          onClick={() => handleEditClick(data.id)}
+          className="p-2 text-green-600 bg-green-200 rounded-lg"
+        >
           <MdModeEdit />
         </button>
-        <button className="p-2 text-red-600 bg-red-200 rounded-lg">
+        <button
+          onClick={() => handleDeleteClick(data)}
+          className="p-2 text-red-600 bg-red-200 rounded-lg"
+        >
           <RiDeleteBin5Line />
         </button>
         {/* History Button */}
@@ -76,7 +103,7 @@ const DispatchTable = ({ qualityStep }) => {
       minWidth: 150,
       maxWidth: 200,
     },
-    { headerName: "HDR", field: "HDR", flex: 1 },
+    { headerName: "DA NO", field: "DANO", flex: 1 },
     { headerName: "Customer Name", field: "CustomerName", flex: 1 },
     { headerName: "Created Date", field: "CreatedDate", flex: 1 },
     { headerName: "Created By", field: "CreatedBy", flex: 1 },

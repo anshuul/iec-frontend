@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { MdModeEdit } from "react-icons/md";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { BsInfoCircle } from "react-icons/bs";
-import { IoSearch } from "react-icons/io5";
 
 // AGGrid
 import { AgGridReact } from "ag-grid-react";
@@ -24,15 +23,18 @@ const MPIReportTable = ({ qualityStep }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:8000/api/quality/heatTreatment");
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/mpi`
+        );
         console.log("response.data", response.data);
         const heatTreatmentData = response.data;
 
         const formattedData = heatTreatmentData.map((item, index) => {
           return {
             srNo: index + 1,
-            HTR: item.htrNo,
+            MPI: item.mpirNo,
             CreatedDate: new Date(item.date).toLocaleDateString(),
+            id: item._id,
           };
         });
         setRowData(formattedData);
@@ -46,13 +48,41 @@ const MPIReportTable = ({ qualityStep }) => {
     fetchData();
   }, []);
 
-  const CustomButtonComponent = () => {
+  const handleEditClick = (id) => {
+    router.push(
+      `/quality/magnetic-particle-inspection/mpiReportUpdateForm?id=${id}`
+    );
+  };
+
+  const handleDeleteClick = async (data) => {
+    try {
+      setLoading(true);
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/mpi/deleteByID/${data.id}`,
+      );
+      const updatedRows = rowData.filter((row) => row !== data);
+      setRowData(updatedRows);
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      setLoading(false);
+    }
+  };
+
+  const CustomButtonComponent = ({ data }) => {
+    console.log("Data in MPI Report", data);
     return (
       <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
-        <button className="p-2 text-green-600 bg-green-200 rounded-lg">
+        <button
+          onClick={() => handleEditClick(data.id)}
+          className="p-2 text-green-600 bg-green-200 rounded-lg"
+        >
           <MdModeEdit />
         </button>
-        <button className="p-2 text-red-600 bg-red-200 rounded-lg">
+        {/* Delete button */}
+        <button
+          onClick={() => handleDeleteClick(data)}
+          className="p-2 text-red-600 bg-red-200 rounded-lg"
+        >
           <RiDeleteBin5Line />
         </button>
         {/* History Button */}
@@ -76,7 +106,7 @@ const MPIReportTable = ({ qualityStep }) => {
       minWidth: 150,
       maxWidth: 200,
     },
-    { headerName: "HTR", field: "HTR", flex: 1 },
+    { headerName: "MPI NO", field: "MPI", flex: 1 },
     { headerName: "Created Date", field: "CreatedDate", flex: 1 },
     { headerName: "Created By", field: "CreatedBy", flex: 1 },
   ];

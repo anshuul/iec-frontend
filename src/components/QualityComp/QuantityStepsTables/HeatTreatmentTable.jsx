@@ -24,7 +24,7 @@ const HeatTreatmentTable = ({ qualityStep }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:8000/api/quality/heatTreatment");
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/heatTreatment`);
         console.log("response.data", response.data);
         const heatTreatmentData = response.data;
 

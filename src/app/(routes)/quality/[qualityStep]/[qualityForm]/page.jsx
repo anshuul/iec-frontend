@@ -4,6 +4,11 @@ import HardnessReportForm from "@/components/QualityComp/QualityStepsCreateForm/
 import HeatTreatmentForm from "@/components/QualityComp/QualityStepsCreateForm/HeatTreatmentForm";
 import InspectionReleaseNoteForm from "@/components/QualityComp/QualityStepsCreateForm/InspectionReleaseNoteForm";
 import MPIReportForm from "@/components/QualityComp/QualityStepsCreateForm/MPIReportForm";
+import CertificateComplianceUpdateForm from "@/components/QualityComp/QyalityStepsUpdateForms/CertificateComplianceUpdateForm";
+import DispatchUpdateForm from "@/components/QualityComp/QyalityStepsUpdateForms/DispatchUpdateForm";
+import HardnessReportUpdateForm from "@/components/QualityComp/QyalityStepsUpdateForms/HardnessReportUpdateForm";
+import InspectionReleaseNoteUpdateForm from "@/components/QualityComp/QyalityStepsUpdateForms/InspectionReleaseNoteUpdateForm";
+import MPIReportUpdateForm from "@/components/QualityComp/QyalityStepsUpdateForms/MPIReportUpdateForm";
 
 const QualityForm = ({ params }) => {
   const { qualityForm } = params;
@@ -35,6 +40,28 @@ const QualityForm = ({ params }) => {
       {/* DispatchForm */}
       {qualityForm === "dispatchForm" && (
         <DispatchForm qualityForm={qualityForm} />
+      )}
+
+      {/* For Update Form */}
+      {/* hardnessReportUpdateForm */}
+      {qualityForm === "hardnessReportUpdateForm" && (
+        <HardnessReportUpdateForm qualityForm={qualityForm} />
+      )}
+      {/* mpiReportUpdateForm */}
+      {qualityForm === "mpiReportUpdateForm" && (
+        <MPIReportUpdateForm qualityForm={qualityForm} />
+      )}
+      {/* certificateComplianceUpdateForm */}
+      {qualityForm === "certificateComplianceUpdateForm" && (
+        <CertificateComplianceUpdateForm qualityForm={qualityForm} />
+      )}
+      {/* inspectionReleaseNoteUpdateForm */}
+      {qualityForm === "inspectionReleaseNoteUpdateForm" && (
+        <InspectionReleaseNoteUpdateForm qualityForm={qualityForm} />
+      )}
+      {/* dispatchUpdateForm */}
+      {qualityForm === "dispatchUpdateForm" && (
+        <DispatchUpdateForm qualityForm={qualityForm} />
       )}
     </div>
   );
