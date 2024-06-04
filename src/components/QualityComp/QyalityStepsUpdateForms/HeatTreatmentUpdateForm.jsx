@@ -16,6 +16,8 @@ import "react-datepicker/dist/react-datepicker.css";
 
 const HeatTreatmentUpdateForm = () => {
   const router = useRouter();
+  const id = searchParams.get("id");
+
   const [htrNo, setHtrNo] = useState("");
   const [itemDescription, setItemDescription] = useState("");
   const [quantity, setQuantity] = useState("");
@@ -56,6 +58,68 @@ const HeatTreatmentUpdateForm = () => {
   const removeImage = (index) => {
     const newSelectedImages = selectedImages.filter((_, i) => i !== index);
     setSelectedImages(newSelectedImages);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/heatTreatment/getByID/${id}`
+        );
+        const responseData = response.data;
+        setHtrNo(responseData.htrNo);
+        setItemDescription(responseData.itemDescription);
+        setQuantity(responseData.quantity);
+        setProcess(responseData.process);
+        setTestingInstrumentId(responseData.testingInstrumentId);
+        setManufacturingEquipment(responseData.manufacturingEquipment);
+        setMaterial(responseData.material);
+        setHeatNo(responseData.heatNo);
+        setRequiredHardness(responseData.requiredHardness);
+        setAchieved(responseData.achieved);
+        setHardeningProcessNot(responseData.hardeningProcessNot);
+        setTemperingProcessNot(responseData.temperingProcessNot);
+        setDate(responseData.date);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    if (id) {
+      fetchData();
+    }
+  }, [id]);
+
+  const saveFormData = async (e) => {
+    e.preventDefault();
+    try {
+      const formData = {
+        htrNo,
+        itemDescription,
+        quantity,
+        process,
+        testingInstrumentId,
+        manufacturingEquipment,
+        material,
+        heatNo,
+        requiredHardness,
+        achieved,
+        hardeningProcessNot,
+        temperingProcessNot,
+        date,
+      };
+
+      const response = await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/heatTreatment/update-heatTreatment-report/${id}`,
+        formData
+      );
+      console.log("response in quality module heat treat report", response);
+      if (response.status === 200) {
+        router.push("/quality/heat-treatment");
+      }
+    } catch (error) {
+      console.error("Error updating data:", error);
+    }
   };
 
   return (
@@ -343,7 +407,10 @@ const HeatTreatmentUpdateForm = () => {
 
           <hr className="my-4 border-t border-gray-300" />
           <div className="flex justify-end">
-            <button className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded">
+            <button
+              onClick={saveFormData}
+              className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded"
+            >
               Save
               <FiSave className="ml-2" />
             </button>

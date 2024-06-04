@@ -17,6 +17,16 @@ import "react-datepicker/dist/react-datepicker.css";
 
 const HeatTreatmentForm = () => {
   const router = useRouter();
+  const [selectedCustomerPO, setSelectedCustomerPO] = useState(null);
+
+  useEffect(() => {
+    // Get data from localStorage when the component mounts
+    const data = JSON.parse(localStorage.getItem("selectedCustomerPO"));
+    setSelectedCustomerPO(data);
+  }, []);
+
+  console.log("selectedCustomerPO in heat treatment", selectedCustomerPO);
+
   const [htrNo, setHtrNo] = useState("");
   const [itemDescription, setItemDescription] = useState("");
   const [quantity, setQuantity] = useState("");
@@ -37,7 +47,10 @@ const HeatTreatmentForm = () => {
   );
 
   const [date, setDate] = useState("");
+  // For Image
   const [selectedImages, setSelectedImages] = useState([]);
+  // For PDF
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const handleImageSelection = (e) => {
     const files = Array.from(e.target.files);
@@ -49,6 +62,19 @@ const HeatTreatmentForm = () => {
     setSelectedImages(newSelectedImages);
     console.log("newSelectedImages", newSelectedImages);
   };
+
+  const handleFileSelection = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type === "application/pdf") {
+      setSelectedFile(file);
+    } else {
+      // Optionally, you can display an error message or perform other actions here
+      setSelectedFile(null);
+      alert("Please select a PDF file.");
+    }
+  };
+
+  console.log("selectedFile in HeatTreatment", selectedFile);
 
   const handleChooseImageClick = () => {
     document.getElementById("attachment").click();
@@ -75,8 +101,10 @@ const HeatTreatmentForm = () => {
       formData.append("hardeningProcessNot", hardeningProcessNot);
       formData.append("temperingProcessNot", temperingProcessNot);
       formData.append("date", date);
+      formData.append("attachmentPoNo", selectedCustomerPO.poNo);
+      formData.append("processName", "HeatTreatment");
       selectedImages.forEach((image, index) => {
-        formData.append(`image_${index}`, image);
+        formData.append(`newSelectedImages`, image);
       });
 
       // Call your API endpoint here with axios
@@ -90,7 +118,7 @@ const HeatTreatmentForm = () => {
         }
       );
       console.log("response in quality module heat treat report", response);
-      router.push("/quality");
+      router.push("/quality/heat-treatment");
     } catch (error) {
       console.error("Error occurred while saving form data:", error);
     }
@@ -334,9 +362,10 @@ const HeatTreatmentForm = () => {
           <div className="grid grid-cols-1 gap-4 xl:grid-cols-2 lg:grid-cols-1 md:grid-cols-2">
             {/* First Column */}
             <div className="flex flex-col items-start">
-              <div className="flex items-center">
+              {/* Choose Image */}
+              <div className="flex items-center mb-4">
                 <label htmlFor="attachment" className="text-[16px]">
-                  Attachment
+                  Choose Image
                 </label>
                 <input
                   type="file"
@@ -367,6 +396,41 @@ const HeatTreatmentForm = () => {
                     </div>
                   ))}
                 </div>
+              </div>
+
+              {/* Attach PDF */}
+              <div className="flex items-center">
+                <label htmlFor="attachPDF" className="text-[16px]">
+                  Attachments
+                </label>
+                <input
+                  type="file"
+                  id="attachPDF"
+                  className="hidden"
+                  name="attachPDF"
+                  accept=".pdf"
+                  onChange={handleFileSelection}
+                />
+                <button
+                  onClick={() => document.getElementById("attachPDF").click()}
+                  className="flex items-center px-4 py-2 ml-2 text-black bg-gray-300 rounded"
+                >
+                  Choose file
+                  <FcGallery className="ml-2" />
+                </button>
+                {selectedFile !== null && (
+                  <>
+                    <span className="ml-2">
+                      {selectedFile.name || selectedFile.fileName}
+                    </span>
+                    <button
+                      onClick={() => setSelectedFile(null)}
+                      className="flex items-center text-red-600 bg-none"
+                    >
+                      <IoIosCloseCircleOutline className="ml-2 text-2xl" />
+                    </button>
+                  </>
+                )}
               </div>
             </div>
 

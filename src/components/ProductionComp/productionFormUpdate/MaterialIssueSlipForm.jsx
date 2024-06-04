@@ -119,6 +119,8 @@ const MaterialIssueSlipForm = () => {
     }
   };
 
+  console.log("selectedFile in materialslip", selectedFile)
+
   const handleGoBack = () => {
     router.back();
   };

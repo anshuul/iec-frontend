@@ -16,7 +16,6 @@ const HardnessReportUpdateForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
-  console.log("Hardness IF for update", id);
 
   const [hdrNo, setHdrNo] = useState("");
   const [customerName, setCustomerName] = useState("");
@@ -97,7 +96,7 @@ const HardnessReportUpdateForm = () => {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/hardness/upate-hardness-report/${id}`,
         formData
       );
-      console.log("response in quality module heat treat report", response);
+      console.log("response in quality module hardness report", response);
       router.push("/quality/hardness-test-report");
     } catch (error) {
       console.error("Error occurred while saving form data:", error);

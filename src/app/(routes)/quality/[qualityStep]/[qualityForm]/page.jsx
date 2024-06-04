@@ -7,6 +7,7 @@ import MPIReportForm from "@/components/QualityComp/QualityStepsCreateForm/MPIRe
 import CertificateComplianceUpdateForm from "@/components/QualityComp/QyalityStepsUpdateForms/CertificateComplianceUpdateForm";
 import DispatchUpdateForm from "@/components/QualityComp/QyalityStepsUpdateForms/DispatchUpdateForm";
 import HardnessReportUpdateForm from "@/components/QualityComp/QyalityStepsUpdateForms/HardnessReportUpdateForm";
+import HeatTreatmentUpdateForm from "@/components/QualityComp/QyalityStepsUpdateForms/HeatTreatmentUpdateForm";
 import InspectionReleaseNoteUpdateForm from "@/components/QualityComp/QyalityStepsUpdateForms/InspectionReleaseNoteUpdateForm";
 import MPIReportUpdateForm from "@/components/QualityComp/QyalityStepsUpdateForms/MPIReportUpdateForm";
 
@@ -43,6 +44,10 @@ const QualityForm = ({ params }) => {
       )}
 
       {/* For Update Form */}
+      {/* heatTreatmentUpdateForm */}
+      {qualityForm === "heatTreatmentUpdateForm" && (
+        <HeatTreatmentUpdateForm qualityForm={qualityForm} />
+      )}
       {/* hardnessReportUpdateForm */}
       {qualityForm === "hardnessReportUpdateForm" && (
         <HardnessReportUpdateForm qualityForm={qualityForm} />

@@ -42,6 +42,8 @@ const ProductionForm = () => {
   const [orderDate, setOrderDate] = useState(new Date());
   const [selectedFile, setSelectedFile] = useState(null);
 
+  const [loading, setLoading] = useState(false);
+
   const userName = localStorage.getItem("userName");
 
   const handleFileSelection = (e) => {
@@ -61,6 +63,7 @@ const ProductionForm = () => {
   };
 
   const saveFormData = async () => {
+    setLoading(true);
     try {
       const formData = new FormData();
       formData.append("customerName", customerName);
@@ -95,7 +98,7 @@ const ProductionForm = () => {
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data", // Set content type to multipart form data
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -103,6 +106,8 @@ const ProductionForm = () => {
       router.push("/production");
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -276,9 +281,7 @@ const ProductionForm = () => {
         </div>
 
         {/* Add list item button */}
-        <button
-          className="flex items-center px-4 py-2 mb-2 text-lg font-bold text-black"
-        >
+        <button className="flex items-center px-4 py-2 mb-2 text-lg font-bold text-black">
           <TiPlus className="mr-2" />
           Add List Item
         </button>
@@ -599,7 +602,10 @@ const ProductionForm = () => {
         <div className="flex justify-end">
           <button
             onClick={saveFormData}
-            className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded"
+            className={`flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded ${
+              loading ? "cursor-not-allowed opacity-50" : ""
+            }`}
+            disabled={loading}
           >
             Save
             <FiSave className="ml-2" />

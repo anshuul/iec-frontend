@@ -24,7 +24,9 @@ const HeatTreatmentTable = ({ qualityStep }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/heatTreatment`);
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/heatTreatment`
+        );
         console.log("response.data", response.data);
         const heatTreatmentData = response.data;
 
@@ -46,13 +48,37 @@ const HeatTreatmentTable = ({ qualityStep }) => {
     fetchData();
   }, []);
 
-  const CustomButtonComponent = () => {
+  const handleEditClick = (id) => {
+    router.push(`/quality/heat-treatment/heatTreatmentUpdateForm?id=${id}`);
+  };
+
+  const handleDeleteClick = async (data) => {
+    try {
+      setLoading(true);
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/heatTreatment/deleteByID/${data.id}`
+      );
+      const updatedRows = rowData.filter((row) => row !== data);
+      setRowData(updatedRows);
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      setLoading(false);
+    }
+  };
+
+  const CustomButtonComponent = ({ data }) => {
     return (
       <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
-        <button className="p-2 text-green-600 bg-green-200 rounded-lg">
+        <button
+          onClick={() => handleEditClick(data.id)}
+          className="p-2 text-green-600 bg-green-200 rounded-lg"
+        >
           <MdModeEdit />
         </button>
-        <button className="p-2 text-red-600 bg-red-200 rounded-lg">
+        <button
+          onClick={() => handleDeleteClick(data)}
+          className="p-2 text-red-600 bg-red-200 rounded-lg"
+        >
           <RiDeleteBin5Line />
         </button>
         {/* History Button */}
@@ -69,6 +95,7 @@ const HeatTreatmentTable = ({ qualityStep }) => {
       field: "srNo",
       minWidth: 50,
       maxWidth: 80,
+      sort: "desc",
     },
     {
       headerName: "Action",

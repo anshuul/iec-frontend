@@ -17,6 +17,14 @@ import InputField from "@/components/common/InpuField";
 
 const MPIReportForm = () => {
   const router = useRouter();
+  const [selectedCustomerPO, setSelectedCustomerPO] = useState(null);
+
+  useEffect(() => {
+    // Get data from localStorage when the component mounts
+    const data = JSON.parse(localStorage.getItem("selectedCustomerPO"));
+    setSelectedCustomerPO(data);
+  }, []);
+
   const [mpirNo, setMpirNo] = useState("");
   const [productName, setProductName] = useState("");
   const [drawingNo, setDrawingNo] = useState("DRG-01");
@@ -224,8 +232,11 @@ const MPIReportForm = () => {
         pieGaugeCalibrationValidity
       );
       formData.append("date", date);
+
+      formData.append("attachmentPoNo", selectedCustomerPO.poNo);
+      formData.append("processName", "MPIReport");
       selectedImages.forEach((image, index) => {
-        formData.append(`image_${index}`, image);
+        formData.append(`newSelectedImages`, image);
       });
 
       // Call your API endpoint here with axios
