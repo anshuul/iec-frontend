@@ -431,7 +431,7 @@ const HeatTreatmentUpdateForm = () => {
                     htrNo,
                     itemDescription,
                     quantity,
-                    process,
+                    processName,
                     testingInstrumentId,
                     manufacturingEquipment,
                     material,
@@ -446,7 +446,26 @@ const HeatTreatmentUpdateForm = () => {
               }
               fileName={`HeatTreatmentReport_${id}.pdf`}
             >
-              <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
+              <button
+                onClick={() =>
+                  console.log({
+                    htrNo,
+                    itemDescription,
+                    quantity,
+                    processName,
+                    testingInstrumentId,
+                    manufacturingEquipment,
+                    material,
+                    heatNo,
+                    requiredHardness,
+                    achieved,
+                    hardeningProcessNot,
+                    temperingProcessNot,
+                    date,
+                  })
+                }
+                className="flex items-center px-4 py-2 text-black bg-gray-300 rounded"
+              >
                 Print
                 <FiPrinter className="ml-2" />
               </button>

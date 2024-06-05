@@ -163,7 +163,7 @@ const HeatTreatmentReport = ({ data }) => {
           <View style={styles.header}>
             <Text style={{ width: "30%", ...styles.cell2 }}>Process</Text>
             <Text style={{ width: "70%", ...styles.cell2 }}>
-              {data?.process}
+              {data?.processName}
             </Text>
           </View>
 
@@ -209,9 +209,14 @@ const HeatTreatmentReport = ({ data }) => {
 
           <View style={styles.header}>
             <Text style={{ width: "10%", ...styles.cell3 }}>1</Text>
-            <Text style={{ width: "15%", ...styles.cell3 }}></Text>
-            <Text style={{ width: "30%", ...styles.cell3 }}>
+            <Text style={{ width: "15%", ...styles.cell3 }}>
               {data?.heatNo}
+            </Text>
+            <Text style={{ width: "30%", ...styles.cell3 }}>
+              {data?.itemDescription}
+            </Text>
+            <Text style={{ width: "15%", ...styles.cell3 }}>
+              {data?.quantity}
             </Text>
             <Text style={{ width: "15%", ...styles.cell3 }}>
               {data?.requiredHardness}
@@ -219,7 +224,6 @@ const HeatTreatmentReport = ({ data }) => {
             <Text style={{ width: "15%", ...styles.cell3 }}>
               {data?.achieved}
             </Text>
-            <Text style={{ width: "15%", ...styles.cell3 }}></Text>
           </View>
 
           <View style={{ margin: 10 }}></View>
