@@ -313,7 +313,7 @@ const ProductionForm = () => {
           </select>
         </div>
 
-        <div className="flex flex-col items-center gap-4 my-4 md:flex-row">
+        <div className="flex flex-col flex-wrap items-center gap-4 my-4 md:flex-row">
           {/* Stud Item Description */}
           <div className="flex flex-col items-center gap-2 md:flex-row">
             <label className="relative cursor-pointer App">
@@ -363,7 +363,7 @@ const ProductionForm = () => {
           </div>
         </div>
 
-        <div className="flex flex-col items-center my-4 md:flex-row">
+        <div className="flex flex-col flex-wrap items-center my-4 md:flex-row">
           {/* Stud Material Grade */}
           <label className="relative mb-4 cursor-pointer App md:mr-4 md:mb-0">
             <input
@@ -396,7 +396,7 @@ const ProductionForm = () => {
         </div>
 
         {/* PO Size input */}
-        <div className="flex flex-col items-start gap-2 my-4 md:items-center md:flex-row">
+        <div className="flex flex-col flex-wrap items-start gap-2 my-4 md:items-center md:flex-row">
           <label htmlFor="size" className="text-[16px] mr-4">
             PO Size:
           </label>
@@ -483,7 +483,7 @@ const ProductionForm = () => {
         </button>
 
         {/* Cutting Size input */}
-        <div className="flex flex-col items-start gap-2 my-4 md:items-center md:flex-row">
+        <div className="flex flex-col flex-wrap items-start gap-2 my-4 md:items-center md:flex-row">
           <label htmlFor="size" className="text-[16px] mr-4">
             Cutting Size:
           </label>
