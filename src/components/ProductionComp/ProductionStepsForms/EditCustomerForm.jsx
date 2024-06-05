@@ -438,7 +438,7 @@ const EditCustomerForm = () => {
           </select>
         </div>
 
-        <div className="flex flex-col items-center gap-4 my-4 md:flex-row">
+        <div className="flex flex-col flex-wrap items-center gap-4 my-4 md:flex-row">
           {/* Stud Item Description */}
           <div className="flex flex-col items-center gap-2 md:flex-row">
             <label className="relative cursor-pointer App">
@@ -453,7 +453,7 @@ const EditCustomerForm = () => {
                   })
                 }
                 placeholder="Input"
-                className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+                className="h-10 w-96 xl:w-[400px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
               />
               <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
                 Stud Description
@@ -501,9 +501,9 @@ const EditCustomerForm = () => {
           </div>
         </div>
 
-        <div className="flex flex-col items-center gap-2 my-4 md:flex-row">
+        <div className="flex flex-col flex-wrap items-center gap-2 my-4 md:flex-row">
           {/* Stud Material Grade */}
-          <label className="relative cursor-pointer App">
+          <label className="relative mb-4 cursor-pointer App md:mr-4 md:mb-0">
             <input
               id="studGrade"
               type="text"
@@ -512,7 +512,7 @@ const EditCustomerForm = () => {
                 setCustomerPO({ ...customerPO, studGrade: e.target.value })
               }
               placeholder="Input"
-              className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+              className="h-10 w-48 xl:w-[400px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
               Stud Grade
@@ -529,7 +529,7 @@ const EditCustomerForm = () => {
                 setCustomerPO({ ...customerPO, nutGrade: e.target.value })
               }
               placeholder="Input"
-              className="h-10 w-96 xl:w-[800px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+              className="h-10 w-48 xl:w-[400px] px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
             />
             <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
               Nut Grade
@@ -538,7 +538,7 @@ const EditCustomerForm = () => {
         </div>
 
         {/* PO Size input */}
-        <div className="flex flex-col items-start gap-2 my-4 md:items-center md:flex-row">
+        <div className="flex flex-col flex-wrap items-start gap-2 my-4 md:items-center md:flex-row">
           <label htmlFor="size" className="text-[16px] mr-4">
             Po Size:
           </label>
