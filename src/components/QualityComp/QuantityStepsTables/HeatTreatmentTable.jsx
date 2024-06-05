@@ -35,6 +35,7 @@ const HeatTreatmentTable = ({ qualityStep }) => {
             srNo: index + 1,
             HTR: item.htrNo,
             CreatedDate: new Date(item.date).toLocaleDateString(),
+            id: item._id
           };
         });
         setRowData(formattedData);

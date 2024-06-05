@@ -2,8 +2,8 @@
 import axios from "axios";
 
 import Container from "@/components/common/Container";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 // Icons
 import { FiArrowLeft, FiPrinter, FiSave } from "react-icons/fi";
@@ -16,12 +16,13 @@ import "react-datepicker/dist/react-datepicker.css";
 
 const HeatTreatmentUpdateForm = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const id = searchParams.get("id");
 
   const [htrNo, setHtrNo] = useState("");
   const [itemDescription, setItemDescription] = useState("");
   const [quantity, setQuantity] = useState("");
-  const [process, setProcess] = useState("Quenching and Tempering");
+  const [processName, setProcessName] = useState("Quenching and Tempering");
   const [testingInstrumentId, setTestingInstrumentId] = useState("HARDNESS");
   const [manufacturingEquipment, setManufacturingEquipment] =
     useState("PIT FURNANCE");
@@ -70,7 +71,7 @@ const HeatTreatmentUpdateForm = () => {
         setHtrNo(responseData.htrNo);
         setItemDescription(responseData.itemDescription);
         setQuantity(responseData.quantity);
-        setProcess(responseData.process);
+        setProcessName(responseData.processName);
         setTestingInstrumentId(responseData.testingInstrumentId);
         setManufacturingEquipment(responseData.manufacturingEquipment);
         setMaterial(responseData.material);
@@ -97,7 +98,7 @@ const HeatTreatmentUpdateForm = () => {
         htrNo,
         itemDescription,
         quantity,
-        process,
+        processName,
         testingInstrumentId,
         manufacturingEquipment,
         material,
@@ -122,10 +123,17 @@ const HeatTreatmentUpdateForm = () => {
     }
   };
 
+  const handleGoBack = () => {
+    router.back();
+  };
+
   return (
     <Container>
       <div className="w-full p-8 mx-auto bg-white rounded shadow-md">
-        <button className="flex items-center mb-4 text-lg font-bold text-black">
+        <button
+          onClick={handleGoBack}
+          className="flex items-center mb-4 text-lg font-bold text-black"
+        >
           <FiArrowLeft className="mr-2" />
           Back
         </button>
@@ -152,14 +160,14 @@ const HeatTreatmentUpdateForm = () => {
               </label>
             </div>
 
-            {/* Process */}
+            {/* processName */}
             <div className="flex items-center mb-4">
               <label className="relative cursor-pointer App">
                 <input
-                  id="process"
+                  id="processName"
                   type="text"
-                  value={process}
-                  onChange={(e) => setProcess(e.target.value)}
+                  value={processName}
+                  onChange={(e) => setProcessName(e.target.value)}
                   placeholder="Input"
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
@@ -371,11 +379,11 @@ const HeatTreatmentUpdateForm = () => {
                 </button>
                 <div className="flex flex-wrap ml-4">
                   {selectedImages.map((image, index) => (
-                    <div key={index} className="flex items-center mr-4 mb-2">
+                    <div key={index} className="flex items-center mb-2 mr-4">
                       <span className="mr-2">{image.name}</span>
                       <button
                         onClick={() => removeImage(index)}
-                        className="flex items-center text-red-600 bg-none p-0"
+                        className="flex items-center p-0 text-red-600 bg-none"
                       >
                         <IoIosCloseCircleOutline className="text-2xl cursor-pointer" />
                       </button>
