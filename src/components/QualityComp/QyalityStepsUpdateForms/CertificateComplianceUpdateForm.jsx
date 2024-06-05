@@ -14,6 +14,8 @@ import { FcGallery } from "react-icons/fc";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import InputField from "@/components/common/InpuField";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import CertificateOfCompliance from "@/components/PDF/CertificateOfCompliance/CertificateOfCompliance";
 
 const CertificateComplianceUpdateForm = () => {
   const router = useRouter();
@@ -102,7 +104,7 @@ const CertificateComplianceUpdateForm = () => {
         formData
       );
       console.log("response in quality module COC report", response.data);
-        router.push("/quality/certificate-compliance");
+      router.push("/quality/certificate-compliance");
     } catch (error) {
       console.error("Error occurred while saving form data:", error);
     }
@@ -330,10 +332,36 @@ const CertificateComplianceUpdateForm = () => {
               Save
               <FiSave className="ml-2" />
             </button>
-            <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
-              Print
-              <FiPrinter className="ml-2" />
-            </button>
+            <PDFDownloadLink
+              document={
+                <CertificateOfCompliance
+                  data={{
+                    cocNo,
+                    customerName,
+                    customerPONO,
+                    soNO,
+                    itemDescription,
+                    inspectionReleaseNoteNo,
+                    date,
+                    itemInfo: {
+                      size,
+                      bslType,
+                      rawMaterialHeatNo,
+                      lotNO,
+                      material,
+                      poSrNO,
+                      quantity,
+                    },
+                  }}
+                />
+              }
+              fileName={`CertificateOfCompliance_${id}.pdf`}
+            >
+              <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
+                Print
+                <FiPrinter className="ml-2" />
+              </button>
+            </PDFDownloadLink>
           </div>
         </div>
       </div>
