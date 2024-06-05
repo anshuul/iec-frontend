@@ -190,54 +190,54 @@ const HeatTreatmentReport = ({ data }) => {
             </Text>
             <View style={{ width: "45%", ...styles.nestedCell }}>
               <View style={{ ...styles.header }}>
-                <Text style={{ width: "33%", ...styles.cell3 }}> </Text>
-                <Text style={{ width: "33%", ...styles.cell3 }}></Text>
-                <Text style={{ width: "34%", ...styles.cell3 }}></Text>
+                <Text style={{ width: "33%", ...styles.cell3 }}>B01 </Text>
+                <Text style={{ width: "33%", ...styles.cell3 }}>1</Text>
+                <Text style={{ width: "34%", ...styles.cell3 }}>92</Text>
               </View>
               <View style={{ ...styles.header }}>
                 <Text style={{ width: "33%", ...styles.cell3 }}></Text>
-                <Text style={{ width: "33%", ...styles.cell3 }}></Text>
-                <Text style={{ width: "34%", ...styles.cell3 }}></Text>
+                <Text style={{ width: "33%", ...styles.cell3 }}>2</Text>
+                <Text style={{ width: "34%", ...styles.cell3 }}>93</Text>
               </View>
               <View style={{ ...styles.header }}>
                 <Text style={{ width: "33%", ...styles.cell3 }}></Text>
-                <Text style={{ width: "33%", ...styles.cell3 }}></Text>
-                <Text style={{ width: "34%", ...styles.cell3 }}></Text>
+                <Text style={{ width: "33%", ...styles.cell3 }}>3</Text>
+                <Text style={{ width: "34%", ...styles.cell3 }}>92</Text>
               </View>
               <View style={{ ...styles.header }}>
                 <Text style={{ width: "33%", ...styles.cell3 }}></Text>
-                <Text style={{ width: "33%", ...styles.cell3 }}></Text>
-                <Text style={{ width: "34%", ...styles.cell3 }}></Text>
+                <Text style={{ width: "33%", ...styles.cell3 }}>4</Text>
+                <Text style={{ width: "34%", ...styles.cell3 }}>92</Text>
               </View>
               <View style={{ ...styles.header }}>
                 <Text style={{ width: "33%", ...styles.cell3 }}></Text>
-                <Text style={{ width: "33%", ...styles.cell3 }}></Text>
-                <Text style={{ width: "34%", ...styles.cell3 }}></Text>
+                <Text style={{ width: "33%", ...styles.cell3 }}>5</Text>
+                <Text style={{ width: "34%", ...styles.cell3 }}>93</Text>
               </View>
               <View style={{ ...styles.header }}>
                 <Text style={{ width: "33%", ...styles.cell3 }}></Text>
-                <Text style={{ width: "33%", ...styles.cell3 }}></Text>
-                <Text style={{ width: "34%", ...styles.cell3 }}></Text>
+                <Text style={{ width: "33%", ...styles.cell3 }}>6</Text>
+                <Text style={{ width: "34%", ...styles.cell3 }}>92</Text>
               </View>
               <View style={{ ...styles.header }}>
                 <Text style={{ width: "33%", ...styles.cell3 }}></Text>
-                <Text style={{ width: "33%", ...styles.cell3 }}></Text>
-                <Text style={{ width: "34%", ...styles.cell3 }}></Text>
+                <Text style={{ width: "33%", ...styles.cell3 }}>7</Text>
+                <Text style={{ width: "34%", ...styles.cell3 }}>93</Text>
               </View>
               <View style={{ ...styles.header }}>
                 <Text style={{ width: "33%", ...styles.cell3 }}></Text>
-                <Text style={{ width: "33%", ...styles.cell3 }}></Text>
-                <Text style={{ width: "34%", ...styles.cell3 }}></Text>
+                <Text style={{ width: "33%", ...styles.cell3 }}>8</Text>
+                <Text style={{ width: "34%", ...styles.cell3 }}>92</Text>
               </View>
               <View style={{ ...styles.header }}>
                 <Text style={{ width: "33%", ...styles.cell3 }}></Text>
-                <Text style={{ width: "33%", ...styles.cell3 }}></Text>
-                <Text style={{ width: "34%", ...styles.cell3 }}></Text>
+                <Text style={{ width: "33%", ...styles.cell3 }}>9</Text>
+                <Text style={{ width: "34%", ...styles.cell3 }}>93</Text>
               </View>
               <View style={{ ...styles.header }}>
                 <Text style={{ width: "33%", ...styles.cell3 }}></Text>
-                <Text style={{ width: "33%", ...styles.cell3 }}></Text>
-                <Text style={{ width: "34%", ...styles.cell3 }}></Text>
+                <Text style={{ width: "33%", ...styles.cell3 }}>10</Text>
+                <Text style={{ width: "34%", ...styles.cell3 }}>93</Text>
               </View>
             </View>
           </View>
