@@ -14,6 +14,8 @@ import { FcGallery } from "react-icons/fc";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import InputField from "@/components/common/InpuField";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import MagneticParticleInspection from "@/components/PDF/MagneticParticleInspection/MagneticParticleInspection";
 
 const MPIReportUpdateForm = () => {
   const router = useRouter();
@@ -941,10 +943,74 @@ const MPIReportUpdateForm = () => {
               Save
               <FiSave className="ml-2" />
             </button>
-            <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
-              Print
-              <FiPrinter className="ml-2" />
-            </button>
+            <PDFDownloadLink
+              document={
+                <MagneticParticleInspection
+                  data={{
+                    mpirNo,
+                    productName,
+                    drawingNo,
+                    quantity,
+                    materialType,
+                    qaNO,
+                    mpiNo,
+                    heatNo,
+                    acceptanceStandard,
+                    material,
+                    materialSpecification,
+                    surfaceCondition,
+                    testTemperature,
+                    illumination,
+                    equipmentName,
+                    illuminationLocation,
+                    technique,
+                    testweight,
+                    selectedMagnetizingProcess,
+                    selectedMagnetizing,
+                    selectedMagnetizingCurrent,
+                    selectedMethod,
+                    selectedDemagnetization,
+                    magneticFieldIndicator,
+                    blackLightIntensity,
+                    powderConcertation,
+                    requiredHardness,
+                    achieved,
+                    whiteContrastPaintMakeType,
+                    whiteContrastPaintLotNo,
+                    blackMagneticInkMakeType,
+                    blackMagneticInkLotNo,
+                    wetFluorescentMakeType,
+                    wetFluorescentLotNo,
+                    dryPowderMakeType,
+                    dryPowderLotNo,
+                    scopeOfWork,
+                    component,
+                    componentResult,
+                    defect,
+                    observation,
+                    acdcYokeEquipmentID,
+                    acdcYokeCalibrationValidity,
+                    blackLightEquipmentID,
+                    blackLightCalibrationValidity,
+                    luxMeterEquipmentID,
+                    luxMeterCalibrationValidity,
+                    dryPowderEquipmentID,
+                    dryPowderCalibrationValidity,
+                    uvMeterEquipmentID,
+                    uvMeterCalibrationValidity,
+                    pieGaugeEquipmentID,
+                    pieGaugeCalibrationValidity,
+                    date,
+                  }}
+                />
+              }
+              fileName={`MagneticParticleInspection_${id}.pdf`}
+            >
+              <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
+                Print
+                <FiPrinter className="ml-2" />
+              </button>
+            </PDFDownloadLink>
           </div>
         </div>
       </div>

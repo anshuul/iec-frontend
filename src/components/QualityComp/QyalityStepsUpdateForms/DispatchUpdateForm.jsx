@@ -14,6 +14,8 @@ import { FcGallery } from "react-icons/fc";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import InputField from "@/components/common/InpuField";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import DispatchAdvise from "../../PDF/DispatchAdvise/DispatchAdvise";
 
 const DispatchDispatchUpdateForm = () => {
   const router = useRouter();
@@ -392,10 +394,41 @@ const DispatchDispatchUpdateForm = () => {
               Save
               <FiSave className="ml-2" />
             </button>
-            <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
-              Print
-              <FiPrinter className="ml-2" />
-            </button>
+            <PDFDownloadLink
+              document={
+                <DispatchAdvise
+                  data={{
+                    daNo,
+                    soNO,
+                    customerName,
+                    customerPONO,
+                    productionDescription,
+                    InspectionReleaseNoteNo,
+                    customerPartylnspReportNo,
+                    modeOfDispatch,
+                    typeOfPacking,
+                    bubblesheet,
+                    checkListPriorToDispatch: {
+                      visualInspection,
+                      cleaningDone,
+                      xyz,
+                    },
+                    itemDispatched: {
+                      itemDescription,
+                      sNo,
+                      quantity,
+                    },
+                    date,
+                  }}
+                />
+              }
+              fileName={`DispatchAdvise_${id}.pdf`}
+            >
+              <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
+                Print
+                <FiPrinter className="ml-2" />
+              </button>
+            </PDFDownloadLink>
           </div>
         </div>
       </div>

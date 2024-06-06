@@ -14,6 +14,8 @@ import { FcGallery } from "react-icons/fc";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import InputField from "@/components/common/InpuField";
+import InspectionReleaseNote from "@/components/PDF/InspectionReleaseNote/InspectionReleaseNote";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 
 const InspectionReleaseNoteUpdateForm = () => {
   const router = useRouter();
@@ -457,10 +459,46 @@ const InspectionReleaseNoteUpdateForm = () => {
               Save
               <FiSave className="ml-2" />
             </button>
-            <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
-              Print
-              <FiPrinter className="ml-2" />
-            </button>
+            <PDFDownloadLink
+              document={
+                <InspectionReleaseNote
+                  data={{
+                    irnNo,
+                    soNO,
+                    customerName,
+                    customerPONO,
+                    productionItemDescription,
+                    itemInfo: {
+                      size,
+                      bslType,
+                      rawMaterialHeatNo,
+                      lotNO,
+                      material,
+                      poSrNO,
+                      quantity,
+                    },
+                    applicableStandardData: {
+                      applicableStandard,
+                      mpiExaminationReport,
+                      utTestReport,
+                      visualInspection,
+                      markingMonogramme,
+                      mtc,
+                      heatTreatment,
+                      coating,
+                      visualAndPhysicalInspection,
+                    },
+                    date,
+                  }}
+                />
+              }
+              fileName={`InspectionReleaseNote_${id}.pdf`}
+            >
+              <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
+                Print
+                <FiPrinter className="ml-2" />
+              </button>
+            </PDFDownloadLink>
           </div>
         </div>
       </div>

@@ -11,6 +11,8 @@ import { FiArrowLeft, FiPrinter, FiSave } from "react-icons/fi";
 // Date Picker
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import HardnessTestReport from "../../PDF/HardnessTestReport/HardnessTestReport";
 
 const HardnessReportUpdateForm = () => {
   const router = useRouter();
@@ -409,10 +411,36 @@ const HardnessReportUpdateForm = () => {
             Save
             <FiSave className="ml-2" />
           </button>
-          <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
-            Print
-            <FiPrinter className="ml-2" />
-          </button>
+          <PDFDownloadLink
+            document={
+              <HardnessTestReport
+                data={{
+                  hdrNo,
+                  customerName,
+                  customerPoNo,
+                  soNo,
+                  itemDescription,
+                  quantity,
+                  heatNo,
+                  material,
+                  acceptableHardness,
+                  testMethod,
+                  instrumentName,
+                  instrumentID,
+                  acceptanceStandard,
+                  stageOfInspection,
+                  testResult,
+                  date,
+                }}
+              />
+            }
+            fileName={`HardnessTestReport_${id}.pdf`}
+          >
+            <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
+              Print
+              <FiPrinter className="ml-2" />
+            </button>
+          </PDFDownloadLink>
         </div>
       </div>
     </Container>

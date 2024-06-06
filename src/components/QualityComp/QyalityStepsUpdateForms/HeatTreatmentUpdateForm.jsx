@@ -13,6 +13,8 @@ import { FcGallery } from "react-icons/fc";
 // Date Picker
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import HeatTreatmentReport from "@/components/PDF/HeatTreatmentReport/HeatTreatmentReport";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 
 const HeatTreatmentUpdateForm = () => {
   const router = useRouter();
@@ -422,10 +424,52 @@ const HeatTreatmentUpdateForm = () => {
               Save
               <FiSave className="ml-2" />
             </button>
-            <button className="flex items-center px-4 py-2 text-black bg-gray-300 rounded">
-              Print
-              <FiPrinter className="ml-2" />
-            </button>
+            <PDFDownloadLink
+              document={
+                <HeatTreatmentReport
+                  data={{
+                    htrNo,
+                    itemDescription,
+                    quantity,
+                    processName,
+                    testingInstrumentId,
+                    manufacturingEquipment,
+                    material,
+                    heatNo,
+                    requiredHardness,
+                    achieved,
+                    hardeningProcessNot,
+                    temperingProcessNot,
+                    date,
+                  }}
+                />
+              }
+              fileName={`HeatTreatmentReport_${id}.pdf`}
+            >
+              <button
+                onClick={() =>
+                  console.log({
+                    htrNo,
+                    itemDescription,
+                    quantity,
+                    processName,
+                    testingInstrumentId,
+                    manufacturingEquipment,
+                    material,
+                    heatNo,
+                    requiredHardness,
+                    achieved,
+                    hardeningProcessNot,
+                    temperingProcessNot,
+                    date,
+                  })
+                }
+                className="flex items-center px-4 py-2 text-black bg-gray-300 rounded"
+              >
+                Print
+                <FiPrinter className="ml-2" />
+              </button>
+            </PDFDownloadLink>
           </div>
         </div>
       </div>
