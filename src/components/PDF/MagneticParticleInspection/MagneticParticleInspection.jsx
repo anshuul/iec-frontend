@@ -89,6 +89,23 @@ const styles = StyleSheet.create({
     padding: 10,
     marginTop: "auto",
   },
+  imageContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    height: 180,
+    width: "100%",
+    padding: 2,
+    border: "2px solid #000",
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    border: "2px solid #000",
+    objectPosition: "50% 50%",
+    margin: "2px"
+  },
 });
 
 const MagneticParticleInspection = ({ data }) => {
@@ -354,24 +371,15 @@ const MagneticParticleInspection = ({ data }) => {
           </View>
           <View style={{ margin: 3 }}></View>
 
-          <View
-            style={{
-              height: "180px",
-              width: "100%",
-              border: "1px solid #000",
-              ...styles.header,
-            }}
-          >
-            <Text>Image here</Text>
-            {/* <Image
-              src={image}
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                objectPosition: "50% 50%",
-              }}
-            /> */}
+          {/* <View style={styles.imageContainer}> */}
+          <View style={{ ...styles.imageContainer, width: '100%' }}>
+            {data.selectedImages.map((image, index) => (
+              <Image
+                key={index}
+                src={`${image.url}`}
+                style={styles.image}
+              />
+            ))}
           </View>
           <View style={styles.header} wrap={false}>
             <Text style={{ width: "25%", ...styles.cell3 }}>Scope of Work</Text>

@@ -111,52 +111,6 @@ const ProductionForm = () => {
     }
   };
 
-  // const saveFormData = async () => {
-  //   try {
-  //     const response = await axios.post(
-  //       "http://localhost:8000/api/customerPO/createCustomerPO",
-  //       {
-  //         customerName,
-  //         poNo,
-  //         materialCode,
-  //         studItemDescription,
-  //         nutItemDescription,
-  //         selectedItem,
-  //         selectedSurface,
-  //         studGrade,
-  //         nutGrade,
-  //         POsize: {
-  //           diameter: {
-  //             value: diameter,
-  //             dimension: diameterDimension,
-  //           },
-  //           thread,
-  //           length: {
-  //             value: length,
-  //             dimension: lengthDimension,
-  //           },
-  //         },
-
-  //         Cuttingsize: {
-  //           cuttingdiameter: {
-  //             value: cuttingDiameter,
-  //           },
-  //           cuttingthread,
-  //           cuttinglength: {
-  //             value: cuttingLength,
-  //           },
-  //         },
-  //         quantity,
-  //         orderDate,
-  //       }
-  //     );
-  //     console.log("response ", response);
-  //     router.push("/production");
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   const handleOrderDateChange = (date) => {
     setOrderDate(date);
   };

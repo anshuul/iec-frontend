@@ -89,9 +89,27 @@ const styles = StyleSheet.create({
     padding: 10,
     marginTop: "auto",
   },
+  imageContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    height: 180,
+    width: "100%",
+    padding: 2,
+    border: "2px solid #000",
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    border: "2px solid #000",
+    objectPosition: "50% 50%",
+    margin: "2px"
+  },
 });
 
 const HeatTreatmentReport = ({ data }) => {
+  console.log("data in pdf", data)
   return (
     <Document>
       <Page size="A4" style={styles.page} wrap>
@@ -234,56 +252,16 @@ const HeatTreatmentReport = ({ data }) => {
 
           <View style={{ margin: 10 }}></View>
           <Text>Heat Treatment Chart or Photo </Text>
-          <View
-            style={{
-              height: "180px",
-              width: "100%",
-              padding: "5px",
-              ...styles.header,
-            }}
-          >
-            <Text
-              style={{
-                width: "50%",
-                height: "100%",
-                objectFit: "cover",
-                border: "2px solid #000",
-                objectPosition: "50% 50%",
-              }}
-            >
-              Image here
-            </Text>
-            <Text
-              style={{
-                width: "50%",
-                height: "100%",
-                objectFit: "cover",
-                border: "2px solid #000",
-                objectPosition: "50% 50%",
-              }}
-            >
-              Image here
-            </Text>
-            {/* <Image
-              src={image}
-              style={{
-                width: "50%",
-                height: "100%",
-                objectFit: "cover",
-                border: "2px solid #000",
-                objectPosition: "50% 50%",
-              }}
-            /> */}
-            {/* <Image
-              src={image}
-              style={{
-                width: "50%",
-                height: "100%",
-                objectFit: "cover",
-                border: "2px solid #000",
-                objectPosition: "50% 50%",
-              }}
-            /> */}
+          {/* Images */}
+          {/* <View style={styles.imageContainer}> */}
+          <View style={{ ...styles.imageContainer, width: '100%' }}>
+            {data.selectedImages.map((image, index) => (
+              <Image
+                key={index}
+                src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${image.path}`}
+                style={styles.image}
+              />
+            ))}
           </View>
           <View style={{ margin: 10 }}></View>
 

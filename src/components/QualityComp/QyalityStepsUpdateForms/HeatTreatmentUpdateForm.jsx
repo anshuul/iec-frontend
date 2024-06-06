@@ -70,6 +70,7 @@ const HeatTreatmentUpdateForm = () => {
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/heatTreatment/getByID/${id}`
         );
         const responseData = response.data;
+        console.log("responseData in heat treatment", responseData);
         setHtrNo(responseData.htrNo);
         setItemDescription(responseData.itemDescription);
         setQuantity(responseData.quantity);
@@ -83,6 +84,14 @@ const HeatTreatmentUpdateForm = () => {
         setHardeningProcessNot(responseData.hardeningProcessNot);
         setTemperingProcessNot(responseData.temperingProcessNot);
         setDate(responseData.date);
+
+        // Add setSelectedImages also
+        const transformedImages = responseData.selectedImages.map(image => ({
+          ...image,
+          name: image.fileName,
+          url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/${image.path}`
+        }));
+        setSelectedImages(transformedImages);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -92,6 +101,8 @@ const HeatTreatmentUpdateForm = () => {
       fetchData();
     }
   }, [id]);
+
+  console.log("selectedImages in heat treat update", selectedImages)
 
   const saveFormData = async (e) => {
     e.preventDefault();
@@ -382,7 +393,7 @@ const HeatTreatmentUpdateForm = () => {
                 <div className="flex flex-wrap ml-4">
                   {selectedImages.map((image, index) => (
                     <div key={index} className="flex items-center mb-2 mr-4">
-                      <span className="mr-2">{image.name}</span>
+                      <span className="mr-2">{image.fileName}</span>
                       <button
                         onClick={() => removeImage(index)}
                         className="flex items-center p-0 text-red-600 bg-none"
@@ -440,6 +451,7 @@ const HeatTreatmentUpdateForm = () => {
                     achieved,
                     hardeningProcessNot,
                     temperingProcessNot,
+                    selectedImages,
                     date,
                   }}
                 />
@@ -461,6 +473,7 @@ const HeatTreatmentUpdateForm = () => {
                     achieved,
                     hardeningProcessNot,
                     temperingProcessNot,
+                    selectedImages,
                     date,
                   })
                 }

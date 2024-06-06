@@ -234,6 +234,14 @@ const MPIReportUpdateForm = () => {
           responseData.pieGauge.calibrationValidity
         );
 
+        // Add setSelectedImages also
+        const transformedImages = responseData.selectedImages.map(image => ({
+          ...image,
+          name: image.fileName,
+          url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/${image.path}`
+        }));
+        setSelectedImages(transformedImages);
+
         setDate(new Date(responseData.date));
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -312,6 +320,8 @@ const MPIReportUpdateForm = () => {
       console.error("Error occurred while saving form data:", error);
     }
   };
+
+  console.log("selectedImages in MPI", selectedImages)
 
   const handleDateChange = (date) => {
     setDate(date);
@@ -899,11 +909,11 @@ const MPIReportUpdateForm = () => {
                 </button>
                 <div className="flex flex-wrap ml-4">
                   {selectedImages.map((image, index) => (
-                    <div key={index} className="flex items-center mr-4 mb-2">
-                      <span className="mr-2">{image.name}</span>
+                    <div key={index} className="flex items-center mb-2 mr-4">
+                      <span className="mr-2">{image.fileName}</span>
                       <button
                         onClick={() => removeImage(index)}
-                        className="flex items-center text-red-600 bg-none p-0"
+                        className="flex items-center p-0 text-red-600 bg-none"
                       >
                         <IoIosCloseCircleOutline className="text-2xl cursor-pointer" />
                       </button>
@@ -1000,6 +1010,7 @@ const MPIReportUpdateForm = () => {
                     uvMeterCalibrationValidity,
                     pieGaugeEquipmentID,
                     pieGaugeCalibrationValidity,
+                    selectedImages,
                     date,
                   }}
                 />
