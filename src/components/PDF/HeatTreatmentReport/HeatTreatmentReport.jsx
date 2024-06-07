@@ -253,16 +253,17 @@ const HeatTreatmentReport = ({ data }) => {
           <View style={{ margin: 10 }}></View>
           <Text>Heat Treatment Chart or Photo </Text>
           {/* Images */}
-          {/* <View style={styles.imageContainer}> */}
-          <View style={{ ...styles.imageContainer, width: '100%' }}>
-            {data.selectedImages.map((image, index) => (
-              <Image
-                key={index}
-                src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${image.path}`}
-                style={styles.image}
-              />
-            ))}
-          </View>
+          {data.selectedImages && data.selectedImages.length > 0 && (
+            <View style={{ ...styles.imageContainer, width: '100%' }}>
+              {data.selectedImages.map((image, index) => (
+                <Image
+                  key={index}
+                  src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${image.path}`}
+                  style={styles.image}
+                />
+              ))}
+            </View>
+          )}
           <View style={{ margin: 10 }}></View>
 
           <Text>Approved By :</Text>

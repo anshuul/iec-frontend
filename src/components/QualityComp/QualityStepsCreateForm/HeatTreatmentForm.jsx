@@ -30,7 +30,7 @@ const HeatTreatmentForm = () => {
   const [htrNo, setHtrNo] = useState("");
   const [itemDescription, setItemDescription] = useState("");
   const [quantity, setQuantity] = useState("");
-  const [process, setProcess] = useState("Quenching and Tempering");
+  const [processName, setProcess] = useState("Quenching and Tempering");
   const [testingInstrumentId, setTestingInstrumentId] = useState("HARDNESS");
   const [manufacturingEquipment, setManufacturingEquipment] =
     useState("PIT FURNANCE");
@@ -91,7 +91,7 @@ const HeatTreatmentForm = () => {
       formData.append("htrNo", htrNo);
       formData.append("itemDescription", itemDescription);
       formData.append("quantity", quantity);
-      formData.append("process", process);
+      formData.append("ProcessName", processName);
       formData.append("testingInstrumentId", testingInstrumentId);
       formData.append("manufacturingEquipment", manufacturingEquipment);
       formData.append("material", material);
@@ -102,7 +102,7 @@ const HeatTreatmentForm = () => {
       formData.append("temperingProcessNot", temperingProcessNot);
       formData.append("date", date);
       formData.append("attachmentPoNo", selectedCustomerPO.poNo);
-      formData.append("processName", "HeatTreatment");
+      formData.append("QualityProcessName", "HeatTreatment");
       selectedImages.forEach((image, index) => {
         formData.append(`newSelectedImages`, image);
       });
@@ -169,10 +169,10 @@ const HeatTreatmentForm = () => {
             <div className="flex items-center mb-4">
               <label className="relative cursor-pointer App">
                 <input
-                  id="process"
+                  id="processName"
                   type="text"
-                  value={process}
-                  onChange={(e) => setProcess(e.target.value)}
+                  value={processName}
+                  onChange={(e) => setProcessName(e.target.value)}
                   placeholder="Input"
                   className="h-10 w-96 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />

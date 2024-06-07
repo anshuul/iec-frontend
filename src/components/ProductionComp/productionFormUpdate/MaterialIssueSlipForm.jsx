@@ -65,7 +65,7 @@ const MaterialIssueSlipForm = () => {
         const responseData = response.data;
 
         setMaterialIssueForm((prevState) => ({
-          ...prevState, // Spread previous state
+          ...prevState,
           materialSlipName: responseData.materialSlipName,
           itemDescription: responseData.itemDescription,
           materialGrade: responseData.materialGrade,

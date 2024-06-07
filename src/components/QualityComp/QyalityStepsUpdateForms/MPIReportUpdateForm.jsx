@@ -139,13 +139,15 @@ const MPIReportUpdateForm = () => {
 
   const handleImageSelection = (e) => {
     const files = Array.from(e.target.files);
+    // Limit the number of selected images to 2
     if (files.length + selectedImages.length > 2) {
       alert("You can only select up to 2 images.");
       return;
     }
+    // Concatenate the newly selected images with the existing ones
     const newSelectedImages = [...selectedImages, ...files].slice(0, 2);
     setSelectedImages(newSelectedImages);
-    console.log("newSelectedImages", newSelectedImages);
+    console.log("newSelectedImages in MPI", newSelectedImages);
   };
 
   const handleChooseImageClick = () => {
@@ -240,6 +242,8 @@ const MPIReportUpdateForm = () => {
           name: image.fileName,
           url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/${image.path}`
         }));
+        console.log("transformedImages in mpi", transformedImages)
+
         setSelectedImages(transformedImages);
 
         setDate(new Date(responseData.date));
@@ -251,66 +255,91 @@ const MPIReportUpdateForm = () => {
       fetchData();
     }
   }, [id]);
+  console.log("MPI selectedImages", selectedImages)
 
-  const saveFormData = async () => {
+  const [selectedCustomerPO, setSelectedCustomerPO] = useState(null);
+
+  useEffect(() => {
+    // Get data from localStorage when the component mounts
+    const data = JSON.parse(localStorage.getItem("selectedCustomerPO"));
+    setSelectedCustomerPO(data);
+  }, []);
+
+  const saveFormData = async (e) => {
+    e.preventDefault();
     try {
+      const formData = new FormData();
+      // Append all form fields to FormData
+      formData.append("mpirNo", mpirNo);
+      formData.append("productName", productName);
+      formData.append("drawingNo", drawingNo);
+      formData.append("quantity", quantity);
+      formData.append("materialType", materialType);
+      formData.append("qaNO", qaNO);
+      formData.append("mpiNo", mpiNo);
+      formData.append("heatNo", heatNo);
+      formData.append("acceptanceStandard", acceptanceStandard);
+      formData.append("material", material);
+      formData.append("materialSpecification", materialSpecification);
+      formData.append("surfaceCondition", surfaceCondition);
+      formData.append("testTemperature", testTemperature);
+      formData.append("illumination", illumination);
+      formData.append("equipmentName", equipmentName);
+      formData.append("illuminationLocation", illuminationLocation);
+      formData.append("technique", technique);
+      formData.append("testweight", testweight);
+      formData.append("selectedMagnetizingProcess", selectedMagnetizingProcess);
+      formData.append("selectedMagnetizing", selectedMagnetizing);
+      formData.append("selectedMagnetizingCurrent", selectedMagnetizingCurrent);
+      formData.append("selectedMethod", selectedMethod);
+      formData.append("selectedDemagnetization", selectedDemagnetization);
+      formData.append("magneticFieldIndicator", magneticFieldIndicator);
+      formData.append("blackLightIntensity", blackLightIntensity);
+      formData.append("powderConcertation", powderConcertation);
+      formData.append("requiredHardness", requiredHardness);
+      formData.append("achieved", achieved);
+      formData.append("whiteContrastPaintMakeType", whiteContrastPaintMakeType);
+      formData.append("whiteContrastPaintLotNo", whiteContrastPaintLotNo);
+      formData.append("blackMagneticInkMakeType", blackMagneticInkMakeType);
+      formData.append("blackMagneticInkLotNo", blackMagneticInkLotNo);
+      formData.append("wetFluorescentMakeType", wetFluorescentMakeType);
+      formData.append("wetFluorescentLotNo", wetFluorescentLotNo);
+      formData.append("dryPowderMakeType", dryPowderMakeType);
+      formData.append("dryPowderLotNo", dryPowderLotNo);
+      formData.append("scopeOfWork", scopeOfWork);
+      formData.append("component", component);
+      formData.append("componentResult", componentResult);
+      formData.append("defect", defect);
+      formData.append("observation", observation);
+      formData.append("acdcYokeEquipmentID", acdcYokeEquipmentID);
+      formData.append("acdcYokeCalibrationValidity", acdcYokeCalibrationValidity);
+      formData.append("blackLightEquipmentID", blackLightEquipmentID);
+      formData.append("blackLightCalibrationValidity", blackLightCalibrationValidity);
+      formData.append("luxMeterEquipmentID", luxMeterEquipmentID);
+      formData.append("luxMeterCalibrationValidity", luxMeterCalibrationValidity);
+      formData.append("dryPowderEquipmentID", dryPowderEquipmentID);
+      formData.append("dryPowderCalibrationValidity", dryPowderCalibrationValidity);
+      formData.append("uvMeterEquipmentID", uvMeterEquipmentID);
+      formData.append("uvMeterCalibrationValidity", uvMeterCalibrationValidity);
+      formData.append("pieGaugeEquipmentID", pieGaugeEquipmentID);
+      formData.append("pieGaugeCalibrationValidity", pieGaugeCalibrationValidity);
+      formData.append("date", date.toString());
+
+      formData.append("attachmentPoNo", selectedCustomerPO.poNo);
+      formData.append("QualityProcessName", "MPIReport");
+
+      // Append images to FormData
+      selectedImages.forEach((image) => {
+        formData.append("newSelectedImages", image);
+      });
+
       const response = await axios.put(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/mpi/update-mpi-report/${id}`,
+        formData,
         {
-          mpirNo,
-          productName,
-          drawingNo,
-          quantity,
-          materialType,
-          qaNO,
-          mpiNo,
-          heatNo,
-          acceptanceStandard,
-          material,
-          materialSpecification,
-          surfaceCondition,
-          testTemperature,
-          illumination,
-          equipmentName,
-          illuminationLocation,
-          technique,
-          testweight,
-          selectedMagnetizingProcess,
-          selectedMagnetizing,
-          selectedMagnetizingCurrent,
-          selectedMethod,
-          selectedDemagnetization,
-          magneticFieldIndicator,
-          blackLightIntensity,
-          powderConcertation,
-          requiredHardness,
-          achieved,
-          whiteContrastPaintMakeType,
-          whiteContrastPaintLotNo,
-          blackMagneticInkMakeType,
-          blackMagneticInkLotNo,
-          wetFluorescentMakeType,
-          wetFluorescentLotNo,
-          dryPowderMakeType,
-          dryPowderLotNo,
-          scopeOfWork,
-          component,
-          componentResult,
-          defect,
-          observation,
-          acdcYokeEquipmentID,
-          acdcYokeCalibrationValidity,
-          blackLightEquipmentID,
-          blackLightCalibrationValidity,
-          luxMeterEquipmentID,
-          luxMeterCalibrationValidity,
-          dryPowderEquipmentID,
-          dryPowderCalibrationValidity,
-          uvMeterEquipmentID,
-          uvMeterCalibrationValidity,
-          pieGaugeEquipmentID,
-          pieGaugeCalibrationValidity,
-          date: date.toString(),
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
 
@@ -910,7 +939,7 @@ const MPIReportUpdateForm = () => {
                 <div className="flex flex-wrap ml-4">
                   {selectedImages.map((image, index) => (
                     <div key={index} className="flex items-center mb-2 mr-4">
-                      <span className="mr-2">{image.fileName}</span>
+                      <span className="mr-2">{image.name}</span>
                       <button
                         onClick={() => removeImage(index)}
                         className="flex items-center p-0 text-red-600 bg-none"

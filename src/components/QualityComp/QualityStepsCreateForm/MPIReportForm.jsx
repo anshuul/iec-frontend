@@ -234,7 +234,7 @@ const MPIReportForm = () => {
       formData.append("date", date);
 
       formData.append("attachmentPoNo", selectedCustomerPO.poNo);
-      formData.append("processName", "MPIReport");
+      formData.append("QualityProcessName", "MPIReport");
       selectedImages.forEach((image, index) => {
         formData.append(`newSelectedImages`, image);
       });

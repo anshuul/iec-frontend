@@ -99,6 +99,7 @@ const MPIReportTable = ({ qualityStep }) => {
       field: "srNo",
       minWidth: 50,
       maxWidth: 80,
+      sort: "desc",
     },
     {
       headerName: "Action",

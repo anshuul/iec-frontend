@@ -62,6 +62,13 @@ const HeatTreatmentUpdateForm = () => {
     const newSelectedImages = selectedImages.filter((_, i) => i !== index);
     setSelectedImages(newSelectedImages);
   };
+  const [selectedCustomerPO, setSelectedCustomerPO] = useState(null);
+
+  useEffect(() => {
+    // Get data from localStorage when the component mounts
+    const data = JSON.parse(localStorage.getItem("selectedCustomerPO"));
+    setSelectedCustomerPO(data);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -91,7 +98,9 @@ const HeatTreatmentUpdateForm = () => {
           name: image.fileName,
           url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/${image.path}`
         }));
-        setSelectedImages(transformedImages);
+        if (responseData.selectedImages) {
+          setSelectedImages(transformedImages);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -107,25 +116,34 @@ const HeatTreatmentUpdateForm = () => {
   const saveFormData = async (e) => {
     e.preventDefault();
     try {
-      const formData = {
-        htrNo,
-        itemDescription,
-        quantity,
-        processName,
-        testingInstrumentId,
-        manufacturingEquipment,
-        material,
-        heatNo,
-        requiredHardness,
-        achieved,
-        hardeningProcessNot,
-        temperingProcessNot,
-        date,
-      };
+      const formData = new FormData();
+      formData.append("htrNo", htrNo);
+      formData.append("itemDescription", itemDescription);
+      formData.append("quantity", quantity);
+      formData.append("processName", processName);
+      formData.append("testingInstrumentId", testingInstrumentId);
+      formData.append("manufacturingEquipment", manufacturingEquipment);
+      formData.append("material", material);
+      formData.append("heatNo", heatNo);
+      formData.append("requiredHardness", requiredHardness);
+      formData.append("achieved", achieved);
+      formData.append("hardeningProcessNot", hardeningProcessNot);
+      formData.append("temperingProcessNot", temperingProcessNot);
+      formData.append("date", date);
+      formData.append("attachmentPoNo", selectedCustomerPO.poNo);
+      formData.append("QualityProcessName", "HeatTreatment");
+      selectedImages.forEach((image) => {
+        formData.append(`newSelectedImages`, image);
+      });
 
       const response = await axios.put(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/heatTreatment/update-heatTreatment-report/${id}`,
-        formData
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
       console.log("response in quality module heat treat report", response);
       if (response.status === 200) {
@@ -393,7 +411,7 @@ const HeatTreatmentUpdateForm = () => {
                 <div className="flex flex-wrap ml-4">
                   {selectedImages.map((image, index) => (
                     <div key={index} className="flex items-center mb-2 mr-4">
-                      <span className="mr-2">{image.fileName}</span>
+                      <span className="mr-2">{image.name}</span>
                       <button
                         onClick={() => removeImage(index)}
                         className="flex items-center p-0 text-red-600 bg-none"
