@@ -30,7 +30,7 @@ const HeatTreatmentForm = () => {
   const [htrNo, setHtrNo] = useState("");
   const [itemDescription, setItemDescription] = useState("");
   const [quantity, setQuantity] = useState("");
-  const [processName, setProcess] = useState("Quenching and Tempering");
+  const [processName, setProcessName] = useState("Quenching and Tempering");
   const [testingInstrumentId, setTestingInstrumentId] = useState("HARDNESS");
   const [manufacturingEquipment, setManufacturingEquipment] =
     useState("PIT FURNANCE");
@@ -85,6 +85,7 @@ const HeatTreatmentForm = () => {
     setSelectedImages(newSelectedImages);
   };
 
+  console.log("selectedCustomerPO in heat treatment", selectedCustomerPO)
   const saveFormData = async () => {
     try {
       const formData = new FormData();
@@ -106,6 +107,7 @@ const HeatTreatmentForm = () => {
       selectedImages.forEach((image, index) => {
         formData.append(`newSelectedImages`, image);
       });
+      console.log("formData in heat treatment", formData)
 
       // Call your API endpoint here with axios
       const response = await axios.post(
