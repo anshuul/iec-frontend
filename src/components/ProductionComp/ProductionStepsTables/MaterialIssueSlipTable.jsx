@@ -32,7 +32,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
           console.log("poNo", parsedCustomerPO.poNo);
           // Fetch material issue slips based on the selected customer PO
           response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/materialissueslip/get-materialIssueSlip/${parsedCustomerPO.poNo}`
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/materialissueslip/get-materialIssueSlipByPoNo?poNo=${parsedCustomerPO.poNo}`
           );
         } else {
           // Fetch all material issue slips if no customer PO is selected

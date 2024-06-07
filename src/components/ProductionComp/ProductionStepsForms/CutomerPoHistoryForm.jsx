@@ -43,7 +43,8 @@ const CutomerPoHistoryForm = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/customerPOHistory/${poNo}/${historyId}`
+          // `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/customerPOHistory/${poNo}/${historyId}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/singlecustomerPOHistory?poNo=${poNo}&&historyId=${historyId}`
         );
         console.log(
           "response in history",
@@ -599,7 +600,7 @@ const CutomerPoHistoryForm = () => {
             id="attachment"
             className="hidden"
             accept=".pdf"
-            // onChange={handleFileSelection}
+          // onChange={handleFileSelection}
           />
           <button
             onClick={() => document.getElementById("attachment").click()}

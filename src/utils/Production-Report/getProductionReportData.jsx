@@ -7,7 +7,7 @@ export const getProductionReportData = async (updatedCustomerPO, prefix) => {
       prefix.map(async (pre) => {
         // Get the production report ID for the current prefix
         const response = await axios.get(
-          `http://localhost:8000/api/productionReport/get-generatedProductionReportId/${updatedCustomerPO.poNo}/${pre}`
+          `http://localhost:8000/api/productionReport/get-generatedProductionReportId?poNo=${updatedCustomerPO.poNo}&&prefix=${pre}`
         );
         // Extract the production report ID from the response
         const ProductionId = response.data;

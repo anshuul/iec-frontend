@@ -31,7 +31,7 @@ const ProductionSheetTable = ({ productionStep }) => {
           const parsedCustomerPO = JSON.parse(selectedCustomerPO);
           console.log("poNo", parsedCustomerPO.poNo);
           response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/production/get-planningSheet/${parsedCustomerPO.poNo}`
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/production/get-planningSheet/bypoNo?poNo=${parsedCustomerPO.poNo}`
           );
         } else {
           response = await axios.get(

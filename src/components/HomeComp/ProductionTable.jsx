@@ -103,7 +103,7 @@ const ProductionTable = () => {
     try {
       setLoading(true);
       await axios.delete(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/delete/${data.CustomerPO}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/delete?poNo=${data.CustomerPO}`
       );
       const updatedRows = rowData.filter((row) => row !== data);
       setRowData(updatedRows);
@@ -118,7 +118,7 @@ const ProductionTable = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/customerPOHistory/${poNo}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/customerPOHistory?poNo=${poNo}`
       );
       console.log("handleHistoryClick response", response.data);
       const historyData = response.data.historyRecords.map((record, index) => ({
@@ -195,7 +195,7 @@ const ProductionTable = () => {
           const poNo = customerPODataForRouting.poNo;
           console.log("poNo", poNo);
           const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/get-routingSheet/${poNo}`
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/get-routingSheet?poNo=${poNo}`
           );
 
           console.log("response", response.data);
@@ -351,7 +351,7 @@ const ProductionTable = () => {
       try {
         setLoading(true);
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/${selectedCustomerPO}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/getPono?poNo=${selectedCustomerPO}`
         );
         const customerPOData = response.data.customerPO;
         localStorage.setItem(

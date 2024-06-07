@@ -183,7 +183,8 @@ const MaterialIssueSlipForm = () => {
       );
 
       const fetchProductionReportId = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/get-generatedProductionReportId/${UpdatedMaterialIssueSlipData.poNo}/${UpdatedMaterialIssueSlipData.prefix}`
+        // `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/get-generatedProductionReportId/${UpdatedMaterialIssueSlipData.poNo}/${UpdatedMaterialIssueSlipData.prefix}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/get-generatedProductionReportId?poNo=${UpdatedMaterialIssueSlipData.poNo}&&prefix=${UpdatedMaterialIssueSlipData.prefix}`
       );
       console.log("fetchProductionReportId", fetchProductionReportId.data);
       const productionReportId =

@@ -37,7 +37,7 @@ const RoutingSheetTable = ({ productionStep }) => {
           const parsedCustomerPO = JSON.parse(selectedCustomerPO);
           console.log("poNo", parsedCustomerPO.poNo);
           response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/get-routingSheet/${parsedCustomerPO.poNo}`
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/get-routingSheet?poNo=${parsedCustomerPO.poNo}`
           );
         } else {
           response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet`);

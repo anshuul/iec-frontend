@@ -4,7 +4,7 @@ export const getRoutingSheetData = async (updatedCustomerPO) => {
   try {
     // Get the planning sheet IDs
     const getRoutingingSheetsId = await axios.get(
-      `http://localhost:8000/api/routingSheet/get-generatedRoutingSheetID/${updatedCustomerPO.poNo}`
+      `http://localhost:8000/api/routingSheet/get-generatedRoutingSheetID?poNo=${updatedCustomerPO.poNo}`
     );
 
     // Planning sheet ID

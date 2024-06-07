@@ -50,7 +50,8 @@ const EditCustomerForm = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/${poNo}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/getPono?poNo=${poNo}`
+          // `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/${poNo}`
         );
         console.log("response", response.data.customerPO);
         setCustomerPO(response.data.customerPO); // Set the customer PO data in state
@@ -129,7 +130,7 @@ const EditCustomerForm = () => {
       }
 
       const response = await axios.put(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/update/${poNo}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/update?poNo=${poNo}`,
         formData,
         {
           headers: {
