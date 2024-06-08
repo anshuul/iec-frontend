@@ -436,7 +436,8 @@ const HeatTreatmentUpdateForm = () => {
                 </label>
 
                 <DatePicker
-                  // selected={}
+                  selected={date}
+                  onChange={(date) => setDate(date)}
                   dateFormat="dd/MM/yyyy"
                   className="w-full px-3 py-2 border border-gray-300 rounded"
                 />
