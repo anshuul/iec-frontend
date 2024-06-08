@@ -56,7 +56,6 @@ const ProductionSheetFormUpdate = () => {
     recordsEvidenceAttachment: null,
   });
 
-  const [selectedFile, setSelectedFile] = useState(null);
 
   // Function to format date in ISO format (yyyy-mm-dd)
   const formatDate = (dateString) => {
@@ -157,18 +156,24 @@ const ProductionSheetFormUpdate = () => {
   };
 
   const saveFormData = async () => {
-    const formData = new FormData();
-    Object.keys(planningSheetForm).forEach((key) => {
-      formData.append(key, planningSheetForm[key]);
-    });
-    // Append the attachmentPoNo to the formData
-    formData.append("attachmentPoNo", planningSheetForm.poNo);
-    Object.keys(attachments).forEach((key) => {
-      if (attachments[key]) {
-        formData.append(key, attachments[key]);
-      }
-    });
     try {
+      const formData = new FormData();
+      Object.entries(planningSheetForm).forEach(([key, value]) => {
+        // Convert date values to ISO 8601 format if they are Date objects
+        if (value instanceof Date) {
+          formData.append(key, value.toISOString());
+        } else {
+          formData.append(key, value);
+        }
+      });
+      // Append the attachmentPoNo to the formData
+      formData.append("attachmentPoNo", planningSheetForm.poNo);
+      Object.entries(attachments).forEach(([key, value]) => {
+        if (value) {
+          formData.append(key, value);
+        }
+      });
+
       const response = await axios.put(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/production/update-planningSheet/${id}`,
         formData,

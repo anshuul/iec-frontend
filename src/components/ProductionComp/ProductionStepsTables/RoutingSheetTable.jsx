@@ -282,8 +282,22 @@ const RoutingSheetTable = ({ productionStep }) => {
     );
   };
 
+  useEffect(() => {
+    // Function to handle beforeunload event
+    const handleBeforeUnload = () => {
+      localStorage.removeItem("selectedRoutingSheet");
+    };
+
+    // Add event listener for beforeunload
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    // Clean up by removing event listener when component unmounts
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
   return (
-    // <div className="flex flex-col items-center justify-center">
     <div className="flex flex-col mx-4 bg-white">
       {/* Button positioned at the top right corner */}
       <button

@@ -287,9 +287,9 @@ const DimensionReportHome = () => {
 
   return (
     <div className="flex flex-col mx-4 h-[85vh] bg-white">
-      <div className="flex items-center justify-between">
+      {/* <div className="flex items-center justify-between">
         {parsedRoutingSheet &&
-        parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
+          parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
           <button
             className="px-4 py-2 m-4 bg-gray-300 rounded-lg"
             onClick={openStudPopup}
@@ -303,6 +303,28 @@ const DimensionReportHome = () => {
           >
             Get Nut Report
           </button>
+        )}
+      </div> */}
+
+      <div className="flex items-center justify-between">
+        {parsedRoutingSheet ? (
+          parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
+            <button
+              className="px-4 py-2 m-4 bg-gray-300 rounded-lg"
+              onClick={openStudPopup}
+            >
+              Get Stud Report
+            </button>
+          ) : (
+            <button
+              className="px-4 py-2 m-4 bg-gray-300 rounded-lg"
+              onClick={openNutPopup}
+            >
+              Get Nut Report
+            </button>
+          )
+        ) : (
+          <p className="px-4 py-2 m-4 bg-red-200 text-red-700 font-bold rounded-lg">Please select a routing sheet</p>
         )}
       </div>
       {showStudPopup && (
@@ -326,7 +348,7 @@ const DimensionReportHome = () => {
       {rowData.length > 0 && (
         <>
           {parsedRoutingSheet &&
-          parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
+            parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
             <StudDimensionForm
               parsedSelectedPO={parsedSelectedPO}
               parsedRoutingSheet={parsedRoutingSheet}
@@ -345,7 +367,7 @@ const DimensionReportHome = () => {
           <hr className="my-4 border-t border-gray-300" />
           <div className="flex justify-end mx-4 my-6">
             {parsedRoutingSheet &&
-            parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
+              parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
               <PDFDownloadLink
                 document={
                   <Document>
