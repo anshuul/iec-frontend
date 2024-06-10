@@ -9,6 +9,8 @@ import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { TiPlus } from "react-icons/ti";
+import ListItemModal from "./ListItemModal";
+import InputRow from "./InputRow";
 
 const ProductionForm = () => {
   const searchParams = useSearchParams();
@@ -44,6 +46,51 @@ const ProductionForm = () => {
 
   const [loading, setLoading] = useState(false);
 
+  // Popup window state
+  const [showModal, setShowModal] = useState(false);
+  const [listItems, setListItems] = useState([]);
+
+  // const handleAddListItem = () => {
+  //   setShowModal(true);
+  // };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  const handleListItemSave = (formData) => {
+    setListItems([...listItems, formData]);
+    setShowModal(false);
+  };
+
+  // Inputs Row
+  const [openInputsRow, setOpenInputsRow] = useState();
+  const [inputRows, setInputRows] = useState([
+    { label: 'Customer Name', value: '', placeholder: 'Customer Name' },
+    { label: 'Created By', value: '', placeholder: 'Created By' },
+    { label: 'PO No', value: '', placeholder: 'PO No' },
+    { label: 'Material Code', value: '', placeholder: 'Material Code' },
+    { label: 'Stud Item Description', value: '', placeholder: 'Stud Item Description' },
+    { label: 'Nut Item Description', value: '', placeholder: 'Nut Item Description' },
+    { label: 'Selected Item', value: '', placeholder: 'Selected Item' },
+    { label: 'Selected Surface', value: '', placeholder: 'Selected Surface' },
+    { label: 'Stud Grade', value: '', placeholder: 'Stud Grade' },
+    { label: 'Nut Grade', value: '', placeholder: 'Nut Grade' },
+    // Add more initial input rows as needed
+  ]);
+
+
+  const handleAddListItem = () => {
+    const newRow = { label: '', value: '', placeholder: '' };
+    setInputRows([...inputRows, newRow]);
+  };
+
+  const handleInputChange = (index, value) => {
+    const updatedRows = [...inputRows];
+    updatedRows[index].value = value;
+    setInputRows(updatedRows);
+  };
+
   const userName = localStorage.getItem("userName");
 
   const handleFileSelection = (e) => {
@@ -52,7 +99,6 @@ const ProductionForm = () => {
     if (file && file.type === "application/pdf") {
       setSelectedFile(file);
     } else {
-      // Optionally, you can display an error message or perform other actions here
       setSelectedFile(null);
       alert("Please select a PDF file.");
     }
@@ -113,12 +159,6 @@ const ProductionForm = () => {
 
   const handleOrderDateChange = (date) => {
     setOrderDate(date);
-  };
-
-  // Function to convert inches to millimeters
-  const inchToMm = (inches) => {
-    const mmPerInch = 25.4;
-    return inches * mmPerInch;
   };
 
   const getRawMaterialDia = async () => {
@@ -235,10 +275,33 @@ const ProductionForm = () => {
         </div>
 
         {/* Add list item button */}
-        <button className="flex items-center px-4 py-2 mb-2 text-lg font-bold text-black">
+        <button
+          onClick={handleAddListItem}
+          className="flex items-center px-4 py-2 mb-2 text-lg font-bold text-black"
+        >
           <TiPlus className="mr-2" />
           Add List Item
         </button>
+
+        {/* Container for inputs rows with horizontal scroll */}
+        <div className="overflow-x-auto border max-w-screen-xl border-gray-200 rounded-md p-2">
+          {/* Inputs Row */}
+          <div className="flex space-x-4">
+            {inputRows.map((row, index) => (
+              <InputRow
+                key={index}
+                label={row.label}
+                value={row.value}
+                onChange={(e) => handleInputChange(index, e.target.value)}
+                placeholder={row.placeholder}
+              />
+            ))}
+          </div>
+        </div>
+        {/* {showModal && (
+          <ListItemModal onSave={handleListItemSave} onClose={handleCloseModal} />
+        )} */}
+
         <div className="flex items-center gap-2 my-4">
           <label className="relative cursor-pointer App">
             <input
@@ -556,9 +619,8 @@ const ProductionForm = () => {
         <div className="flex justify-end">
           <button
             onClick={saveFormData}
-            className={`flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded ${
-              loading ? "cursor-not-allowed opacity-50" : ""
-            }`}
+            className={`flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded ${loading ? "cursor-not-allowed opacity-50" : ""
+              }`}
             disabled={loading}
           >
             Save
