@@ -19,6 +19,8 @@ const ProductionSheetFormUpdate = () => {
   const id = searchParams.get("id");
   console.log("first", id);
 
+  const [loading, setLoading] = useState(false);
+
   const [planningSheetForm, setPlanningSheetForm] = useState({
     productionSheetName: "",
     itemDescription: "",
@@ -157,6 +159,7 @@ const ProductionSheetFormUpdate = () => {
 
   const saveFormData = async () => {
     try {
+      setLoading(true)
       const formData = new FormData();
       Object.entries(planningSheetForm).forEach(([key, value]) => {
         // Convert date values to ISO 8601 format if they are Date objects
@@ -187,6 +190,8 @@ const ProductionSheetFormUpdate = () => {
       router.push("/production/production-planning-sheets");
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -1126,7 +1131,8 @@ const ProductionSheetFormUpdate = () => {
         <div className="flex justify-end">
           <button
             onClick={saveFormData}
-            className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded"
+            className={`flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded ${loading ? 'cursor-not-allowed opacity-50' : ''}`}
+            disabled={loading}
           >
             Save
             <FiSave className="ml-2" />

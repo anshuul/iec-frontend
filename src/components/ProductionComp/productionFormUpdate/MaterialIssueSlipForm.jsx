@@ -33,6 +33,9 @@ const MaterialIssueSlipForm = () => {
 
   const [selectedFile, setSelectedFile] = useState(null);
 
+  const [loading, setLoading] = useState(false);
+
+
   const selectedFilePath =
     selectedFile && `${process.env.NEXT_PUBLIC_BACKEND_URL}/${selectedFile.path}`;
 
@@ -125,6 +128,7 @@ const MaterialIssueSlipForm = () => {
 
   const saveFormData = async () => {
     try {
+      setLoading(true);
       const newCustomerPO = JSON.parse(
         localStorage.getItem("selectedCustomerPO")
       );
@@ -221,6 +225,8 @@ const MaterialIssueSlipForm = () => {
       router.push("/production/material-issue-slip");
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
   console.log("materialIssueForm in Form", materialIssueForm);
@@ -523,7 +529,8 @@ const MaterialIssueSlipForm = () => {
         <div className="flex justify-end">
           <button
             onClick={saveFormData}
-            className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded"
+            className={`flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded ${loading ? 'cursor-not-allowed opacity-50' : ''}`}
+            disabled={loading}
           >
             Save
             <FiSave className="ml-2" />

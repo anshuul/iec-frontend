@@ -191,7 +191,7 @@ const RoutingSheetFormUpdate = () => {
       // Send PUT request to update the routing sheet
       await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/update-routing-sheet/${id}`, requestData);
 
-      alert("Routing sheet updated successfully!");
+      router.push('/production/routing-sheet');
       setLoading(false);
       // Redirect to the routing sheet page or do any other necessary action
     } catch (error) {
@@ -200,7 +200,6 @@ const RoutingSheetFormUpdate = () => {
       setLoading(false);
     }
   };
-
 
 
 
@@ -335,7 +334,8 @@ const RoutingSheetFormUpdate = () => {
         <div className="flex">
           <button
             onClick={handleSave}
-            className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded"
+            className={`flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded ${loading ? 'cursor-not-allowed opacity-50' : ''}`}
+            disabled={loading}
           >
             Save
             <FiSave className="ml-2" />

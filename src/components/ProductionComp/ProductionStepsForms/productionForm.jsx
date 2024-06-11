@@ -53,7 +53,6 @@ const ProductionForm = () => {
             `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/${CustomerPO}`
           );
           setRowData(response);
-          // router.push("/production");
           console.log("response", response);
         } catch (error) {
           console.error("Error fetching data:", error);
@@ -71,7 +70,6 @@ const ProductionForm = () => {
     if (file && file.type === "application/pdf") {
       setSelectedFile(file);
     } else {
-      // Optionally, you can display an error message or perform other actions here
       setSelectedFile(null);
       alert("Please select a PDF file.");
     }
@@ -106,7 +104,6 @@ const ProductionForm = () => {
       formData.append("orderDate", orderDate);
       formData.append("createdBy", userName);
 
-      // Append poNo to the formData
       formData.append("attachmentPoNo", poNo);
       if (selectedFile) {
         formData.append("attachment", selectedFile);
@@ -117,7 +114,7 @@ const ProductionForm = () => {
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data", // Set content type to multipart form data
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -126,64 +123,12 @@ const ProductionForm = () => {
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(false); // Enable button after success or error
+      setLoading(false);
     }
   };
 
-  // const saveFormData = async () => {
-  //   try {
-  //     const response = await axios.post(
-  //       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/createCustomerPO`,
-  //       {
-  //         customerName,
-  //         poNo,
-  //         materialCode,
-  //         studItemDescription,
-  //         nutItemDescription,
-  //         selectedItem,
-  //         selectedSurface,
-  //         studGrade,
-  //         nutGrade,
-  //         POsize: {
-  //           diameter: {
-  //             value: diameter,
-  //             dimension: diameterDimension,
-  //           },
-  //           thread,
-  //           length: {
-  //             value: length,
-  //             dimension: lengthDimension,
-  //           },
-  //         },
-
-  //         Cuttingsize: {
-  //           cuttingdiameter: {
-  //             value: cuttingDiameter,
-  //           },
-  //           cuttingthread,
-  //           cuttinglength: {
-  //             value: cuttingLength,
-  //           },
-  //         },
-  //         quantity,
-  //         orderDate,
-  //       }
-  //     );
-  //     console.log("response ", response);
-  //     router.push("/production");
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   const handleOrderDateChange = (date) => {
     setOrderDate(date);
-  };
-
-  // Function to convert inches to millimeters
-  const inchToMm = (inches) => {
-    const mmPerInch = 25.4;
-    return inches * mmPerInch;
   };
 
   const getRawMaterialDia = async () => {
@@ -611,7 +556,7 @@ const ProductionForm = () => {
             Choose file
             <FiFile className="ml-2" />
           </button>
-          {/* {selectedFile && <span className="ml-2">{selectedFile.name}</span>} */}
+          
           {selectedFile && (
             <>
               <span className="ml-2">{selectedFile.name}</span>
