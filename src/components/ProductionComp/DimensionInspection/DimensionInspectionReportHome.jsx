@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 import StudDimensionReportPopUp from "./StudDimensionReport/StudDimensionReportPopUp";
-import NutDimensionReportPopup from "./NutDimensionReportPopup";
 import StudDimensionForm from "./StudDimensionReport/StudDimensionForm";
 import NutDimensionForm from "./NutDimensionReport/NutDimensionForm";
 import { FiPrinter } from "react-icons/fi";
@@ -22,10 +21,12 @@ import {
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
+import NutDimensionReportPopup from "./NutDimensionReportPopUp";
+import Link from "next/link";
 const styles = StyleSheet.create({
   page: {
     flexDirection: "row",
-    backgroundColor: "#E4E4E4",
+    backgroundColor: "#FFFFFF",
     padding: 10,
   },
   section: {
@@ -118,7 +119,7 @@ const DimensionReportHome = () => {
         console.log("newStudInputValues 1st", newStudInputValues);
 
         const response = await axios.post(
-          "http://localhost:8000/api/dimensinReport/createDimensionReport",
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/dimensinReport/createDimensionReport`,
           newStudInputValues
         );
         console.log(
@@ -132,7 +133,7 @@ const DimensionReportHome = () => {
 
         // Fetch data using the retrieved ID
         const dimensionReportResponse = await axios.get(
-          `http://localhost:8000/api/dimensinReport/${id}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/dimensinReport/${id}`
         );
         console.log(
           "Fetched dimension report data:",
@@ -190,7 +191,7 @@ const DimensionReportHome = () => {
 
         // Send an HTTP POST request to submit the stud data
         const response = await axios.post(
-          "http://localhost:8000/api/dimensinReport/dimensionNut/createDimensionReportNut",
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/dimensinReport/dimensionNut/createDimensionReportNut`,
           newNutInputValues
         );
         console.log(
@@ -204,7 +205,7 @@ const DimensionReportHome = () => {
 
         // Fetch data using the retrieved ID
         const dimensionReportResponseForNut = await axios.get(
-          `http://localhost:8000/api/dimensinReport/dimensionNut/${id}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/dimensinReport/dimensionNut/${id}`
         );
         console.log(
           "Nut Fetched dimension report data:",
@@ -287,9 +288,9 @@ const DimensionReportHome = () => {
 
   return (
     <div className="flex flex-col mx-4 h-[85vh] bg-white">
-      <div className="flex items-center justify-between">
+      {/* <div className="flex items-center justify-between">
         {parsedRoutingSheet &&
-        parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
+          parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
           <button
             className="px-4 py-2 m-4 bg-gray-300 rounded-lg"
             onClick={openStudPopup}
@@ -303,6 +304,30 @@ const DimensionReportHome = () => {
           >
             Get Nut Report
           </button>
+        )}
+      </div> */}
+
+      <div className="flex items-center justify-between">
+        {parsedRoutingSheet ? (
+          parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
+            <button
+              className="px-4 py-2 m-4 bg-gray-300 rounded-lg"
+              onClick={openStudPopup}
+            >
+              Get Stud Report
+            </button>
+          ) : (
+            <button
+              className="px-4 py-2 m-4 bg-gray-300 rounded-lg"
+              onClick={openNutPopup}
+            >
+              Get Nut Report
+            </button>
+          )
+        ) : (
+          <Link href={"/production/routing-sheet"}>
+            <p className="px-4 py-2 m-4 bg-red-200 text-red-700 font-bold rounded-lg">Please select a routing sheet</p>
+          </Link>
         )}
       </div>
       {showStudPopup && (
@@ -326,7 +351,7 @@ const DimensionReportHome = () => {
       {rowData.length > 0 && (
         <>
           {parsedRoutingSheet &&
-          parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
+            parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
             <StudDimensionForm
               parsedSelectedPO={parsedSelectedPO}
               parsedRoutingSheet={parsedRoutingSheet}
@@ -345,7 +370,7 @@ const DimensionReportHome = () => {
           <hr className="my-4 border-t border-gray-300" />
           <div className="flex justify-end mx-4 my-6">
             {parsedRoutingSheet &&
-            parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
+              parsedRoutingSheet.RoutingSheets.startsWith("Stud") ? (
               <PDFDownloadLink
                 document={
                   <Document>

@@ -14,7 +14,7 @@ import DimensionInspectionMain from "./DimensionInspectionMain.jsx";
 const styles = StyleSheet.create({
   page: {
     flexDirection: "row",
-    backgroundColor: "#E4E4E4",
+    backgroundColor: "#FFFFFF",
     padding: 10,
   },
   section: {
@@ -96,6 +96,10 @@ const styles = StyleSheet.create({
 });
 
 const DimensionInspection = ({ data }) => {
+  const formatObservationValue = (value) => {
+    return value.toFixed(2);
+  };
+
   return (
     <View style={styles.section}>
       <View style={styles.header} fixed>
@@ -215,11 +219,11 @@ const DimensionInspection = ({ data }) => {
             tolerance2={
               data.tolerancemax ? data.tolerancemax : data.studendvalue
             }
-            observedDimensions1={data.observationValues[0]}
-            observedDimensions2={data.observationValues[1]}
-            observedDimensions3={data.observationValues[2]}
-            observedDimensions4={data.observationValues[3]}
-            observedDimensions5={data.observationValues[4]}
+            observedDimensions1={formatObservationValue(data.observationValues[0])}
+            observedDimensions2={formatObservationValue(data.observationValues[1])}
+            observedDimensions3={formatObservationValue(data.observationValues[2])}
+            observedDimensions4={formatObservationValue(data.observationValues[3])}
+            observedDimensions5={formatObservationValue(data.observationValues[4])}
             operatorName={data.operatorName}
             instrumentsUsed={data.instrumentUsed}
           />

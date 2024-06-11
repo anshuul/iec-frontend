@@ -33,8 +33,11 @@ const MaterialIssueSlipForm = () => {
 
   const [selectedFile, setSelectedFile] = useState(null);
 
+  const [loading, setLoading] = useState(false);
+
+
   const selectedFilePath =
-    selectedFile && `http://localhost:8000/${selectedFile.path}`;
+    selectedFile && `${process.env.NEXT_PUBLIC_BACKEND_URL}/${selectedFile.path}`;
 
   const handleDownloadSelected = async () => {
     try {
@@ -60,12 +63,12 @@ const MaterialIssueSlipForm = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/materialissueslip/get-materialIssueSlipByID/${id}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/materialissueslip/get-materialIssueSlipByID/${id}`
         );
         const responseData = response.data;
 
         setMaterialIssueForm((prevState) => ({
-          ...prevState,
+          ...prevState, // Spread previous state
           materialSlipName: responseData.materialSlipName,
           itemDescription: responseData.itemDescription,
           materialGrade: responseData.materialGrade,
@@ -119,14 +122,13 @@ const MaterialIssueSlipForm = () => {
     }
   };
 
-  console.log("selectedFile in materialslip", selectedFile)
-
   const handleGoBack = () => {
     router.back();
   };
 
   const saveFormData = async () => {
     try {
+      setLoading(true);
       const newCustomerPO = JSON.parse(
         localStorage.getItem("selectedCustomerPO")
       );
@@ -168,7 +170,7 @@ const MaterialIssueSlipForm = () => {
       }
 
       const response = await axios.put(
-        `http://localhost:8000/api/materialissueslip/update-materialIssueSlip/${id}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/materialissueslip/update-materialIssueSlip/${id}`,
         formData,
         {
           headers: {
@@ -185,7 +187,8 @@ const MaterialIssueSlipForm = () => {
       );
 
       const fetchProductionReportId = await axios.get(
-        `http://localhost:8000/api/productionReport/get-generatedProductionReportId/${UpdatedMaterialIssueSlipData.poNo}/${UpdatedMaterialIssueSlipData.prefix}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/get-generatedProductionReportId/${UpdatedMaterialIssueSlipData.poNo}/${UpdatedMaterialIssueSlipData.prefix}`
+        // `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/get-generatedProductionReportId?poNo=${UpdatedMaterialIssueSlipData.poNo}&&prefix=${UpdatedMaterialIssueSlipData.prefix}`
       );
       console.log("fetchProductionReportId", fetchProductionReportId.data);
       const productionReportId =
@@ -209,7 +212,7 @@ const MaterialIssueSlipForm = () => {
 
       // Update or Create Production Report
       const updateProductionReport = await axios.put(
-        `http://localhost:8000/api/productionReport/create-updateGenerateProductionReport/${productionReportId}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/create-updateGenerateProductionReport/${productionReportId}`,
         {
           newCustomerPo: newCustomerPO,
           UpdatedMaterialIssueSlipData: UpdatedMaterialIssueSlipData,
@@ -222,6 +225,8 @@ const MaterialIssueSlipForm = () => {
       router.push("/production/material-issue-slip");
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
   console.log("materialIssueForm in Form", materialIssueForm);
@@ -524,7 +529,8 @@ const MaterialIssueSlipForm = () => {
         <div className="flex justify-end">
           <button
             onClick={saveFormData}
-            className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded"
+            className={`flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded ${loading ? 'cursor-not-allowed opacity-50' : ''}`}
+            disabled={loading}
           >
             Save
             <FiSave className="ml-2" />

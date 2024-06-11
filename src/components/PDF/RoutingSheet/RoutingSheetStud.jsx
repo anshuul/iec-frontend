@@ -15,7 +15,7 @@ import RoutingSheetNutMain from "./RoutingSheetMain.jsx";
 const styles = StyleSheet.create({
   page: {
     flexDirection: "row",
-    backgroundColor: "#E4E4E4",
+    backgroundColor: "#FFFFFF",
     padding: 10,
   },
   section: {
@@ -426,19 +426,6 @@ const RoutingSheetStud = ({ data }) => {
             <Text style={{ width: "70px", ...styles.cell3 }}>Opt. Sign</Text>
             <Text style={{ width: "70px", ...styles.cell3 }}>Remarks</Text>
           </View>
-          {/* <RoutingSheetNutMain
-            srNo={1}
-            operatorName={tableData.routingSheet.processRows[0].operatorName}
-            machineNo={tableData.routingSheet.processRows[0].machineNo}
-            processDescription={
-              tableData.routingSheet.processRows[0].processDescription
-            }
-            procedureNo={tableData.routingSheet.processRows[0].procedureNo}
-            orderQuantity={tableData.routingSheet.processRows[0].orderQty}
-            processQuantity={tableData.routingSheet.processRows[0].processQty}
-            startDate={tableData.routingSheet.processRows[0].startTime}
-            endDate={tableData.routingSheet.processRows[0].endTime}
-          /> */}
           {data?.map((ele, i) => (
             <View wrap>
               <RoutingSheetNutMain

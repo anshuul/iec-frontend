@@ -15,7 +15,7 @@ import ProductionReportMain from "./ProductionReportMain.jsx";
 const styles = StyleSheet.create({
   page: {
     flexDirection: "row",
-    backgroundColor: "#E4E4E4",
+    backgroundColor: "#FFFFFF",
     padding: 10,
   },
   section: {

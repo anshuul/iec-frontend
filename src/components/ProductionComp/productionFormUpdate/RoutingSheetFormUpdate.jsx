@@ -39,22 +39,29 @@ const RoutingSheetFormUpdate = () => {
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [processRowToDelete, setProcessRowToDelete] = useState(null);
 
+  const [loading, setLoading] = useState(false);
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/routingSheet/get-routingSheetById/${id}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/get-routingSheetById/${id}`
         );
         const responseData = Array.isArray(response.data)
           ? response.data
           : [response.data];
+        console.log("responseData in routing", responseData)
         console.log("responseData routing", responseData[0]);
+
+        const routingSheetId = responseData[0]?._id;
+        console.log("routingSheetId in oth index", routingSheetId);
 
         const newRows = responseData[0]?.processRows.map((row, index) => {
           let startTime = "";
           let endTime = "";
           let operatorName = "";
-          let procedureNo = "";
+          // let procedureNo = "";
           let orderQty = "";
           let processQty = "";
 
@@ -73,9 +80,9 @@ const RoutingSheetFormUpdate = () => {
             // processDescription =
             //   productionReportSliceDataForRouting[0]?.processRows[index]
             //     ?.jobDescription || "";
-            procedureNo =
-              productionReportSliceDataForRouting[0]?.processRows[index]
-                ?.procedures || "";
+            // procedureNo =
+            //   productionReportSliceDataForRouting[0]?.processRows[index]
+            //     ?.procedures || "";
             orderQty =
               productionReportSliceDataForRouting[0]?.processRows[index]
                 ?.orderQty || "";
@@ -83,27 +90,45 @@ const RoutingSheetFormUpdate = () => {
               productionReportSliceDataForRouting[0]?.processRows[index]
                 ?.processQty || "";
           } else if (row.routingSheetNo.startsWith("Nut")) {
-            startTime =
-              productionReportSliceDataForRouting[1]?.processRows[index]
-                ?.startTime || "";
-            endTime =
-              productionReportSliceDataForRouting[1]?.processRows[index]
-                ?.endTime || "";
-            operatorName =
-              productionReportSliceDataForRouting[1]?.processRows[index]
-                ?.operatorName || "";
-            // processDescription =
-            //   productionReportSliceDataForRouting[1]?.processRows[index]
-            //     ?.jobDescription || "";
-            procedureNo =
-              productionReportSliceDataForRouting[1]?.processRows[index]
-                ?.procedures || "";
-            orderQty =
-              productionReportSliceDataForRouting[1]?.processRows[index]
-                ?.orderQty || "";
-            processQty =
-              productionReportSliceDataForRouting[1]?.processRows[index]
-                ?.processQty || "";
+            if (productionReportSliceDataForRouting.length > 1) {
+              startTime =
+                productionReportSliceDataForRouting[1]?.processRows[index]
+                  ?.startTime || "";
+              endTime =
+                productionReportSliceDataForRouting[1]?.processRows[index]
+                  ?.endTime || "";
+              operatorName =
+                productionReportSliceDataForRouting[1]?.processRows[index]
+                  ?.operatorName || "";
+              // procedureNo =
+              //   productionReportSliceDataForRouting[1]?.processRows[index]
+              //     ?.procedures || "";
+              orderQty =
+                productionReportSliceDataForRouting[1]?.processRows[index]
+                  ?.orderQty || "";
+              processQty =
+                productionReportSliceDataForRouting[1]?.processRows[index]
+                  ?.processQty || "";
+            } else {
+              startTime =
+                productionReportSliceDataForRouting[0]?.processRows[index]
+                  ?.startTime || "";
+              endTime =
+                productionReportSliceDataForRouting[0]?.processRows[index]
+                  ?.endTime || "";
+              operatorName =
+                productionReportSliceDataForRouting[0]?.processRows[index]
+                  ?.operatorName || "";
+              // procedureNo =
+              //   productionReportSliceDataForRouting[0]?.processRows[index]
+              //     ?.procedures || "";
+              orderQty =
+                productionReportSliceDataForRouting[0]?.processRows[index]
+                  ?.orderQty || "";
+              processQty =
+                productionReportSliceDataForRouting[0]?.processRows[index]
+                  ?.processQty || "";
+            }
           }
 
           return {
@@ -112,11 +137,11 @@ const RoutingSheetFormUpdate = () => {
             startTime,
             endTime,
             operatorName,
-            procedureNo,
+            // procedureNo,
             orderQty,
             processQty,
             processRowNumber: index + 1,
-            routingSheetId: responseData[0]._id,
+            routingSheetId,
           };
         });
 
@@ -132,26 +157,6 @@ const RoutingSheetFormUpdate = () => {
     fetchData();
   }, [id, productionReportSliceDataForRouting]);
 
-  const handleAddRow = () => {
-    const newRowData = {
-      srNo: rowData.length + 1,
-      date: "",
-      operatorName: "",
-      machineNo: "",
-      processDescription: "",
-      procedureNo: "",
-      orderQty: 0,
-      processQty: 0,
-      startTime: "",
-      endTime: "",
-      optSign: "",
-      remarks: "",
-      poNo: "",
-      routingSheetNumber: 0,
-      processRowNumber: rowData.length + 1, // Update processRowNumber
-    };
-    setRowData([...rowData, newRowData]);
-  };
 
   const handleFileSelection = (e) => {
     const file = e.target.files[0];
@@ -165,25 +170,35 @@ const RoutingSheetFormUpdate = () => {
 
   const handleSave = async () => {
     try {
-      const formData = new FormData();
-      const updatedData = { ...routingSheet, processRows: rowData };
-      console.log("updatedData in routing sheet handleSave", updatedData);
-      formData.append("routingSheetId", id);
-      formData.append("newData", updatedData);
-      if (attachment) {
-        formData.append("attachment", attachment);
-        formData.append("attachmentPoNo", routingSheet.poNo); // Include the poNo for the file destination
-      }
+      setLoading(true);
 
-      await axios.put(
-        `http://localhost:8000/api/routingSheet/update-generated-routingsheet/${id}`,
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
-      alert("Routing sheet updated successfully");
+      // Prepare data to be sent in the request body
+      const requestData = {
+        processRows: rowData.map(row => ({
+          _id: row._id,
+          operatorName: row.operatorName,
+          machineNo: row.machineNo,
+          processDescription: row.processDescription,
+          procedureNo: row.procedureNo,
+          orderQty: row.orderQty,
+          processQty: row.processQty,
+          startTime: row.startTime,
+          endTime: row.endTime,
+          optSign: row.optSign,
+          remarks: row.remarks
+        }))
+      };
+
+      // Send PUT request to update the routing sheet
+      await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/update-routing-sheet/${id}`, requestData);
+
+      router.push('/production/routing-sheet');
+      setLoading(false);
+      // Redirect to the routing sheet page or do any other necessary action
     } catch (error) {
       console.error("Error updating routing sheet:", error);
       alert("Failed to update routing sheet");
+      setLoading(false);
     }
   };
 
@@ -277,13 +292,7 @@ const RoutingSheetFormUpdate = () => {
         <FiArrowLeft className="mr-2" />
         Back
       </button>
-      <button
-        onClick={handleAddRow}
-        className="flex items-center px-4 py-2 mb-2 text-lg font-bold text-black"
-      >
-        <TiPlus className="mr-2" />
-        Add Row
-      </button>
+
       <div className="ag-theme-alpine px-4 w-full h-[75vh]">
         <AgGridReact
           columnDefs={columnDefs}
@@ -326,7 +335,8 @@ const RoutingSheetFormUpdate = () => {
         <div className="flex">
           <button
             onClick={handleSave}
-            className="flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded"
+            className={`flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded ${loading ? 'cursor-not-allowed opacity-50' : ''}`}
+            disabled={loading}
           >
             Save
             <FiSave className="ml-2" />
