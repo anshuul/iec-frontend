@@ -15,7 +15,7 @@ import formatDate from "../utils/formatDate.js";
 const styles = StyleSheet.create({
   page: {
     flexDirection: "row",
-    backgroundColor: "#E4E4E4",
+    backgroundColor: "#FFFFFF",
     padding: 10,
   },
   section: {
@@ -97,29 +97,7 @@ const styles = StyleSheet.create({
 });
 
 // Main component to render the PDF
-const ProductionPlanning = ({ data, attachmentPaths }) => {
-  // const handleDownloadAll = async () => {
-  //   try {
-  //     for (const path of attachmentPaths) {
-  //       const response = await fetch(path);
-  //       if (!response.ok) {
-  //         throw new Error("Network response was not ok");
-  //       }
-  //       const blob = await response.blob();
-  //       const url = window.URL.createObjectURL(new Blob([blob]));
-  //       const a = document.createElement("a");
-  //       a.href = url;
-  //       a.download = path.split("/").pop(); // Set the file name
-  //       document.body.appendChild(a);
-  //       a.click();
-  //       window.URL.revokeObjectURL(url);
-  //       document.body.removeChild(a);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error downloading PDF:", error);
-  //   }
-  // };
-  
+const ProductionPlanning = ({ data}) => {
   return (
     <Document>
       <Page size="A4" style={styles.page} orientation="landscape" wrap>

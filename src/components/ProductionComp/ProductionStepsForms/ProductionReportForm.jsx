@@ -87,9 +87,9 @@ const ProductionReportForm = () => {
             // Split the date into parts and rearrange them to format as dd/mm/yyyy if datePart exists
             const formattedDate = datePart
               ? (() => {
-                  const parts = datePart.split("/");
-                  return `${parts[1]}/${parts[0]}/${parts[2]}`;
-                })()
+                const parts = datePart.split("/");
+                return `${parts[1]}/${parts[0]}/${parts[2]}`;
+              })()
               : "";
 
             // Extract Date and Time parts from endTime
@@ -103,9 +103,9 @@ const ProductionReportForm = () => {
             // Split the date into parts and rearrange them to format as dd/mm/yyyy if datePart exists
             const formattedDateForEndTime = datePartForEnd
               ? (() => {
-                  const parts = datePartForEnd.split("/");
-                  return `${parts[1]}/${parts[0]}/${parts[2]}`;
-                })()
+                const parts = datePartForEnd.split("/");
+                return `${parts[1]}/${parts[0]}/${parts[2]}`;
+              })()
               : "";
             console.log("formattedDateForEndTime", formattedDateForEndTime);
 
@@ -158,7 +158,7 @@ const ProductionReportForm = () => {
         // Check if the row has been modified
         if (row.modified) {
           const { productionReportId, _id, ...updatedProcessRowData } = row;
-
+          console.log("updatedProcessRowData in production report", updatedProcessRowData)
           // Create a FormData object
           const formData = new FormData();
 
@@ -183,7 +183,7 @@ const ProductionReportForm = () => {
             const poNo = data ? data.poNo : null;
             formData.append("attachmentPoNo", poNo);
           }
-
+          console.log("formData in production report", formData)
           await axios.put(
             `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/${productionReportId}/${_id}`,
             formData,
@@ -196,6 +196,8 @@ const ProductionReportForm = () => {
           row.modified = false;
         }
       }
+
+      router.push('/production/production-report');
     } catch (error) {
       console.error("Error updating process row:", error);
     } finally {
@@ -336,9 +338,8 @@ const ProductionReportForm = () => {
           <button
             onClick={handleSave}
             disabled={loading}
-            className={`flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded ${
-              loading ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+            className={`flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded ${loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
           >
             {loading ? "Saving..." : "Save"}
             <FiSave className="ml-2" />

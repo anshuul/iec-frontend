@@ -4,7 +4,7 @@ export const getPlanningSheetData = async (updatedCustomerPO) => {
   try {
     // Get the planning sheet IDs
     const getPlanningSheetsId = await axios.get(
-      `http://localhost:8000/api/production/get-getGeneratedProductionPlanningSheetIds?poNo=${updatedCustomerPO.poNo}`
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/production/get-getGeneratedProductionPlanningSheetIds?poNo=${updatedCustomerPO.poNo}`
     );
 
     // Planning sheet ID
