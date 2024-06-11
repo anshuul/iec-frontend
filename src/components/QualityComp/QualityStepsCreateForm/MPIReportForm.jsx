@@ -241,7 +241,7 @@ const MPIReportForm = () => {
 
       // Call your API endpoint here with axios
       const response = await axios.post(
-        "http://localhost:8000/api/quality/mpi/create-mpi-report",
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/mpi/create-mpi-report`,
         formData,
         {
           headers: {

@@ -76,7 +76,7 @@ const HardnessReportForm = () => {
 
       // Call your API endpoint here with axios
       const response = await axios.post(
-        "http://localhost:8000/api/quality/hardness/create-hardness-report",
+        "${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/hardness/create-hardness-report",
         formData
       );
       console.log("response in quality module heat treat report", response);

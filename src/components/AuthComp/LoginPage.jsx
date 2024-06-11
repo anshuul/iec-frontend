@@ -17,7 +17,7 @@ const LoginPage = () => {
     try {
       console.log("Start");
       const response = await axios.post(
-        "http://localhost:8000/api/users/login",
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/login`,
         {
           email,
           password,

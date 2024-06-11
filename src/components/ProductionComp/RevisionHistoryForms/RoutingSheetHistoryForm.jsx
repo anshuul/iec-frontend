@@ -27,7 +27,7 @@ const RoutingSheetHistoryForm = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/routingSheet/get-getSingleRoutingHistoryByroutingId/${currentId}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/get-getSingleRoutingHistoryByroutingId/${currentId}`
         );
         console.log("History Response Data Routing", response.data);
 

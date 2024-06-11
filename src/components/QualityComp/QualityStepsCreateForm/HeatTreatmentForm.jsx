@@ -111,7 +111,7 @@ const HeatTreatmentForm = () => {
 
       // Call your API endpoint here with axios
       const response = await axios.post(
-        "http://localhost:8000/api/quality/heatTreatment/create-heatTreatment-report",
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/heatTreatment/create-heatTreatment-report`,
         formData,
         {
           headers: {

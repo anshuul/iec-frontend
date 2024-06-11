@@ -53,7 +53,7 @@ const ProductionReportForm = () => {
           const parsedRoutingSheet = JSON.parse(selectedRoutingSheet);
           console.log("_id", parsedRoutingSheet._id);
           const routingSheetIdData = await axios.get(
-            `http://localhost:8000/api/productionReport/get-production-report-by-routing-sheet/${parsedRoutingSheet._id}`
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/get-production-report-by-routing-sheet/${parsedRoutingSheet._id}`
           );
           console.log("routingSheetIdData", routingSheetIdData.data);
           setData(routingSheetIdData.data);
@@ -63,13 +63,13 @@ const ProductionReportForm = () => {
           console.log("firstReportId", firstReportId);
 
           response = await axios.get(
-            `http://localhost:8000/api/productionReport/get-production-reportById/${firstReportId}`
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/get-production-reportById/${firstReportId}`
           );
           console.log("responsebyid", response.data);
         } else {
           // Fetch all material issue slips if no customer PO is selected
           response = await axios.get(
-            "http://localhost:8000/api/productionReport/get-all-production-report"
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/get-all-production-report`
           );
         }
 
@@ -185,7 +185,7 @@ const ProductionReportForm = () => {
           }
 
           await axios.put(
-            `http://localhost:8000/api/productionReport/${productionReportId}/${_id}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/${productionReportId}/${_id}`,
             formData,
             { headers: { "Content-Type": "multipart/form-data" } }
           );
@@ -213,7 +213,7 @@ const ProductionReportForm = () => {
     try {
       console.log("Deleting process row:", processRowId);
       await axios.delete(
-        `http://localhost:8000/api/productionReport/${productionReportId}/${processRowId}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/${productionReportId}/${processRowId}`
       );
       const updatedRowData = rowData.filter((row) => row._id !== processRowId);
       setRowData(updatedRowData);

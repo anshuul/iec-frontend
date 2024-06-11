@@ -32,12 +32,12 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
           console.log("poNo", parsedCustomerPO.poNo);
           // Fetch material issue slips based on the selected customer PO
           response = await axios.get(
-            `http://localhost:8000/api/materialissueslip/get-materialIssueSlip/${parsedCustomerPO.poNo}`
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/materialissueslip/get-materialIssueSlip/${parsedCustomerPO.poNo}`
           );
         } else {
           // Fetch all material issue slips if no customer PO is selected
           response = await axios.get(
-            "http://localhost:8000/api/materialissueslip/get-materialIssueSlip"
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/materialissueslip/get-materialIssueSlip`
           );
         }
 
@@ -90,10 +90,10 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
     try {
       setLoading(true);
       // const response = await axios.get(
-      //   `http://localhost:8000/api/materialissueslip/materialIssueSlipHistory/${poNo}`
+      //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/materialissueslip/materialIssueSlipHistory/${poNo}`
       // );
       const response = await axios.get(
-        `http://localhost:8000/api/materialissueslip/materialIssueSlipHistory2/${_id}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/materialissueslip/materialIssueSlipHistory2/${_id}`
       );
       console.log("Response data material:", response.data);
       console.log(
@@ -149,7 +149,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
     try {
       setLoading(true);
       await axios.delete(
-        `http://localhost:8000/api/materialissueslip/delete-materialissueslipbyid/${data._id}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/materialissueslip/delete-materialissueslipbyid/${data._id}`
       );
       const updatedRows = rowData.filter((row) => row !== data);
       setRowData(updatedRows);

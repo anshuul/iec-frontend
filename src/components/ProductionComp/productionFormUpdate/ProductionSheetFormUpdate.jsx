@@ -73,7 +73,7 @@ const ProductionSheetFormUpdate = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/production/get-planningSheetById/${id}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/production/get-planningSheetById/${id}`
         );
         const responseData = response.data;
         console.log("responseData", responseData);
@@ -172,7 +172,7 @@ const ProductionSheetFormUpdate = () => {
     try {
       setLoading(true)
       const response = await axios.put(
-        `http://localhost:8000/api/production/update-planningSheet/${id}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/production/update-planningSheet/${id}`,
         formData,
         {
           headers: {
@@ -196,6 +196,7 @@ const ProductionSheetFormUpdate = () => {
   console.log("attachments in planning sheet", attachments);
 
   const attachmentPaths = Object.values(attachments).map(
+    // (attachment) => `${process.env.NEXT_PUBLIC_BACKEND_URL}/${attachment?.path}`
     (attachment) => `http://localhost:8000/${attachment?.path}`
   );
   console.log("attachmentPaths in planning sheet", attachmentPaths);

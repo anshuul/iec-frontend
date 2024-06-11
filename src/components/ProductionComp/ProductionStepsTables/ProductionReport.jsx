@@ -40,14 +40,14 @@ const ProductionReport = ({ productionStep }) => {
           const parsedRoutingSheet = JSON.parse(selectedRoutingSheet);
           console.log("_id", parsedRoutingSheet._id);
           response = await axios.get(
-            `http://localhost:8000/api/productionReport/get-production-report-by-routing-sheet/${parsedRoutingSheet._id}`
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/get-production-report-by-routing-sheet/${parsedRoutingSheet._id}`
           );
           console.log("in condition response", response.data);
           console.log("responsebyid", selectedRoutingSheet);
         } else {
           // Fetch all material issue slips if no customer PO is selected
           response = await axios.get(
-            "http://localhost:8000/api/productionReport/get-all-production-report"
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/get-all-production-report`
           );
         }
 
@@ -88,7 +88,7 @@ const ProductionReport = ({ productionStep }) => {
     try {
       setLoading(true);
       await axios.delete(
-        `http://localhost:8000/api/productionReport/delete-productionReport/${data.productionReportID}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/delete-productionReport/${data.productionReportID}`
       );
       const updatedRows = rowData.filter((row) => row !== data);
       setRowData(updatedRows);
@@ -104,7 +104,7 @@ const ProductionReport = ({ productionStep }) => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:8000/api/productionReport/get-productionReportHistory/${productionReportID}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/get-productionReportHistory/${productionReportID}`
       );
 
       console.log(

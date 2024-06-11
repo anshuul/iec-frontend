@@ -82,7 +82,7 @@ const MaterialIssueForm = () => {
       }
 
       const response = await axios.post(
-        "http://localhost:8000/api/materialissueslip/createMaterialIssueSlip",
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/materialissueslip/createMaterialIssueSlip`,
         formData,
         {
           headers: {

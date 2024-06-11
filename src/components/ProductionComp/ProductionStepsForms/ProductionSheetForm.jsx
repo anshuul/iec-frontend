@@ -207,7 +207,7 @@ const ProductionSheetForm = () => {
     });
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/production/createPlanningSheet",
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/production/createPlanningSheet`,
         formData,
         {
           headers: {

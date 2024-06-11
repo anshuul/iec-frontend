@@ -212,7 +212,7 @@ const RoutingSheetFormUpdate = () => {
     try {
       console.log("Deleting process row:", processRowId);
       await axios.delete(
-        `http://localhost:8000/api/routingSheet/delete-processRow/${routingSheetId}/${processRowId}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/delete-processRow/${routingSheetId}/${processRowId}`
       );
       const updatedRowData = rowData.filter((row) => row._id !== processRowId);
       setRowData(updatedRowData);
