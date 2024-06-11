@@ -11,6 +11,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { TiPlus } from "react-icons/ti";
 import ListItemModal from "./ListItemModal";
 import InputRow from "./InputRow";
+import ListItemInputs from "./ListItem/ListItemInputs";
 
 const ProductionForm = () => {
   const searchParams = useSearchParams();
@@ -284,8 +285,7 @@ const ProductionForm = () => {
         </button>
 
         {/* Container for inputs rows with horizontal scroll */}
-        <div className="overflow-x-auto border max-w-screen-xl border-gray-200 rounded-md p-2">
-          {/* Inputs Row */}
+        {/* <div className="overflow-x-auto border max-w-screen-xl border-gray-200 rounded-md p-2">
           <div className="flex space-x-4">
             {inputRows.map((row, index) => (
               <InputRow
@@ -296,6 +296,25 @@ const ProductionForm = () => {
                 placeholder={row.placeholder}
               />
             ))}
+          </div>
+        </div> */}
+        <div className="overflow-x-auto border max-w-screen-xl border-gray-200 rounded-md p-2">
+          {/* Inputs Row */}
+          <div className="flex space-x-4">
+            <ListItemInputs
+              materialCode={materialCode}
+              setMaterialCode={setMaterialCode}
+              studItemDescription={studItemDescription}
+              nutItemDescription={nutItemDescription}
+              diameterDimension={diameterDimension}
+              thread={thread}
+              setStudItemDescription={setStudItemDescription}
+              setNutItemDescription={setNutItemDescription}
+              setSelectedSurface={setSelectedSurface}
+              setSelectedItem={setSelectedItem}
+              setDiameterDimension={setDiameterDimension}
+              setThread={setThread}
+            />
           </div>
         </div>
         {/* {showModal && (
