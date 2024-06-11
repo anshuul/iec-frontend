@@ -22,6 +22,7 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import NutDimensionReportPopup from "./NutDimensionReportPopUp";
+import Link from "next/link";
 const styles = StyleSheet.create({
   page: {
     flexDirection: "row",
@@ -324,7 +325,9 @@ const DimensionReportHome = () => {
             </button>
           )
         ) : (
-          <p className="px-4 py-2 m-4 bg-red-200 text-red-700 font-bold rounded-lg">Please select a routing sheet</p>
+          <Link href={"/production/routing-sheet"}>
+            <p className="px-4 py-2 m-4 bg-red-200 text-red-700 font-bold rounded-lg">Please select a routing sheet</p>
+          </Link>
         )}
       </div>
       {showStudPopup && (
