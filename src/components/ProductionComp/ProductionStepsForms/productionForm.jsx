@@ -9,8 +9,6 @@ import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { TiPlus } from "react-icons/ti";
-import ListItemModal from "./ListItemModal";
-import InputRow from "./InputRow";
 import ListItemInputs from "./ListItem/ListItemInputs";
 
 const ProductionForm = () => {
@@ -47,49 +45,92 @@ const ProductionForm = () => {
 
   const [loading, setLoading] = useState(false);
 
-  // Popup window state
-  const [showModal, setShowModal] = useState(false);
-  const [listItems, setListItems] = useState([]);
-
-  // const handleAddListItem = () => {
-  //   setShowModal(true);
-  // };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
-
-  const handleListItemSave = (formData) => {
-    setListItems([...listItems, formData]);
-    setShowModal(false);
-  };
-
-  // Inputs Row
-  const [openInputsRow, setOpenInputsRow] = useState();
-  const [inputRows, setInputRows] = useState([
-    { label: 'Customer Name', value: '', placeholder: 'Customer Name' },
-    { label: 'Created By', value: '', placeholder: 'Created By' },
-    { label: 'PO No', value: '', placeholder: 'PO No' },
-    { label: 'Material Code', value: '', placeholder: 'Material Code' },
-    { label: 'Stud Item Description', value: '', placeholder: 'Stud Item Description' },
-    { label: 'Nut Item Description', value: '', placeholder: 'Nut Item Description' },
-    { label: 'Selected Item', value: '', placeholder: 'Selected Item' },
-    { label: 'Selected Surface', value: '', placeholder: 'Selected Surface' },
-    { label: 'Stud Grade', value: '', placeholder: 'Stud Grade' },
-    { label: 'Nut Grade', value: '', placeholder: 'Nut Grade' },
-    // Add more initial input rows as needed
+  // State for managing list items
+  const [listItems, setListItems] = useState([
+    {
+      materialCode: "",
+      studItemDescription: "",
+      nutItemDescription: "",
+      selectedItem: "",
+      selectedSurface: "",
+      studGrade: "",
+      nutGrade: "",
+      diameter: "",
+      diameterDimension: "mm",
+      thread: "",
+      length: "",
+      lengthDimension: "mm",
+      cuttingDiameter: "",
+      cuttingthread: "",
+      cuttingLength: "",
+      quantity: "",
+      orderDate: new Date(),
+    },
   ]);
 
-
-  const handleAddListItem = () => {
-    const newRow = { label: '', value: '', placeholder: '' };
-    setInputRows([...inputRows, newRow]);
+  const addNewListItem = () => {
+    setListItems([...listItems, {
+      materialCode: "",
+      studItemDescription: "",
+      nutItemDescription: "",
+      selectedItem: "",
+      selectedSurface: "",
+      studGrade: "",
+      nutGrade: "",
+      diameter: "",
+      diameterDimension: "mm",
+      thread: "",
+      length: "",
+      lengthDimension: "mm",
+      cuttingDiameter: "",
+      cuttingthread: "",
+      cuttingLength: "",
+      quantity: "",
+    }]);
   };
 
-  const handleInputChange = (index, value) => {
-    const updatedRows = [...inputRows];
-    updatedRows[index].value = value;
-    setInputRows(updatedRows);
+  const saveListItem = async (index) => {
+    setLoading(true);
+    try {
+      const listItem = listItems[index];
+      const formData = new FormData();
+      formData.append("materialCode", listItem.materialCode);
+      formData.append("studItemDescription", listItem.studItemDescription);
+      formData.append("nutItemDescription", listItem.nutItemDescription);
+      formData.append("selectedItem", listItem.selectedItem);
+      formData.append("selectedSurface", listItem.selectedSurface);
+      formData.append("studGrade", listItem.studGrade);
+      formData.append("nutGrade", listItem.nutGrade);
+      formData.append("POsize[diameter][value]", listItem.diameter);
+      formData.append("POsize[diameter][dimension]", listItem.diameterDimension);
+      formData.append("POsize[thread]", listItem.thread);
+      formData.append("POsize[length][value]", listItem.length);
+      formData.append("POsize[length][dimension]", listItem.lengthDimension);
+      formData.append("Cuttingsize[cuttingdiameter][value]", listItem.cuttingDiameter);
+      formData.append("Cuttingsize[cuttingthread]", listItem.cuttingthread);
+      formData.append("Cuttingsize[cuttinglength][value]", listItem.cuttingLength);
+      formData.append("quantity", listItem.quantity);
+      formData.append("createdBy", userName);
+
+      if (selectedFile) {
+        formData.append("attachment", selectedFile);
+      }
+
+      const response = await axios.post(
+        `http://localhost:8000/api/customerPO/addListItemToPO/PO177`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("response ", response);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const userName = localStorage.getItem("userName");
@@ -158,20 +199,23 @@ const ProductionForm = () => {
     }
   };
 
-  const handleOrderDateChange = (date) => {
-    setOrderDate(date);
+  const handleOrderDateChange = (date, index) => {
+    const newListItems = [...listItems];
+    newListItems[index].orderDate = date;
+    setListItems(newListItems);
   };
 
-  const getRawMaterialDia = async () => {
+  const getRawMaterialDia = async (index) => {
     try {
+      const listItem = listItems[index];
       let adjustedLength;
 
-      if (lengthDimension === "mm") {
+      if (listItem.lengthDimension === "mm") {
         // If length dimension is in mm, simply add 5 to the length
-        adjustedLength = parseFloat(length) + 5;
-      } else if (lengthDimension === "inch") {
+        adjustedLength = parseFloat(listItem.length) + 5;
+      } else if (listItem.lengthDimension === "inch") {
         // Handle potential format "X.Y/Z inch"
-        const parts = length.split("/");
+        const parts = listItem.length.split("/");
         if (parts.length === 2) {
           const numerator = parseFloat(parts[0]);
           console.log("numerator", numerator);
@@ -183,36 +227,36 @@ const ProductionForm = () => {
           console.log("adjustedLength", adjustedLength);
         } else {
           // If not in the format "X.Y/Z inch", assume plain inch value
-          adjustedLength = parseFloat(length) * 25.4 + 5;
+          adjustedLength = parseFloat(listItem.length) * 25.4 + 5;
         }
       } else {
         // Raise an error for invalid dimension
-        throw new ValueError(
-          "Invalid length dimension. Must be 'mm' or 'inch'."
-        );
+        throw new ValueError("Invalid length dimension. Must be 'mm' or 'inch'.");
       }
 
       // Set the adjusted length to the cuttingLength state
-      setCuttingLength(adjustedLength.toString());
+      const updatedListItems = [...listItems];
+      updatedListItems[index].cuttingLength = adjustedLength.toString();
+      setListItems(updatedListItems);
 
       let response;
-      if (diameterDimension === "mm") {
+      if (listItem.diameterDimension === "mm") {
         response = await axios.get(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/helperRoutes/cuttingRawDataMM`,
           {
             params: {
-              diameter: `${diameter}`,
-              thread: `${thread}`,
+              diameter: `${listItem.diameter}`,
+              thread: `${listItem.thread}`,
             },
           }
         );
-      } else if (diameterDimension === "inch") {
+      } else if (listItem.diameterDimension === "inch") {
         response = await axios.get(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/helperRoutes/cuttingRawDataInch`,
           {
             params: {
-              diameter: `${diameter}`,
-              thread: `${thread}`,
+              diameter: `${listItem.diameter}`,
+              thread: `${listItem.thread}`,
             },
           }
         );
@@ -220,8 +264,10 @@ const ProductionForm = () => {
 
       const matchingObject = response.data.matchingObject;
       if (matchingObject) {
-        setCuttingDiameter(matchingObject.RAW_MATERIAL_DIA.toString());
-        setCuttingThread(matchingObject.PITCH.toString());
+        const updatedListItems = [...listItems];
+        updatedListItems[index].cuttingDiameter = matchingObject.RAW_MATERIAL_DIA.toString();
+        updatedListItems[index].cuttingthread = matchingObject.PITCH.toString();
+        setListItems(updatedListItems);
       } else {
         console.log("No matching object found.");
       }
@@ -277,51 +323,135 @@ const ProductionForm = () => {
 
         {/* Add list item button */}
         <button
-          onClick={handleAddListItem}
+          onClick={addNewListItem}
           className="flex items-center px-4 py-2 mb-2 text-lg font-bold text-black"
         >
           <TiPlus className="mr-2" />
-          Add List Item
+          Add New List
         </button>
 
-        {/* Container for inputs rows with horizontal scroll */}
-        {/* <div className="overflow-x-auto border max-w-screen-xl border-gray-200 rounded-md p-2">
-          <div className="flex space-x-4">
-            {inputRows.map((row, index) => (
-              <InputRow
-                key={index}
-                label={row.label}
-                value={row.value}
-                onChange={(e) => handleInputChange(index, e.target.value)}
-                placeholder={row.placeholder}
-              />
-            ))}
-          </div>
-        </div> */}
-        <div className="overflow-x-auto border max-w-screen-xl border-gray-200 rounded-md p-2">
-          {/* Inputs Row */}
-          <div className="flex space-x-4">
-            <ListItemInputs
-              materialCode={materialCode}
-              setMaterialCode={setMaterialCode}
-              studItemDescription={studItemDescription}
-              nutItemDescription={nutItemDescription}
-              diameterDimension={diameterDimension}
-              thread={thread}
-              setStudItemDescription={setStudItemDescription}
-              setNutItemDescription={setNutItemDescription}
-              setSelectedSurface={setSelectedSurface}
-              setSelectedItem={setSelectedItem}
-              setDiameterDimension={setDiameterDimension}
-              setThread={setThread}
-            />
-          </div>
-        </div>
-        {/* {showModal && (
-          <ListItemModal onSave={handleListItemSave} onClose={handleCloseModal} />
-        )} */}
+        <div className="space-y-2">
+          {listItems.map((item, index) => (
+            <div className="overflow-x-auto border max-w-screen-lg border-gray-200 rounded-md px-2">
+              <div key={index}>
+                <ListItemInputs
+                  materialCode={item.materialCode}
+                  setMaterialCode={(value) => {
+                    const newListItems = [...listItems];
+                    newListItems[index].materialCode = value;
+                    setListItems(newListItems);
+                  }}
+                  studItemDescription={item.studItemDescription}
+                  setStudItemDescription={(value) => {
+                    const newListItems = [...listItems];
+                    newListItems[index].studItemDescription = value;
+                    setListItems(newListItems);
+                  }}
+                  nutItemDescription={item.nutItemDescription}
+                  setNutItemDescription={(value) => {
+                    const newListItems = [...listItems];
+                    newListItems[index].nutItemDescription = value;
+                    setListItems(newListItems);
+                  }}
+                  selectedItem={item.selectedItem}
+                  setSelectedItem={(value) => {
+                    const newListItems = [...listItems];
+                    newListItems[index].selectedItem = value;
+                    setListItems(newListItems);
+                  }}
+                  studGrade={item.studGrade}
+                  setStudGrade={(value) => {
+                    const newListItems = [...listItems];
+                    newListItems[index].studGrade = value;
+                    setListItems(newListItems);
+                  }}
+                  nutGrade={item.nutGrade}
+                  setNutGrade={(value) => {
+                    const newListItems = [...listItems];
+                    newListItems[index].nutGrade = value;
+                    setListItems(newListItems);
+                  }}
+                  selectedSurface={item.selectedSurface}
+                  setSelectedSurface={(value) => {
+                    const newListItems = [...listItems];
+                    newListItems[index].selectedSurface = value;
+                    setListItems(newListItems);
+                  }}
+                  diameter={item.diameter}
+                  setDiameter={(value) => {
+                    const newListItems = [...listItems];
+                    newListItems[index].diameter = value;
+                    setListItems(newListItems);
+                  }}
+                  diameterDimension={item.diameterDimension}
+                  setDiameterDimension={(value) => {
+                    const newListItems = [...listItems];
+                    newListItems[index].diameterDimension = value;
+                    setListItems(newListItems);
+                  }}
+                  thread={item.thread}
+                  setThread={(value) => {
+                    const newListItems = [...listItems];
+                    newListItems[index].thread = value;
+                    setListItems(newListItems);
+                  }}
 
-        <div className="flex items-center gap-2 my-4">
+                  convertedLength={item.convertedLength}
+                  setConvertedLength={(value) => {
+                    const newListItems = [...listItems];
+                    newListItems[index].convertedLength = value;
+                    setListItems(newListItems);
+                  }}
+
+                  length={item.length}
+                  setLength={(value) => {
+                    const newListItems = [...listItems];
+                    newListItems[index].length = value;
+                    setListItems(newListItems);
+                  }}
+                  lengthDimension={item.lengthDimension}
+                  setLengthDimension={(value) => {
+                    const newListItems = [...listItems];
+                    newListItems[index].lengthDimension = value;
+                    setListItems(newListItems);
+                  }}
+                  cuttingDiameter={item.cuttingDiameter}
+                  setCuttingDiameter={(value) => {
+                    const newListItems = [...listItems];
+                    newListItems[index].cuttingDiameter = value;
+                    setListItems(newListItems);
+                  }}
+                  cuttingThread={item.cuttingthread}
+                  setCuttingThread={(value) => {
+                    const newListItems = [...listItems];
+                    newListItems[index].cuttingthread = value;
+                    setListItems(newListItems);
+                  }}
+                  cuttingLength={item.cuttingLength}
+                  setCuttingLength={(value) => {
+                    const newListItems = [...listItems];
+                    newListItems[index].cuttingLength = value;
+                    setListItems(newListItems);
+                  }}
+                  quantity={item.quantity}
+                  setQuantity={(value) => {
+                    const newListItems = [...listItems];
+                    newListItems[index].quantity = value;
+                    setListItems(newListItems);
+                  }}
+
+                  saveListItem={() => saveListItem(index)}
+                  getRawMaterialDia={() => getRawMaterialDia(index)}
+
+                  orderDate={item.orderDate}
+                  handleOrderDateChange={(date) => handleOrderDateChange(date, index)}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* <div className="flex items-center gap-2 my-4">
           <label className="relative cursor-pointer App">
             <input
               id="materialCode"
@@ -350,7 +480,7 @@ const ProductionForm = () => {
         </div>
 
         <div className="flex flex-col flex-wrap items-center gap-4 my-4 md:flex-row">
-          {/* Stud Item Description */}
+          
           <div className="flex flex-col items-center gap-2 md:flex-row">
             <label className="relative cursor-pointer App">
               <input
@@ -367,7 +497,7 @@ const ProductionForm = () => {
             </label>
           </div>
 
-          {/* Nut Item Description */}
+          
           <div className="flex flex-col items-center gap-2 md:flex-row">
             <label className="relative cursor-pointer App">
               <input
@@ -400,7 +530,7 @@ const ProductionForm = () => {
         </div>
 
         <div className="flex flex-col flex-wrap items-center my-4 md:flex-row">
-          {/* Stud Material Grade */}
+          
           <label className="relative mb-4 cursor-pointer App md:mr-4 md:mb-0">
             <input
               id="StudGrade"
@@ -415,7 +545,7 @@ const ProductionForm = () => {
             </span>
           </label>
 
-          {/* Nut Material Grade */}
+          
           <label className="relative cursor-pointer">
             <input
               id="itemGrade2"
@@ -431,12 +561,12 @@ const ProductionForm = () => {
           </label>
         </div>
 
-        {/* PO Size input */}
+        
         <div className="flex flex-col flex-wrap items-start gap-2 my-4 md:items-center md:flex-row">
           <label htmlFor="size" className="text-[16px] mr-4">
             PO Size:
           </label>
-          {/* Diameter with dimension */}
+          
           <label className="relative cursor-pointer App">
             <input
               id="sizeFirstPart"
@@ -450,7 +580,7 @@ const ProductionForm = () => {
               Diameter
             </span>
           </label>
-          {/* Diameter dimension */}
+          
           <label
             htmlFor="dimension"
             className="relative flex items-center cursor-pointer App"
@@ -461,12 +591,12 @@ const ProductionForm = () => {
               onChange={(e) => setDiameterDimension(e.target.value)}
               className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
             >
-              {/* <option value="">-select-</option> */}
+              
               <option value="inch">Inch</option>
               <option value="mm">MM</option>
             </select>
           </label>
-          {/* Pitch */}
+          
           <label className="relative cursor-pointer App">
             <input
               id="thread"
@@ -480,7 +610,7 @@ const ProductionForm = () => {
               Pitch
             </span>
           </label>
-          {/* Length */}
+          
           <label className="relative cursor-pointer App">
             <input
               id="sizeFirstPart"
@@ -494,7 +624,7 @@ const ProductionForm = () => {
               Length
             </span>
           </label>
-          {/* Length dimension */}
+          
           <label
             htmlFor="dimension"
             className="relative flex items-center cursor-pointer App"
@@ -518,12 +648,12 @@ const ProductionForm = () => {
           Get Cutting Size
         </button>
 
-        {/* Cutting Size input */}
+        
         <div className="flex flex-col flex-wrap items-start gap-2 my-4 md:items-center md:flex-row">
           <label htmlFor="size" className="text-[16px] mr-4">
             Cutting Size:
           </label>
-          {/* Diameter with dimension */}
+          
           <label className="relative cursor-pointer App">
             <input
               id="sizeFirstPart"
@@ -538,7 +668,7 @@ const ProductionForm = () => {
             </span>
           </label>
 
-          {/* Pitch */}
+          
           <label className="relative cursor-pointer App">
             <input
               id="thread"
@@ -552,7 +682,7 @@ const ProductionForm = () => {
               Pitch
             </span>
           </label>
-          {/* Length */}
+          
           <label className="relative cursor-pointer App">
             <input
               id="sizeFirstPart"
@@ -584,7 +714,6 @@ const ProductionForm = () => {
           </label>
         </div>
 
-        {/* Order Date */}
         <div className="flex items-center mb-4">
           <label htmlFor="deliveryDate" className="w-auto mr-2 text-[16px]">
             Order Date:
@@ -617,7 +746,6 @@ const ProductionForm = () => {
             Choose file
             <FiFile className="ml-2" />
           </button>
-          {/* {selectedFile && <span className="ml-2">{selectedFile.name}</span>} */}
           {selectedFile && (
             <>
               <span className="ml-2">{selectedFile.name}</span>
@@ -632,7 +760,7 @@ const ProductionForm = () => {
         </div>
         <p className="ml-2 text-sm text-red-600">
           Only PDF files are allowed and only one file can be selected.
-        </p>
+        </p> */}
 
         <hr className="my-4 border-t border-gray-300" />
         <div className="flex justify-end">

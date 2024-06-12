@@ -1,45 +1,61 @@
 // ListItemInputs.js
-import React from 'react';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const ListItemInputs = ({
     materialCode,
     setMaterialCode,
-    studItemDescription,
-    setStudItemDescription,
-    nutItemDescription,
-    setNutItemDescription,
-    selectedItem,
-    setSelectedItem,
+
     selectedSurface,
     setSelectedSurface,
-    diameterDimension,
-    setDiameterDimension,
-    
+
+    studItemDescription,
+    setStudItemDescription,
+
+    nutItemDescription,
+    setNutItemDescription,
+
+    selectedItem,
+    setSelectedItem,
+
     studGrade,
     setStudGrade,
+
     nutGrade,
     setNutGrade,
-    quantity,
-    setQuantity,
-    attachmentPath,
-    setAttachmentPath,
-    attachmentName,
-    setAttachmentName,
-    poNo,
-    setPoNo,
+
     diameter,
     setDiameter,
+
+    diameterDimension,
+    setDiameterDimension,
+
     thread,
     setThread,
-    convertedLength,
-    setConvertedLength,
-    cuttingdiameter,
+
+    length,
+    setLength,
+
+    lengthDimension,
+    setLengthDimension,
+
+    cuttingDiameter,
     setCuttingDiameter,
-    cuttingthread,
+
+    cuttingThread,
     setCuttingThread,
-    cuttinglength,
+
+    cuttingLength,
     setCuttingLength,
-    existingPO,
+
+    quantity,
+    setQuantity,
+
+    getRawMaterialDia,
+    saveListItem,
+
+    orderDate,
+    handleOrderDateChange
 }) => {
     return (
         <div className="flex flex-col items-center gap-2 md:flex-row">
@@ -115,10 +131,10 @@ const ListItemInputs = ({
 
             <label className="relative cursor-pointer App">
                 <input
-                    id="nutItemDescription"
+                    id="studGrade"
                     type="text"
-                    value={nutItemDescription}
-                    onChange={(e) => setNutItemDescription(e.target.value)}
+                    value={studGrade}
+                    onChange={(e) => setStudGrade(e.target.value)}
                     placeholder="Input"
                     className="h-10 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
@@ -129,10 +145,10 @@ const ListItemInputs = ({
 
             <label className="relative cursor-pointer App">
                 <input
-                    id="nutItemDescription"
+                    id="nutGrade"
                     type="text"
-                    value={nutItemDescription}
-                    onChange={(e) => setNutItemDescription(e.target.value)}
+                    value={nutGrade}
+                    onChange={(e) => setNutGrade(e.target.value)}
                     placeholder="Input"
                     className="h-10 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
@@ -141,14 +157,15 @@ const ListItemInputs = ({
                 </span>
             </label>
 
+            {/* PO Size */}
             <span className='w-24'>PO Size:</span>
 
             <label className="relative cursor-pointer App">
                 <input
-                    id="nutItemDescription"
+                    id="diameter"
                     type="text"
-                    value={nutItemDescription}
-                    onChange={(e) => setNutItemDescription(e.target.value)}
+                    value={diameter}
+                    onChange={(e) => setDiameter(e.target.value)}
                     placeholder="Input"
                     className="h-10 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
                 />
@@ -185,6 +202,121 @@ const ListItemInputs = ({
                     Pitch
                 </span>
             </label>
+
+            <label className="relative cursor-pointer App">
+                <input
+                    id="sizeFirstPart"
+                    type="text"
+                    value={length}
+                    onChange={(e) => setLength(e.target.value)}
+                    placeholder="Input"
+                    className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+                />
+                <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+                    Length
+                </span>
+            </label>
+            {/* Length dimension */}
+            <label
+                htmlFor="dimension"
+                className="relative flex items-center cursor-pointer App"
+            >
+                <select
+                    id="lengthUnit"
+                    value={lengthDimension}
+                    onChange={(e) => setLengthDimension(e.target.value)}
+                    className="h-10 w-24 px-2 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 transition duration-200"
+                >
+                    <option value="inch">Inch</option>
+                    <option value="mm">MM</option>
+                </select>
+            </label>
+
+            <button
+                onClick={getRawMaterialDia}
+                className="text-sm w-auto font-bold text-white bg-blue-500 rounded-lg px-4 py-2"
+            >
+                Get Size
+            </button>
+
+            {/* Cutting Size */}
+            <span className='w-24'>Cutting Size:</span>
+            {/* Diameter */}
+            <label className="relative cursor-pointer App">
+                <input
+                    id="sizeFirstPart"
+                    type="text"
+                    value={cuttingDiameter}
+                    onChange={(e) => setCuttingDiameter(e.target.value)}
+                    placeholder="Input"
+                    className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+                />
+                <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+                    Diameter
+                </span>
+            </label>
+
+            {/* Pitch */}
+            <label className="relative cursor-pointer App">
+                <input
+                    id="thread"
+                    type="text"
+                    value={cuttingThread}
+                    onChange={(e) => setCuttingThread(e.target.value)}
+                    placeholder="Input"
+                    className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+                />
+                <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+                    Pitch
+                </span>
+            </label>
+
+            {/* Length */}
+            <label className="relative cursor-pointer App">
+                <input
+                    id="sizeFirstPart"
+                    type="text"
+                    value={cuttingLength}
+                    onChange={(e) => setCuttingLength(e.target.value)}
+                    placeholder="Input"
+                    className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+                />
+                <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+                    Length
+                </span>
+            </label>
+
+            {/* Quantity */}
+            <label className="relative cursor-pointer App">
+                <input
+                    id="quantity"
+                    value={quantity}
+                    onChange={(e) => setQuantity(e.target.value)}
+                    type="text"
+                    placeholder="Input"
+                    className="h-10 w-22 px-6 text-[16px] text-black bg-white border-black border-2 rounded-lg border-opacity-50 outline-none focus:border-blue-500 placeholder-gray-300 placeholder-opacity-0 transition duration-200"
+                />
+                <span className="text-[16px] text-black text-opacity-80 bg-white absolute left-4 top-1.5 px-1 transition duration-200 input-text">
+                    Quantity
+                </span>
+            </label>
+
+            <label htmlFor="deliveryDate" className="w-32 mr-2 text-[16px]">
+                Order Date:
+            </label>
+            <DatePicker
+                selected={orderDate}
+                onChange={handleOrderDateChange}
+                dateFormat="dd/MM/yyyy"
+                className="w-44 px-3 py-2 border border-gray-300 rounded"
+            />
+
+            <button
+                onClick={saveListItem}
+                className="text-lgsm font-bold text-white bg-blue-500 rounded-lg px-4 py-2"
+            >
+                Save
+            </button>
         </div>
     );
 };
