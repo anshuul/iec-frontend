@@ -15,31 +15,10 @@ const ProductionForm = () => {
   const searchParams = useSearchParams();
 
   const CustomerPO = searchParams.get("CustomerPO");
-  console.log("first", CustomerPO);
 
   const router = useRouter();
   const [customerName, setCustomerName] = useState("");
-  // const [createdBy, setCreatedBy] = useState("");
   const [poNo, setPoNo] = useState("");
-  const [materialCode, setMaterialCode] = useState("");
-  const [studItemDescription, setStudItemDescription] = useState("");
-  const [nutItemDescription, setNutItemDescription] = useState("");
-
-  const [selectedItem, setSelectedItem] = useState("");
-  const [selectedSurface, setSelectedSurface] = useState("");
-
-  const [studGrade, setStudGrade] = useState("");
-  const [nutGrade, setNutGrade] = useState("");
-
-  const [diameter, setDiameter] = useState("");
-  const [cuttingDiameter, setCuttingDiameter] = useState("");
-  const [diameterDimension, setDiameterDimension] = useState("mm");
-  const [thread, setThread] = useState("");
-  const [cuttingthread, setCuttingThread] = useState("");
-  const [length, setLength] = useState("");
-  const [cuttingLength, setCuttingLength] = useState("");
-  const [lengthDimension, setLengthDimension] = useState("mm");
-  const [quantity, setQuantity] = useState("");
   const [orderDate, setOrderDate] = useState(new Date());
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -97,11 +76,12 @@ const ProductionForm = () => {
   };
 
   const removeListItem = (index) => {
-    const updatedListItems = listItems.filter((_, i) => i !== index);
-    const updatedSavedItems = savedItems.filter((_, i) => i !== index);
-    setListItems(updatedListItems);
-    setSavedItems(updatedSavedItems);
+    if (listItems.length > 1) {
+      const updatedListItems = listItems.filter((_, i) => i !== index);
+      setListItems(updatedListItems);
+    }
   };
+
   const saveListItem = async (index) => {
     setLoading(true);
     try {
@@ -139,7 +119,7 @@ const ProductionForm = () => {
       }
 
       const response = await axios.post(
-        `http://localhost:8000/api/customerPO/addListItemToPO/PO177`,
+        `http://localhost:8000/api/customerPO/addListItemToPO/${poNo}`,
         formData,
         {
           headers: {
@@ -147,7 +127,6 @@ const ProductionForm = () => {
           },
         }
       );
-      console.log("response ", response);
       const newSavedItems = [...savedItems];
       newSavedItems[index] = true;
       setSavedItems(newSavedItems);
@@ -175,21 +154,68 @@ const ProductionForm = () => {
     router.back();
   };
 
-  const saveFormData = async () => {
+  const saveFormData = async (event) => {
+    event.preventDefault();
     setLoading(true);
     try {
       const formData = new FormData();
       formData.append("poNo", poNo);
       formData.append("customerName", customerName);
+      formData.append("orderDate", orderDate.toISOString());
+      formData.append("createdBy", userName);
 
-      // Append poNo to the formData
-      formData.append("attachmentPoNo", poNo);
+      listItems.forEach((item, index) => {
+        formData.append(`listItem[${index}][materialCode]`, item.materialCode);
+        formData.append(
+          `listItem[${index}][studItemDescription]`,
+          item.studItemDescription
+        );
+        formData.append(
+          `listItem[${index}][nutItemDescription]`,
+          item.nutItemDescription
+        );
+        formData.append(`listItem[${index}][selectedItem]`, item.selectedItem);
+        formData.append(
+          `listItem[${index}][selectedSurface]`,
+          item.selectedSurface
+        );
+        formData.append(`listItem[${index}][studGrade]`, item.studGrade);
+        formData.append(`listItem[${index}][nutGrade]`, item.nutGrade);
+        formData.append(`listItem[${index}][diameter]`, item.diameter);
+        formData.append(
+          `listItem[${index}][diameterDimension]`,
+          item.diameterDimension
+        );
+        formData.append(`listItem[${index}][thread]`, item.thread);
+        formData.append(`listItem[${index}][length]`, item.length);
+        formData.append(
+          `listItem[${index}][lengthDimension]`,
+          item.lengthDimension
+        );
+        formData.append(
+          `listItem[${index}][cuttingDiameter]`,
+          item.cuttingDiameter
+        );
+        formData.append(
+          `listItem[${index}][cuttingthread]`,
+          item.cuttingthread
+        );
+        formData.append(
+          `listItem[${index}][cuttingLength]`,
+          item.cuttingLength
+        );
+        formData.append(`listItem[${index}][quantity]`, item.quantity);
+        formData.append(
+          `listItem[${index}][orderDate]`,
+          item.orderDate.toISOString()
+        );
+      });
+
       if (selectedFile) {
         formData.append("attachment", selectedFile);
       }
 
-      // Save main form data
-      const response = await axios.post(
+      await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/createCustomerPO`,
         formData,
         {
@@ -198,76 +224,9 @@ const ProductionForm = () => {
           },
         }
       );
-
-      // Save list item data
-      await Promise.all(
-        listItems.map(async (listItem) => {
-          const listItemFormData = new FormData();
-          listItemFormData.append("poNo", poNo);
-          listItemFormData.append("customerName", customerName);
-
-          // Append list item data to formData
-          listItemFormData.append("materialCode", listItem.materialCode);
-          listItemFormData.append(
-            "studItemDescription",
-            listItem.studItemDescription
-          );
-          listItemFormData.append(
-            "nutItemDescription",
-            listItem.nutItemDescription
-          );
-          listItemFormData.append("selectedItem", listItem.selectedItem);
-          listItemFormData.append("selectedSurface", listItem.selectedSurface);
-          listItemFormData.append("studGrade", listItem.studGrade);
-          listItemFormData.append("nutGrade", listItem.nutGrade);
-          listItemFormData.append("POsize[diameter][value]", listItem.diameter);
-          listItemFormData.append(
-            "POsize[diameter][dimension]",
-            listItem.diameterDimension
-          );
-          listItemFormData.append("POsize[thread]", listItem.thread);
-          listItemFormData.append("POsize[length][value]", listItem.length);
-          listItemFormData.append(
-            "POsize[length][dimension]",
-            listItem.lengthDimension
-          );
-          listItemFormData.append(
-            "Cuttingsize[cuttingdiameter][value]",
-            listItem.cuttingDiameter
-          );
-          listItemFormData.append(
-            "Cuttingsize[cuttingthread]",
-            listItem.cuttingthread
-          );
-          listItemFormData.append(
-            "Cuttingsize[cuttinglength][value]",
-            listItem.cuttingLength
-          );
-          listItemFormData.append("quantity", listItem.quantity);
-          listItemFormData.append("createdBy", userName);
-
-          // Append attachment if available
-          if (selectedFile) {
-            listItemFormData.append("attachment", selectedFile);
-          }
-
-          // Save list item
-          await axios.post(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/createCustomerPO`,
-            listItemFormData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            }
-          );
-        })
-      );
-
-      console.log("response ", response);
-      router.push("/production");
+      // router.push("/production");
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -292,13 +251,9 @@ const ProductionForm = () => {
         const parts = listItem.length.split("/");
         if (parts.length === 2) {
           const numerator = parseFloat(parts[0]);
-          console.log("numerator", numerator);
           const denominator = parseFloat(parts[1]);
-          console.log("denominator", denominator);
           const lengthInInch = numerator / denominator;
-          console.log("lengthInInch", lengthInInch);
           adjustedLength = lengthInInch * 25.4 + 5;
-          console.log("adjustedLength", adjustedLength);
         } else {
           // If not in the format "X.Y/Z inch", assume plain inch value
           adjustedLength = parseFloat(listItem.length) * 25.4 + 5;
@@ -418,7 +373,7 @@ const ProductionForm = () => {
                   <TiMinus className="" />
                 </button>
               )}
-              <div className="overflow-x-auto border max-w-screen-lg border-gray-200 rounded-md px-2 flex-grow">
+              <div className="overflow-x-auto border w-96 border-gray-200 rounded-md px-2 flex-grow">
                 <ListItemInputs
                   materialCode={item.materialCode}
                   setMaterialCode={(value) => {
@@ -529,6 +484,8 @@ const ProductionForm = () => {
                     handleOrderDateChange(date, index)
                   }
                   saved={savedItems[index]}
+                  index={index}
+                  saveFormData={saveFormData}
                 />
               </div>
             </div>

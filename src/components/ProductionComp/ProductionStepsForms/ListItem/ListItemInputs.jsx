@@ -54,6 +54,8 @@ const ListItemInputs = ({
   getRawMaterialDia,
   saveListItem,
   saved,
+  index,
+  saveFormData,
 
   orderDate,
   handleOrderDateChange,
@@ -313,15 +315,25 @@ const ListItemInputs = ({
         className="w-44 px-3 py-2 border border-gray-300 rounded"
       />
 
-      <button
-        onClick={saveListItem}
-        className={`text-lgsm font-bold text-white rounded-lg px-4 py-2 ${
-          saved ? "bg-gray-400 cursor-not-allowed" : "bg-green-500"
-        }`}
-        disabled={saved}
-      >
-        Add
-      </button>
+      {index < 1 && (
+        <button
+          onClick={saveFormData}
+          className={`text-lgsm font-bold text-white rounded-lg px-4 py-2 bg-blue-500`}
+        >
+          Add
+        </button>
+      )}
+      {index > 0 && (
+        <button
+          onClick={saveListItem}
+          className={`text-lgsm font-bold text-white rounded-lg px-4 py-2 ${
+            saved ? "bg-gray-400 cursor-not-allowed" : "bg-green-500"
+          }`}
+          disabled={saved}
+        >
+          Add
+        </button>
+      )}
     </div>
   );
 };
