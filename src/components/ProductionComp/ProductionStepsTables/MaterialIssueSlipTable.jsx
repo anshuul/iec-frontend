@@ -42,7 +42,7 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
         }
 
         const materialIssueSlips = response.data;
-        console.log("materialIssueSlips in material", materialIssueSlips)
+        console.log("materialIssueSlips in material", materialIssueSlips);
         // Generate srNo for each material issue slip
         const formattedData = materialIssueSlips.map((issueSlip, index) => {
           let size = "N/A";

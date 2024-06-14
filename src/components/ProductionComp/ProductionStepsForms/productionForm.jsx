@@ -1,6 +1,6 @@
 "use client";
 import Container from "@/components/common/Container";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiArrowLeft, FiFile, FiPrinter, FiSave } from "react-icons/fi";
 import { IoIosCloseCircleOutline } from "react-icons/io";
@@ -12,10 +12,6 @@ import { TiMinus, TiPlus } from "react-icons/ti";
 import ListItemInputs from "./ListItem/ListItemInputs";
 
 const ProductionForm = () => {
-  const searchParams = useSearchParams();
-
-  const CustomerPO = searchParams.get("CustomerPO");
-
   const router = useRouter();
   const [customerName, setCustomerName] = useState("");
   const [poNo, setPoNo] = useState("");
@@ -118,7 +114,7 @@ const ProductionForm = () => {
         formData.append("attachment", selectedFile);
       }
 
-      const response = await axios.post(
+      await axios.post(
         `http://localhost:8000/api/customerPO/addListItemToPO/${poNo}`,
         formData,
         {
@@ -152,6 +148,18 @@ const ProductionForm = () => {
 
   const handleGoBack = () => {
     router.back();
+  };
+
+  const generateReport = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/automateReport/${poNo}`
+      );
+      router.push("/production");
+    } catch (error) {
+      console.error("Error generating report:", error);
+    }
   };
 
   const saveFormData = async (event) => {
@@ -224,7 +232,6 @@ const ProductionForm = () => {
           },
         }
       );
-      // router.push("/production");
     } catch (error) {
       console.error(error);
     } finally {
@@ -486,6 +493,7 @@ const ProductionForm = () => {
                   saved={savedItems[index]}
                   index={index}
                   saveFormData={saveFormData}
+                  loading={loading}
                 />
               </div>
             </div>
@@ -806,7 +814,7 @@ const ProductionForm = () => {
         <hr className="my-4 border-t border-gray-300" />
         <div className="flex justify-end">
           <button
-            onClick={saveFormData}
+            onClick={generateReport}
             className={`flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded ${
               loading ? "cursor-not-allowed opacity-50" : ""
             }`}

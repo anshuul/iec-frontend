@@ -56,6 +56,7 @@ const ListItemInputs = ({
   saved,
   index,
   saveFormData,
+  loading,
 
   orderDate,
   handleOrderDateChange,
@@ -318,7 +319,10 @@ const ListItemInputs = ({
       {index < 1 && (
         <button
           onClick={saveFormData}
-          className={`text-lgsm font-bold text-white rounded-lg px-4 py-2 bg-blue-500`}
+          className={`text-lgsm font-bold text-white rounded-lg px-4 py-2 ${
+            loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500"
+          }`}
+          disabled={loading}
         >
           Add
         </button>
