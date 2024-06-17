@@ -275,7 +275,7 @@ const RoutingSheetTable = ({ productionStep }) => {
   ];
 
   const onRowClicked = (event) => {
-    const selectedRoutingSheet = event.data; // Access the clicked row data
+    const selectedRoutingSheet = event.data;
     localStorage.setItem(
       "selectedRoutingSheet",
       JSON.stringify(selectedRoutingSheet)
@@ -283,9 +283,7 @@ const RoutingSheetTable = ({ productionStep }) => {
   };
 
   return (
-    // <div className="flex flex-col items-center justify-center">
     <div className="flex flex-col mx-4 bg-white">
-      {/* Button positioned at the top right corner */}
       <button
         className="self-end px-4 py-2 m-4 bg-gray-400 rounded-lg"
         onClick={handleClick}

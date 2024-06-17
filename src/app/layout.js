@@ -12,7 +12,7 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en">
-      <body className="scrollbar-none scroll-smooth bg-white">
+      <body className="bg-white scrollbar-none scroll-smooth">
         <Provider store={store}>
           <div className="flex h-full">
             {!isLoginPage && <SideBar />}

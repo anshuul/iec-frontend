@@ -4,6 +4,7 @@ import DimensionReportHome from "@/components/ProductionComp/DimensionInspection
 import ProductionReportForm from "@/components/ProductionComp/ProductionStepsForms/ProductionReportForm";
 import DimensionReport from "@/components/ProductionComp/ProductionStepsTables/DimensionReport";
 import MaterialIssueSlipTable from "@/components/ProductionComp/ProductionStepsTables/MaterialIssueSlipTable";
+import POListItemTable from "@/components/ProductionComp/ProductionStepsTables/POListItemTable";
 import ProductionReport from "@/components/ProductionComp/ProductionStepsTables/ProductionReport";
 import ProductionSheetTable from "@/components/ProductionComp/ProductionStepsTables/ProductionSheetTable";
 import RoutingSheetTable from "@/components/ProductionComp/ProductionStepsTables/RoutingSheetTable";
@@ -27,9 +28,9 @@ const ProducitonStep = ({ params }) => {
   return (
     <div className="bg-gray-300">
       {productionStep === "po-list-item" && (
-        <ProductionSheetTable
+        <POListItemTable
           productionStep={productionStep}
-          userEmailName={userEmailName}
+          // userEmailName={userEmailName}
         />
       )}
       {productionStep === "production-planning-sheets" && (
