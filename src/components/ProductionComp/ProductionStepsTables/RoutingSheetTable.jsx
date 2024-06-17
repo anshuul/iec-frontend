@@ -31,13 +31,13 @@ const RoutingSheetTable = ({ productionStep }) => {
         console.log("start");
         setLoading(true);
         let response;
-        const selectedCustomerPO = localStorage.getItem("selectedCustomerPO");
+        const selectedPOListItem = localStorage.getItem("selectedPOListItem");
 
-        if (selectedCustomerPO) {
-          const parsedCustomerPO = JSON.parse(selectedCustomerPO);
-          console.log("poNo", parsedCustomerPO.poNo);
+        if (selectedPOListItem) {
+          const parsedPOListItem = JSON.parse(selectedPOListItem);
+          console.log("poNo", parsedPOListItem.poNo);
           response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/get-routingSheet/${parsedCustomerPO.poNo}`
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/get-routingSheetBy-listItemNo?poNo=${parsedPOListItem.poNo}&listItemNo=${parsedPOListItem.POListNo}`
           );
         } else {
           response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet`);

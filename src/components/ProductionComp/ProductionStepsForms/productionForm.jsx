@@ -375,12 +375,12 @@ const ProductionForm = () => {
               {index > 0 && (
                 <button
                   onClick={() => removeListItem(index)}
-                  className="flex items-center p-2 text-lg mx-2 font-bold text-red-500 bg-red-200 rounded-full"
+                  className="flex items-center p-2 mx-2 text-lg font-bold text-red-500 bg-red-200 rounded-full"
                 >
                   <TiMinus className="" />
                 </button>
               )}
-              <div className="overflow-x-auto border w-96 border-gray-200 rounded-md px-2 flex-grow">
+              <div className="flex-grow px-2 overflow-x-auto border border-gray-200 rounded-md w-96">
                 <ListItemInputs
                   materialCode={item.materialCode}
                   setMaterialCode={(value) => {

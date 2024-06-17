@@ -26,13 +26,13 @@ const MaterialIssueSlipTable = ({ productionStep }) => {
         let response;
 
         // Check if there's a selected customer PO in localStorage
-        const selectedCustomerPO = localStorage.getItem("selectedCustomerPO");
-        if (selectedCustomerPO) {
-          const parsedCustomerPO = JSON.parse(selectedCustomerPO);
-          console.log("poNo", parsedCustomerPO.poNo);
+        const selectedPOListItem = localStorage.getItem("selectedPOListItem");
+        if (selectedPOListItem) {
+          const parsedPOListItem = JSON.parse(selectedPOListItem);
+          console.log("poNo", parsedPOListItem.poNo);
           // Fetch material issue slips based on the selected customer PO
           response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/materialissueslip/get-materialIssueSlip/${parsedCustomerPO.poNo}`
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/materialissueslip//get-materialIssueSlipBy-listItemNo?poNo=${parsedPOListItem.poNo}&listItemNo=${parsedPOListItem.POListNo}`
           );
         } else {
           // Fetch all material issue slips if no customer PO is selected

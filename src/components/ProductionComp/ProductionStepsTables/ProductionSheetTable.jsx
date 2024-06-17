@@ -25,13 +25,13 @@ const ProductionSheetTable = ({ productionStep }) => {
       try {
         setLoading(true);
         let response;
-        const selectedCustomerPO = localStorage.getItem("selectedCustomerPO");
+        const selectedPOListItem = localStorage.getItem("selectedPOListItem");
 
-        if (selectedCustomerPO) {
-          const parsedCustomerPO = JSON.parse(selectedCustomerPO);
-          console.log("poNo", parsedCustomerPO.poNo);
+        if (selectedPOListItem) {
+          const parsedPOListItem = JSON.parse(selectedPOListItem);
+          console.log("poNo", parsedPOListItem.poNo);
           response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/production/get-planningSheet/${parsedCustomerPO.poNo}`
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/production/get-planningSheetBy-listItemNo?poNo=${parsedPOListItem.poNo}&listItemNo=${parsedPOListItem.POListNo}`
           );
         } else {
           response = await axios.get(

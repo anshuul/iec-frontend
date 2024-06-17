@@ -24,9 +24,9 @@ const POListItemTable = ({ productionStep }) => {
                 setLoading(true);
                 let response;
                 const selectedCustomerPO = localStorage.getItem("selectedCustomerPO");
+                const parsedCustomerPO = JSON.parse(selectedCustomerPO);
 
                 if (selectedCustomerPO) {
-                    const parsedCustomerPO = JSON.parse(selectedCustomerPO);
                     console.log("poNo", parsedCustomerPO.poNo);
                     response = await axios.get(
                         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/get-listItem/${parsedCustomerPO.poNo}`
@@ -40,7 +40,8 @@ const POListItemTable = ({ productionStep }) => {
                         orderDate: new Date(item.orderDate).toLocaleString(),
                         createdBy: item.createdBy,
                         createdAt: new Date(item.createdAt).toLocaleString(),
-                        _id: item._id
+                        _id: item._id,
+                        poNo: parsedCustomerPO.poNo
                     }))
                 );
             } catch (error) {
@@ -54,7 +55,7 @@ const POListItemTable = ({ productionStep }) => {
 
     const handleEditClick = (_id) => {
         router.push(
-            `/production/production-planning-sheets/productionSheetFormUpdate?id=${_id}`
+            `/production/po-list-item/POListItemFormUpdate?id=${_id}`
         );
     };
 

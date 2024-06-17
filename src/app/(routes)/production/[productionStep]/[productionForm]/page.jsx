@@ -12,6 +12,7 @@ import RoutingSheetFormUpdate from "@/components/ProductionComp/productionFormUp
 import ProductionPlanningHistoryForm from "@/components/ProductionComp/RevisionHistoryForms/ProductionPlanningHistoryForm";
 import MaterialIssueSlipHistoryForm from "@/components/ProductionComp/RevisionHistoryForms/MaterialIssueSlipHistoryForm";
 import RoutingSheetHistoryForm from "@/components/ProductionComp/RevisionHistoryForms/RoutingSheetHistoryForm";
+import POListItemUpdateForm from "@/components/ProductionComp/productionFormUpdate/POListItemUpdateForm";
 
 const productionForm = ({ params }) => {
   const { productionForm } = params;
@@ -62,6 +63,11 @@ const productionForm = ({ params }) => {
       )} */}
       {productionForm === "dimensionReportForm" && (
         <DimensionReportForm productionForm={productionForm} />
+      )}
+
+      {/* POList Item Update */}
+      {productionForm === "POListItemFormUpdate" && (
+        <POListItemUpdateForm productionForm={productionForm} />
       )}
     </div>
   );
