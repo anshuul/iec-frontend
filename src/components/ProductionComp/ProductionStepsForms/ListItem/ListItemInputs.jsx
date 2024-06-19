@@ -57,9 +57,6 @@ const ListItemInputs = ({
   index,
   saveFormData,
   loading,
-
-  orderDate,
-  handleOrderDateChange,
 }) => {
   return (
     <div className="flex flex-col items-center gap-2 md:flex-row">
@@ -239,7 +236,7 @@ const ListItemInputs = ({
 
       <button
         onClick={getRawMaterialDia}
-        className="text-sm w-auto font-bold text-white bg-blue-500 rounded-lg px-4 py-2"
+        className="w-auto px-4 py-2 text-sm font-bold text-white bg-blue-500 rounded-lg"
       >
         Get Size
       </button>
@@ -305,16 +302,6 @@ const ListItemInputs = ({
           Quantity
         </span>
       </label>
-
-      <label htmlFor="deliveryDate" className="w-32 mr-2 text-[16px]">
-        Order Date:
-      </label>
-      <DatePicker
-        selected={orderDate}
-        onChange={handleOrderDateChange}
-        dateFormat="dd/MM/yyyy"
-        className="w-44 px-3 py-2 border border-gray-300 rounded"
-      />
 
       {index < 1 && (
         <button

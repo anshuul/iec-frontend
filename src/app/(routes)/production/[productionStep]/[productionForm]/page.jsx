@@ -13,6 +13,7 @@ import ProductionPlanningHistoryForm from "@/components/ProductionComp/RevisionH
 import MaterialIssueSlipHistoryForm from "@/components/ProductionComp/RevisionHistoryForms/MaterialIssueSlipHistoryForm";
 import RoutingSheetHistoryForm from "@/components/ProductionComp/RevisionHistoryForms/RoutingSheetHistoryForm";
 import POListItemUpdateForm from "@/components/ProductionComp/productionFormUpdate/POListItemUpdateForm";
+import POListItemHistoryForm from "@/components/ProductionComp/ProductionStepsForms/ListItem/POListItemHistoryForm";
 
 const productionForm = ({ params }) => {
   const { productionForm } = params;
@@ -33,6 +34,11 @@ const productionForm = ({ params }) => {
       )}
       {productionForm === "view" && (
         <CutomerPoHistoryForm productionForm={productionForm} />
+      )}
+
+      {/* PO List Item History Form */}
+      {productionForm === "poListItemHistoryForm" && (
+        <POListItemHistoryForm productionForm={productionForm} />
       )}
       {productionForm === "planningSheet-history" && (
         <ProductionPlanningHistoryForm productionForm={productionForm} />

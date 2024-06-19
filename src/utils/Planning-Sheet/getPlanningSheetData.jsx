@@ -1,10 +1,10 @@
 import axios from "axios";
 
-export const getPlanningSheetData = async (updatedCustomerPO) => {
+export const getPlanningSheetData = async (updatedNewCustomerPo, poNo) => {
   try {
     // Get the planning sheet IDs
     const getPlanningSheetsId = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/production/get-getGeneratedProductionPlanningSheetIds/${updatedCustomerPO.poNo}`
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/production/get-getGeneratedProductionPlanningSheetIds/${poNo}`
     );
 
     // Planning sheet ID
@@ -12,35 +12,28 @@ export const getPlanningSheetData = async (updatedCustomerPO) => {
     console.log("planningSheetID", planningSheetID);
 
     // selectedItem
-    const selectedItem = updatedCustomerPO.selectedItem;
-    console.log("Planning Sheet selectedItem", selectedItem);
+    const selectedItem = updatedNewCustomerPo.selectedItem;
 
     // selectedSurface for planning sheet
-    const selectedSurface = updatedCustomerPO.selectedSurface;
-    console.log("Planning Sheet selectedSurface", selectedSurface);
+    const selectedSurface = updatedNewCustomerPo.selectedSurface;
 
     // customPoQuantity
-    const customPoQuantity = updatedCustomerPO.quantity;
-    console.log("customPoQuantity for planning", customPoQuantity);
+    const customPoQuantity = updatedNewCustomerPo.quantity;
 
     // Extract the number of nuts from selectedItem
     const nutsCountMatch = selectedItem.match(/\d+nuts/);
-    console.log("nutsCountMatch", nutsCountMatch);
 
     let modifiedQuantity = customPoQuantity;
 
     if (nutsCountMatch) {
       const nutsCount = parseInt(nutsCountMatch[0].replace("nuts", ""));
-      console.log("nutsCount", nutsCount);
 
       if (!isNaN(nutsCount)) {
-        modifiedQuantity *= nutsCount; // Increment quantity based on the number of nuts
+        modifiedQuantity *= nutsCount;
       } else {
         throw new Error("Invalid selectedItem format");
       }
     }
-
-    console.log("modifiedQuantity", modifiedQuantity);
 
     return {
       planningSheetID,

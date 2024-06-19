@@ -269,12 +269,12 @@ const ProductionTable = () => {
 
     return (
       <div className="flex flex-row items-center gap-2 pt-1 ag-theme-alpine">
-        <button
+        {/* <button
           onClick={() => handleEditClick(data.CustomerPO)}
           className="p-2 text-green-600 bg-green-200 rounded-lg"
         >
           <MdModeEdit />
-        </button>
+        </button> */}
         {/* Delete Button */}
         <button
           onClick={() => handleDeleteClick(data)}
@@ -393,7 +393,7 @@ const ProductionTable = () => {
         />
       </div>
       {/* <button
-        className="self-start px-4 py-2 m-4 bg-green-300 text-green-900 rounded-lg"
+        className="self-start px-4 py-2 m-4 text-green-900 bg-green-300 rounded-lg"
       >
         Download All PDF By PoNo
       </button> */}
