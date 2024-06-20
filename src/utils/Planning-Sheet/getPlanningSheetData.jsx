@@ -1,10 +1,14 @@
 import axios from "axios";
 
-export const getPlanningSheetData = async (updatedNewCustomerPo, poNo) => {
+export const getPlanningSheetData = async (
+  updatedNewCustomerPo,
+  poNo,
+  id
+) => {
   try {
     // Get the planning sheet IDs
     const getPlanningSheetsId = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/production/get-getGeneratedProductionPlanningSheetIds/${poNo}`
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/production/get-findPlanningSheetIdByPoNoAndListItemNo?poNo=${poNo}&listItemID=${id}`
     );
 
     // Planning sheet ID

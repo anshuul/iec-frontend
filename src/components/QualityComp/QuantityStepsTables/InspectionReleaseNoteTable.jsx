@@ -24,9 +24,22 @@ const InspectionReleaseNoteTable = ({ qualityStep }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/inspectionReleaseNote`
-        );
+
+        let response;
+
+        // Check if there's a selected customer PO in localStorage
+        const selectedPOListItem = localStorage.getItem("selectedPOListItem");
+        if (selectedPOListItem) {
+          const parsedPOListItem = JSON.parse(selectedPOListItem);
+          response = await axios.get(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/inspectionReleaseNote/getBy-listItemNo?poNo=${parsedPOListItem.poNo}&listItemNo=${parsedPOListItem.POListNo}`
+          );
+        } else {
+          response = await axios.get(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/inspectionReleaseNote`
+          );
+        }
+
         console.log("response.data", response.data);
         const heatTreatmentData = response.data;
 
@@ -36,7 +49,8 @@ const InspectionReleaseNoteTable = ({ qualityStep }) => {
             IRNNo: item.irnNo,
             CustomerName: item.customerName,
             CreatedDate: new Date(item.date).toLocaleDateString(),
-            id: item._id
+            id: item._id,
+            CreatedBy: item.createdBy,
           };
         });
         setRowData(formattedData);

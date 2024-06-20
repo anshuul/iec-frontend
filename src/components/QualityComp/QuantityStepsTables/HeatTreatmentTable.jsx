@@ -24,9 +24,19 @@ const HeatTreatmentTable = ({ qualityStep }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/heatTreatment`
-        );
+        let response;
+        // Check if there's a selected customer PO in localStorage
+        const selectedPOListItem = localStorage.getItem("selectedPOListItem");
+        if (selectedPOListItem) {
+          const parsedPOListItem = JSON.parse(selectedPOListItem);
+          response = await axios.get(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/heatTreatment/getBy-listItemNo?poNo=${parsedPOListItem.poNo}&listItemNo=${parsedPOListItem.POListNo}`
+          );
+        } else {
+          response = await axios.get(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/heatTreatment`
+          );
+        }
         console.log("response.data", response.data);
         const heatTreatmentData = response.data;
 
@@ -35,7 +45,8 @@ const HeatTreatmentTable = ({ qualityStep }) => {
             srNo: index + 1,
             HTR: item.htrNo,
             CreatedDate: new Date(item.date).toLocaleDateString(),
-            id: item._id
+            id: item._id,
+            CreatedBy: item.createdBy,
           };
         });
         setRowData(formattedData);

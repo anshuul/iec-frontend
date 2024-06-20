@@ -313,12 +313,12 @@ const ProductionTable = () => {
       maxWidth: 80,
       sort: "desc",
     },
-    {
-      headerName: "Action",
-      cellRenderer: CustomButtonComponent,
-      minWidth: 150,
-      maxWidth: 200,
-    },
+    // {
+    //   headerName: "Action",
+    //   cellRenderer: CustomButtonComponent,
+    //   minWidth: 150,
+    //   maxWidth: 200,
+    // },
     { headerName: "Customer PO", field: "CustomerPO", flex: 1, sort: "desc" },
     {
       headerName: "Customer Name",

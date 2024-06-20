@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { MdModeEdit } from "react-icons/md";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { BsInfoCircle } from "react-icons/bs";
-import { IoSearch } from "react-icons/io5";
 
 // AGGrid
 import { AgGridReact } from "ag-grid-react";
@@ -23,9 +22,22 @@ const DispatchTable = ({ qualityStep }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/dispatch`
-        );
+
+        let response;
+
+        // Check if there's a selected customer PO in localStorage
+        const selectedPOListItem = localStorage.getItem("selectedPOListItem");
+        if (selectedPOListItem) {
+          const parsedPOListItem = JSON.parse(selectedPOListItem);
+          response = await axios.get(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/dispatch/getBy-listItemNo?poNo=${parsedPOListItem.poNo}&listItemNo=${parsedPOListItem.POListNo}`
+          );
+        } else {
+          response = await axios.get(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/dispatch`
+          );
+        }
+
         console.log("response.data", response.data);
         const heatTreatmentData = response.data;
 
@@ -36,6 +48,7 @@ const DispatchTable = ({ qualityStep }) => {
             CustomerName: item.customerName,
             CreatedDate: new Date(item.date).toLocaleDateString(),
             id: item._id,
+            CreatedBy: item.createdBy,
           };
         });
         setRowData(formattedData);

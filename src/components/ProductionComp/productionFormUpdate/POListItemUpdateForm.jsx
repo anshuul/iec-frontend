@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import ListItemInputs from "../ProductionStepsForms/ListItem/ListItemInputs";
 import Container from "@/components/common/Container";
 import { getPlanningSheetData } from "@/utils/Planning-Sheet/getPlanningSheetData";
+import { getMaterialIssueSlipData } from "@/utils/Material-Issue-Slip/getMaterialIssueSlipData";
+import { getRoutingSheetData } from "@/utils/Routing-Sheet/getRoutingSheetData";
 
 const POListItemUpdateForm = () => {
   const router = useRouter();
@@ -33,6 +35,9 @@ const POListItemUpdateForm = () => {
   });
 
   const [saved, setSaved] = useState(false);
+
+  const selectedCustomerPO = localStorage.getItem("selectedCustomerPO");
+  const parsedCustomerPO = JSON.parse(selectedCustomerPO);
 
   useEffect(() => {
     const fetchPOListItem = async () => {
@@ -104,15 +109,49 @@ const POListItemUpdateForm = () => {
         selectedSurface,
         modifiedQuantity,
         customPoQuantity,
-      } = await getPlanningSheetData(updatedNewCustomerPo, poNo);
+      } = await getPlanningSheetData(updatedNewCustomerPo, poNo, id);
 
-      console.log("getPlanningSheetData in POListItem", {
-        planningSheetID,
-        selectedItem,
-        selectedSurface,
-        modifiedQuantity,
-        customPoQuantity,
-      })
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/production/update-GeneratePlanningSheets/${planningSheetID}`,
+        {
+          customerPO: updatedNewCustomerPo,
+          poNo: parsedCustomerPO.poNo,
+          customerName: parsedCustomerPO.customerName,
+          selectedItem,
+          selectedSurface,
+          modifiedQuantity,
+          customPoQuantity,
+        }
+      );
+
+      const { MaterialIssueSlipId } = await getMaterialIssueSlipData(
+        poNo,
+        POListNo
+      );
+
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/materialissueslip/update-GenerateMaterialIssueSlips/${MaterialIssueSlipId}`,
+        {
+          customerPO: updatedNewCustomerPo,
+          poNo: parsedCustomerPO.poNo,
+          customerName: parsedCustomerPO.customerName,
+          selectedItem,
+          modifiedQuantity,
+          customPoQuantity,
+        }
+      );
+
+      const { routingingSheetID } = await getRoutingSheetData(poNo);
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/update-GeneratedRoutingSheetByIDs/${routingingSheetID}`,
+        {
+          newCustomerPo: updatedNewCustomerPo,
+          poNo: parsedCustomerPO.poNo,
+          selectedItem,
+          modifiedQuantity,
+          customPoQuantity,
+        }
+      );
 
       setSaved(true);
       router.push(`/production/po-list-item`);
@@ -129,7 +168,6 @@ const POListItemUpdateForm = () => {
         <h1 className="my-4 text-2xl font-bold">Update PO List Item</h1>
         <div className="flex items-center">
           <div className="flex-grow px-2 overflow-x-auto border border-gray-200 rounded-md w-96">
-
             <ListItemInputs
               materialCode={formData.materialCode}
               setMaterialCode={(value) =>
@@ -216,7 +254,7 @@ const POListItemUpdateForm = () => {
               setQuantity={(value) =>
                 setFormData((prev) => ({ ...prev, quantity: value }))
               }
-              getRawMaterialDia={() => { }}
+              getRawMaterialDia={() => {}}
               saveListItem={handleSave}
               saved={saved}
               index={1}

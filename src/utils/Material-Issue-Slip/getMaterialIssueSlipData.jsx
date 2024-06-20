@@ -1,10 +1,10 @@
 import axios from "axios";
 
-export const getMaterialIssueSlipData = async (updatedCustomerPO) => {
+export const getMaterialIssueSlipData = async (poNo, POListNo) => {
   try {
     // Get the planning sheet IDs
     const getMaterialIssueSlipId = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/materialissueslip/get-getGeneratedMaterialIssueSlipIDByPoNo/${updatedCustomerPO.poNo}`
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/materialissueslip/get-findMaterialIssueSlipIdByPoNoAndListItemNo?poNo=${poNo}&listItemNo=${POListNo}`
     );
 
     // Planning sheet ID

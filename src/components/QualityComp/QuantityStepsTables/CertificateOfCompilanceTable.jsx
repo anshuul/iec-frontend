@@ -24,9 +24,22 @@ const CertificateOfCompilanceTable = ({ qualityStep }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/coc`
-        );
+
+        let response;
+
+        // Check if there's a selected customer PO in localStorage
+        const selectedPOListItem = localStorage.getItem("selectedPOListItem");
+        if (selectedPOListItem) {
+          const parsedPOListItem = JSON.parse(selectedPOListItem);
+          response = await axios.get(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/coc/getBy-listItemNo?poNo=${parsedPOListItem.poNo}&listItemNo=${parsedPOListItem.POListNo}`
+          );
+        } else {
+          response = await axios.get(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/coc`
+          );
+        }
+
         console.log("response.data", response.data);
         const responseData = response.data;
 
@@ -37,6 +50,7 @@ const CertificateOfCompilanceTable = ({ qualityStep }) => {
             CustomerName: item.customerName,
             CreatedDate: new Date(item.date).toLocaleDateString(),
             id: item._id,
+            CreatedBy: item.createdBy,
           };
         });
         setRowData(formattedData);
