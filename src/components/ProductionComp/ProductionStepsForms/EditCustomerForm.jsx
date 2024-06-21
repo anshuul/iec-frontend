@@ -53,14 +53,14 @@ const EditCustomerForm = () => {
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/${poNo}`
         );
         console.log("response", response.data.customerPO);
-        setCustomerPO(response.data.customerPO); // Set the customer PO data in state
+        setCustomerPO(response.data.customerPO);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
     if (poNo) {
-      fetchData(); // Fetch customer PO data when CustomerPO is available
+      fetchData();
     }
   }, [poNo]);
 

@@ -14,6 +14,7 @@ import MaterialIssueSlipHistoryForm from "@/components/ProductionComp/RevisionHi
 import RoutingSheetHistoryForm from "@/components/ProductionComp/RevisionHistoryForms/RoutingSheetHistoryForm";
 import POListItemUpdateForm from "@/components/ProductionComp/productionFormUpdate/POListItemUpdateForm";
 import POListItemHistoryForm from "@/components/ProductionComp/ProductionStepsForms/ListItem/POListItemHistoryForm";
+import CreateListItemForm from "@/components/ProductionComp/ProductionStepsForms/ListItem/CreateListItemForm";
 
 const productionForm = ({ params }) => {
   const { productionForm } = params;
@@ -71,6 +72,10 @@ const productionForm = ({ params }) => {
         <DimensionReportForm productionForm={productionForm} />
       )}
 
+      {/* POList Item Create Form */}
+      {productionForm === "POListItemForm" && (
+        <CreateListItemForm productionForm={productionForm} />
+      )}
       {/* POList Item Update */}
       {productionForm === "POListItemFormUpdate" && (
         <POListItemUpdateForm productionForm={productionForm} />

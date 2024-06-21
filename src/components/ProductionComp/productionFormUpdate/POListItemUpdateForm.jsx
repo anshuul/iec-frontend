@@ -124,10 +124,7 @@ const POListItemUpdateForm = () => {
         }
       );
 
-      const { MaterialIssueSlipId } = await getMaterialIssueSlipData(
-        poNo,
-        POListNo
-      );
+      const { MaterialIssueSlipId } = await getMaterialIssueSlipData(poNo, id);
 
       await axios.put(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/materialissueslip/update-GenerateMaterialIssueSlips/${MaterialIssueSlipId}`,
@@ -141,7 +138,7 @@ const POListItemUpdateForm = () => {
         }
       );
 
-      const { routingingSheetID } = await getRoutingSheetData(poNo);
+      const { routingingSheetID } = await getRoutingSheetData(poNo, id);
       await axios.put(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/update-GeneratedRoutingSheetByIDs/${routingingSheetID}`,
         {

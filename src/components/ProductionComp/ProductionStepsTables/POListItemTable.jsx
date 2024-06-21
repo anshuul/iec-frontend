@@ -26,17 +26,25 @@ const POListItemTable = ({ productionStep }) => {
     setShowHistoryTable(false);
   };
 
+  // Retrieve poNo from local storage
+  const selectedCustomerPO = localStorage.getItem("selectedCustomerPO");
+  const parsedCustomerPO = JSON.parse(selectedCustomerPO);
+  const poNo = parsedCustomerPO ? parsedCustomerPO.poNo : null;
+
   const handleClick = () => {
-    router.push(`/production/${productionStep}/POListItemForm`);
+    if (poNo) {
+      router.push(`/production/${productionStep}/POListItemForm?poNo=${poNo}`);
+    } else {
+      console.error("No PO number found.");
+    }
   };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
+
         let response;
-        const selectedCustomerPO = localStorage.getItem("selectedCustomerPO");
-        const parsedCustomerPO = JSON.parse(selectedCustomerPO);
 
         if (selectedCustomerPO) {
           console.log("poNo", parsedCustomerPO.poNo);
