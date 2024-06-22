@@ -95,7 +95,7 @@ const HardnessReportUpdateForm = () => {
       };
 
       const response = await axios.put(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/hardness/upate-hardness-report/${id}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/hardness/update-hardness-report/${id}`,
         formData
       );
       console.log("response in quality module hardness report", response);

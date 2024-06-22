@@ -4,7 +4,7 @@ export const getRoutingSheetData = async (poNo, id) => {
   try {
     // Get the planning sheet IDs
     const getRoutingingSheetsId = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/get-findRoutingSheetIdByPoNoAndListItemNo?${poNo}&listItemID=${id}`
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/get-findRoutingSheetIdByPoNoAndListItemNo?poNo=${poNo}&listItemID=${id}`
     );
 
     // Planning sheet ID

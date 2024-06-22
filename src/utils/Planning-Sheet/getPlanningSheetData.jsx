@@ -13,7 +13,7 @@ export const getPlanningSheetData = async (
 
     // Planning sheet ID
     const planningSheetID = getPlanningSheetsId.data;
-    console.log("planningSheetID", planningSheetID);
+    console.log("planningSheetID in generated", planningSheetID);
 
     // selectedItem
     const selectedItem = updatedNewCustomerPo.selectedItem;

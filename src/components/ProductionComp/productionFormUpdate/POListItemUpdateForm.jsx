@@ -7,6 +7,10 @@ import Container from "@/components/common/Container";
 import { getPlanningSheetData } from "@/utils/Planning-Sheet/getPlanningSheetData";
 import { getMaterialIssueSlipData } from "@/utils/Material-Issue-Slip/getMaterialIssueSlipData";
 import { getRoutingSheetData } from "@/utils/Routing-Sheet/getRoutingSheetData";
+import { getHeatTreatmentData } from "@/utils/Quality_Module/getHeatTreatmentData";
+import { getHardnessData } from "@/utils/Quality_Module/getHardnessData";
+import { getMPIData } from "@/utils/Quality_Module/getMPIData";
+import { getCOCData } from "@/utils/Quality_Module/getCOCData";
 
 const POListItemUpdateForm = () => {
   const router = useRouter();
@@ -138,15 +142,67 @@ const POListItemUpdateForm = () => {
         }
       );
 
-      const { routingingSheetID } = await getRoutingSheetData(poNo, id);
+      // const { routingingSheetID } = await getRoutingSheetData(poNo, id);
+      // await axios.put(
+      //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/update-GeneratedRoutingSheetByIDs/${routingingSheetID}`,
+      //   {
+      //     newCustomerPo: updatedNewCustomerPo,
+      //     poNo: parsedCustomerPO.poNo,
+      //     selectedItem,
+      //     modifiedQuantity,
+      //     customPoQuantity,
+      //   }
+      // );
+
+      const { heatTreatmentID } = await getHeatTreatmentData(poNo, id);
+
       await axios.put(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/update-GeneratedRoutingSheetByIDs/${routingingSheetID}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/heatTreatment/update-generatedHeatTreatment-report/${heatTreatmentID}`,
         {
           newCustomerPo: updatedNewCustomerPo,
           poNo: parsedCustomerPO.poNo,
-          selectedItem,
           modifiedQuantity,
           customPoQuantity,
+          createdBy: parsedCustomerPO.createdBy,
+        }
+      );
+
+      const { hardnessReportId } = await getHardnessData(poNo, id);
+
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/hardness/update-generatedHardness-report/${hardnessReportId}`,
+        {
+          newCustomerPo: updatedNewCustomerPo,
+          poNo: parsedCustomerPO.poNo,
+          modifiedQuantity,
+          customPoQuantity,
+          createdBy: parsedCustomerPO.createdBy,
+        }
+      );
+
+      const { mpiReportId } = await getMPIData(poNo, id);
+
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/mpi/update-generatedMPI-report/${mpiReportId}`,
+        {
+          newCustomerPo: updatedNewCustomerPo,
+          poNo: parsedCustomerPO.poNo,
+          modifiedQuantity,
+          customPoQuantity,
+          createdBy: parsedCustomerPO.createdBy,
+        }
+      );
+
+      // COC
+      const { cocReportId } = await getCOCData(poNo, id);
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/coc/update-generateCOCReport-report/${cocReportId}`,
+        {
+          newCustomerPo: updatedNewCustomerPo,
+          poNo: parsedCustomerPO.poNo,
+          modifiedQuantity,
+          customPoQuantity,
+          createdBy: parsedCustomerPO.createdBy,
         }
       );
 
