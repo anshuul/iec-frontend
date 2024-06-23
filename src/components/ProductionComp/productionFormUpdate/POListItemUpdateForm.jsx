@@ -11,6 +11,8 @@ import { getHeatTreatmentData } from "@/utils/Quality_Module/getHeatTreatmentDat
 import { getHardnessData } from "@/utils/Quality_Module/getHardnessData";
 import { getMPIData } from "@/utils/Quality_Module/getMPIData";
 import { getCOCData } from "@/utils/Quality_Module/getCOCData";
+import { getInspectionData } from "@/utils/Quality_Module/getInspectionData";
+import { getDispatchData } from "@/utils/Quality_Module/getDispatchData";
 
 const POListItemUpdateForm = () => {
   const router = useRouter();
@@ -206,6 +208,32 @@ const POListItemUpdateForm = () => {
         }
       );
 
+      // Inspection Release Note
+      const { inspectionReportId } = await getInspectionData(poNo, id);
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/inspectionReleaseNote/update-generatedInspection-note/${inspectionReportId}`,
+        {
+          newCustomerPo: updatedNewCustomerPo,
+          poNo: parsedCustomerPO.poNo,
+          modifiedQuantity,
+          customPoQuantity,
+          createdBy: parsedCustomerPO.createdBy,
+        }
+      );
+
+      // Dispatch Release Note
+      const { dispatchReportId } = await getDispatchData(poNo, id);
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/dispatch/update-generatedDispatch-report/${dispatchReportId}`,
+        {
+          newCustomerPo: updatedNewCustomerPo,
+          poNo: parsedCustomerPO.poNo,
+          modifiedQuantity,
+          customPoQuantity,
+          createdBy: parsedCustomerPO.createdBy,
+        }
+      );
+
       setSaved(true);
       router.push(`/production/po-list-item`);
     } catch (error) {
@@ -307,7 +335,7 @@ const POListItemUpdateForm = () => {
               setQuantity={(value) =>
                 setFormData((prev) => ({ ...prev, quantity: value }))
               }
-              getRawMaterialDia={() => {}}
+              getRawMaterialDia={() => { }}
               saveListItem={handleSave}
               saved={saved}
               index={1}

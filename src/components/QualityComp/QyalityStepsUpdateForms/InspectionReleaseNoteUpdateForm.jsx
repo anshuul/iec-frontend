@@ -232,7 +232,7 @@ const InspectionReleaseNoteUpdateForm = () => {
         </div>
 
         <hr className="my-2 border-t border-gray-300" />
-        <h1 className="font-bold text-xl">Item Info</h1>
+        <h1 className="text-xl font-bold">Item Info</h1>
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-2 lg:grid-cols-1 md:grid-cols-2">
           {/* First Column */}
           <div className="flex flex-col items-start">
@@ -302,7 +302,7 @@ const InspectionReleaseNoteUpdateForm = () => {
         </div>
 
         <hr className="my-2 border-t border-gray-300" />
-        <h1 className="font-bold text-xl">Applicable Standard</h1>
+        <h1 className="text-xl font-bold">Applicable Standard</h1>
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-2 lg:grid-cols-1 md:grid-cols-2">
           {/* First Column */}
           <div className="flex flex-col items-start">
@@ -415,11 +415,11 @@ const InspectionReleaseNoteUpdateForm = () => {
                 </button>
                 <div className="flex flex-wrap ml-4">
                   {/* {selectedImages.map((image, index) => (
-                    <div key={index} className="flex items-center mr-4 mb-2">
+                    <div key={index} className="flex items-center mb-2 mr-4">
                       <span className="mr-2">{image.name}</span>
                       <button
                         onClick={() => removeImage(index)}
-                        className="flex items-center text-red-600 bg-none p-0"
+                        className="flex items-center p-0 text-red-600 bg-none"
                       >
                         <IoIosCloseCircleOutline className="text-2xl cursor-pointer" />
                       </button>
