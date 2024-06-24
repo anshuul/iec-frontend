@@ -13,6 +13,7 @@ import { getMPIData } from "@/utils/Quality_Module/getMPIData";
 import { getCOCData } from "@/utils/Quality_Module/getCOCData";
 import { getInspectionData } from "@/utils/Quality_Module/getInspectionData";
 import { getDispatchData } from "@/utils/Quality_Module/getDispatchData";
+import { FiArrowLeft } from "react-icons/fi";
 
 const POListItemUpdateForm = () => {
   const router = useRouter();
@@ -144,17 +145,17 @@ const POListItemUpdateForm = () => {
         }
       );
 
-      // const { routingingSheetID } = await getRoutingSheetData(poNo, id);
-      // await axios.put(
-      //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/update-GeneratedRoutingSheetByIDs/${routingingSheetID}`,
-      //   {
-      //     newCustomerPo: updatedNewCustomerPo,
-      //     poNo: parsedCustomerPO.poNo,
-      //     selectedItem,
-      //     modifiedQuantity,
-      //     customPoQuantity,
-      //   }
-      // );
+      const { routingingSheetID } = await getRoutingSheetData(poNo, id);
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/update-GeneratedRoutingSheetByIDs/${routingingSheetID}`,
+        {
+          newCustomerPo: updatedNewCustomerPo,
+          poNo: parsedCustomerPO.poNo,
+          selectedItem,
+          modifiedQuantity,
+          customPoQuantity,
+        }
+      );
 
       const { heatTreatmentID } = await getHeatTreatmentData(poNo, id);
 
@@ -243,9 +244,90 @@ const POListItemUpdateForm = () => {
     }
   };
 
+  const handleGoBack = () => {
+    router.back();
+  };
+
+  const getRawMaterialDia = async () => {
+    try {
+      let adjustedLength;
+
+      if (formData.lengthDimension === "mm") {
+        // If length dimension is in mm, simply add 5 to the length
+        adjustedLength = parseFloat(formData.length) + 5;
+      } else if (formData.lengthDimension === "inch") {
+        // Handle potential format "X.Y/Z inch"
+        const parts = formData.length.split("/");
+        if (parts.length === 2) {
+          const numerator = parseFloat(parts[0]);
+          const denominator = parseFloat(parts[1]);
+          const lengthInInch = numerator / denominator;
+          adjustedLength = lengthInInch * 25.4 + 5;
+        } else {
+          // If not in the format "X.Y/Z inch", assume plain inch value
+          adjustedLength = parseFloat(formData.length) * 25.4 + 5;
+        }
+      } else {
+        // Raise an error for invalid dimension
+        throw new Error("Invalid length dimension. Must be 'mm' or 'inch'.");
+      }
+
+      // Set the adjusted length to the cuttingLength state
+      setFormData((prev) => ({
+        ...prev,
+        cuttingLength: adjustedLength.toString(),
+      }));
+
+      let response;
+      if (formData.diameterDimension === "mm") {
+        response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/helperRoutes/cuttingRawDataMM`,
+          {
+            params: {
+              diameter: `${formData.diameter}`,
+              thread: `${formData.thread}`,
+            },
+          }
+        );
+      } else if (formData.diameterDimension === "inch") {
+        response = await axios.get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/helperRoutes/cuttingRawDataInch`,
+          {
+            params: {
+              diameter: `${formData.diameter}`,
+              thread: `${formData.thread}`,
+            },
+          }
+        );
+      }
+
+      const matchingObject = response.data.matchingObject;
+      if (matchingObject) {
+        setFormData((prev) => ({
+          ...prev,
+          cuttingDiameter: matchingObject.RAW_MATERIAL_DIA.toString(),
+          cuttingThread: matchingObject.PITCH.toString(),
+        }));
+      } else {
+        console.log("No matching object found.");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   return (
     <Container>
       <div className="w-full p-8 mx-auto bg-white rounded shadow-md">
+        <button
+          onClick={handleGoBack}
+          className="flex items-center mb-4 text-lg font-bold text-black"
+        >
+          <FiArrowLeft className="mr-2" />
+          Back
+        </button>
+        <hr className="my-2 border-t border-gray-300" />
+
         <h1 className="my-4 text-2xl font-bold">Update PO List Item</h1>
         <div className="flex items-center">
           <div className="flex-grow px-2 overflow-x-auto border border-gray-200 rounded-md w-96">
@@ -335,7 +417,7 @@ const POListItemUpdateForm = () => {
               setQuantity={(value) =>
                 setFormData((prev) => ({ ...prev, quantity: value }))
               }
-              getRawMaterialDia={() => { }}
+              getRawMaterialDia={() => getRawMaterialDia()}
               saveListItem={handleSave}
               saved={saved}
               index={1}
