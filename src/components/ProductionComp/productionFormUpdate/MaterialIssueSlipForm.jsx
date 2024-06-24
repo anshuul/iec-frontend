@@ -7,6 +7,10 @@ import Container from "@/components/common/Container";
 import MaterialIssueSlip from "@/components/PDF/MaterialSlip/MaterialIssueSlip";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { IoIosCloseCircleOutline } from "react-icons/io";
+import { getHeatTreatmentData } from "@/utils/Quality_Module/getHeatTreatmentData";
+import { getHardnessData } from "@/utils/Quality_Module/getHardnessData";
+import { getMPIData } from "@/utils/Quality_Module/getMPIData";
+import { getCOCData } from "@/utils/Quality_Module/getCOCData";
 
 const MaterialIssueSlipForm = () => {
   const router = useRouter();
@@ -35,9 +39,9 @@ const MaterialIssueSlipForm = () => {
 
   const [loading, setLoading] = useState(false);
 
-
   const selectedFilePath =
-    selectedFile && `${process.env.NEXT_PUBLIC_BACKEND_URL}/${selectedFile.path}`;
+    selectedFile &&
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/${selectedFile.path}`;
 
   const handleDownloadSelected = async () => {
     try {
@@ -49,7 +53,7 @@ const MaterialIssueSlipForm = () => {
       const url = window.URL.createObjectURL(new Blob([blob]));
       const a = document.createElement("a");
       a.href = url;
-      a.download = selectedFilePath.split("/").pop(); // Set the file name
+      a.download = selectedFilePath.split("/").pop();
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -107,7 +111,7 @@ const MaterialIssueSlipForm = () => {
     };
 
     if (id) {
-      fetchData(); // Fetch data when id is available
+      fetchData();
     }
   }, [id]);
 
@@ -130,10 +134,20 @@ const MaterialIssueSlipForm = () => {
     try {
       setLoading(true);
       const newCustomerPO = JSON.parse(
-        localStorage.getItem("selectedCustomerPO")
+        localStorage.getItem("selectedPOListItem")
       );
 
-      const selectedItem = newCustomerPO.selectedItem;
+      const listItemId = newCustomerPO._id;
+      console.log("first listItemId", listItemId);
+
+      const responseListItem = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/customerPO/get-listItemByID/${newCustomerPO.poNo}/${listItemId}`
+      );
+
+      const listItemData = responseListItem.data.listItem;
+      console.log("listItemData for list item", listItemData);
+      const selectedItem = listItemData.selectedItem;
+      console.log("selectedItem for linking listItem", selectedItem);
 
       const formData = new FormData();
 
@@ -188,7 +202,6 @@ const MaterialIssueSlipForm = () => {
 
       const fetchProductionReportId = await axios.get(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/get-generatedProductionReportId/${UpdatedMaterialIssueSlipData.poNo}/${UpdatedMaterialIssueSlipData.prefix}`
-        // `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/get-generatedProductionReportId?poNo=${UpdatedMaterialIssueSlipData.poNo}&&prefix=${UpdatedMaterialIssueSlipData.prefix}`
       );
       console.log("fetchProductionReportId", fetchProductionReportId.data);
       const productionReportId =
@@ -197,32 +210,86 @@ const MaterialIssueSlipForm = () => {
       console.log("productionReportId", productionReportId);
 
       const nutsCountMatch = selectedItem.match(/\d+nuts/);
+      console.log("nutsCountMatch for linking list item", nutsCountMatch);
 
-      let modifiedQuantity = newCustomerPO.quantity;
-      let customPoQuantity = newCustomerPO.quantity;
+      let modifiedQuantity = listItemData.quantity;
+      let customPoQuantity = listItemData.quantity;
 
       if (nutsCountMatch) {
         const nutsCount = parseInt(nutsCountMatch[0].replace("nuts", ""));
         if (!isNaN(nutsCount)) {
-          modifiedQuantity *= nutsCount; // Increment quantity based on the number of nuts
+          modifiedQuantity *= nutsCount;
         } else {
           throw new Error("Invalid selectedItem format");
         }
       }
 
       // Update or Create Production Report
-      const updateProductionReport = await axios.put(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/create-updateGenerateProductionReport/${productionReportId}`,
+      // const updateProductionReport = await axios.put(
+      //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/productionReport/create-updateGenerateProductionReport/${productionReportId}`,
+      //   {
+      //     newCustomerPo: listItemData,
+      //     UpdatedMaterialIssueSlipData: UpdatedMaterialIssueSlipData,
+      //     selectedItem: selectedItem,
+      //     modifiedQuantity: modifiedQuantity,
+      //     customPoQuantity: customPoQuantity,
+      //   }
+      // );
+      // console.log("updateProductionReport", updateProductionReport);
+
+      const { heatTreatmentID } = await getHeatTreatmentData(
+        newCustomerPO.poNo,
+        listItemId
+      );
+
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/heatTreatment/UpdateHeatTreatmentReportByMaterialIssue-report/${heatTreatmentID}`,
         {
-          newCustomerPo: newCustomerPO,
-          UpdatedMaterialIssueSlipData: UpdatedMaterialIssueSlipData,
-          selectedItem: selectedItem,
-          modifiedQuantity: modifiedQuantity,
-          customPoQuantity: customPoQuantity,
+          newCustomerPo: UpdatedMaterialIssueSlipData,
+          poNo: newCustomerPO.poNo,
+          createdBy: newCustomerPO.createdBy,
         }
       );
-      console.log("updateProductionReport", updateProductionReport);
+
+      const { hardnessReportId } = await getHardnessData(
+        newCustomerPO.poNo,
+        listItemId
+      );
+
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/hardness/UpdateHardnessReportByMaterialIssue-report/${hardnessReportId}`,
+        {
+          newCustomerPo: UpdatedMaterialIssueSlipData,
+          poNo: newCustomerPO.poNo,
+          createdBy: newCustomerPO.createdBy,
+        }
+      );
+
+      const { mpiReportId } = await getMPIData(newCustomerPO.poNo, listItemId);
+
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/mpi/UpdateMPIReportByMaterialIssue-report/${mpiReportId}`,
+        {
+          newCustomerPo: UpdatedMaterialIssueSlipData,
+          poNo: newCustomerPO.poNo,
+          createdBy: newCustomerPO.createdBy,
+        }
+      );
+
+      // COC
+      const { cocReportId } = await getCOCData(newCustomerPO.poNo, listItemId);
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/coc/UpdateCOCReportByMaterialIssue-report/${cocReportId}`,
+        {
+          newCustomerPo: UpdatedMaterialIssueSlipData,
+          poNo: newCustomerPO.poNo,
+          createdBy: newCustomerPO.createdBy,
+        }
+      );
+
+      console.log("heatTreatmentID in update material slip", heatTreatmentID);
       router.push("/production/material-issue-slip");
+      console.log("Navigate Successfully!");
     } catch (error) {
       console.log(error);
     } finally {
@@ -250,7 +317,7 @@ const MaterialIssueSlipForm = () => {
         const numerator = parseFloat(parts[0]);
         const denominator = parseFloat(parts[1]);
         const diameterInInch = numerator / denominator;
-        diameterInMM = diameterInInch * 25.4; // Convert inches to millimeters
+        diameterInMM = diameterInInch * 25.4;
       }
     }
 
@@ -262,7 +329,7 @@ const MaterialIssueSlipForm = () => {
         const numerator = parseFloat(parts[0]);
         const denominator = parseFloat(parts[1]);
         const lengthInInch = numerator / denominator;
-        lengthInMM = lengthInInch * 25.4; // Convert inches to millimeters
+        lengthInMM = lengthInInch * 25.4;
       }
     }
 
@@ -529,7 +596,9 @@ const MaterialIssueSlipForm = () => {
         <div className="flex justify-end">
           <button
             onClick={saveFormData}
-            className={`flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded ${loading ? 'cursor-not-allowed opacity-50' : ''}`}
+            className={`flex items-center px-4 py-2 mr-4 text-black bg-gray-300 rounded ${
+              loading ? "cursor-not-allowed opacity-50" : ""
+            }`}
             disabled={loading}
           >
             Save
