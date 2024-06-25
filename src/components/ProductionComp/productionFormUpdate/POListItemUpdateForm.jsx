@@ -145,18 +145,18 @@ const POListItemUpdateForm = () => {
         }
       );
 
-      const { routingingSheetID } = await getRoutingSheetData(poNo, id);
-      console.log("routingingSheetID in list item update", routingingSheetID)
-      await axios.put(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/update-GeneratedRoutingSheetByIDs/${routingingSheetID}`,
-        {
-          newCustomerPo: updatedNewCustomerPo,
-          poNo: parsedCustomerPO.poNo,
-          selectedItem,
-          modifiedQuantity,
-          customPoQuantity,
-        }
-      );
+      // const { routingingSheetID } = await getRoutingSheetData(poNo, id);
+      // console.log("routingingSheetID in list item update", routingingSheetID)
+      // await axios.put(
+      //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/routingSheet/update-GeneratedRoutingSheetByIDs/${routingingSheetID}`,
+      //   {
+      //     newCustomerPo: updatedNewCustomerPo,
+      //     poNo: parsedCustomerPO.poNo,
+      //     selectedItem,
+      //     modifiedQuantity,
+      //     customPoQuantity,
+      //   }
+      // );
 
       const { heatTreatmentID } = await getHeatTreatmentData(poNo, id);
 

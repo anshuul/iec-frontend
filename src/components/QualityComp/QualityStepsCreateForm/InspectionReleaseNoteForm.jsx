@@ -47,7 +47,50 @@ const InspectionReleaseNoteForm = () => {
 
   const [date, setDate] = useState("");
 
-  const saveFormData = async () => {};
+  const saveFormData = async () => {
+    try {
+      const selectedCustomerPO = JSON.parse(
+        localStorage.getItem("selectedPOListItem")
+      );
+
+      const formData = {
+        irnNo,
+        soNO,
+        customerName,
+        customerPONO,
+        productionItemDescription,
+        size,
+        bslType,
+        rawMaterialHeatNo,
+        lotNO,
+        material,
+        poSrNO,
+        quantity,
+        applicableStandard,
+        mpiExaminationReport,
+        utTestReport,
+        visualInspection,
+        markingMonogramme,
+        MTC,
+        heatTreatment,
+        coating,
+        visualAndPhysicalInspection,
+        poNo: selectedCustomerPO.poNo,
+        listItemNo: selectedCustomerPO.POListNo,
+        listItemID: selectedCustomerPO._id,
+        date: date,
+      };
+
+      // Call your API endpoint here with axios
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/inspectionReleaseNote/create-inspectionReleaseNote-note`,
+        formData
+      );
+      console.log("response in quality module inspection report", response);
+    } catch (error) {
+      console.error("Error occurred while saving form data:", error);
+    }
+  };
 
   const handleDateChange = (date) => {
     setDate(date);

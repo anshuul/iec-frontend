@@ -35,7 +35,46 @@ const CertificateOfCompilanceForm = () => {
 
   const [date, setDate] = useState("");
 
-  const saveFormData = async () => {};
+  const saveFormData = async () => {
+    console.log("start save form data for coc quality module");
+    try {
+      const selectedCustomerPO = JSON.parse(
+        localStorage.getItem("selectedPOListItem")
+      );
+
+      console.log("selectedCustomerPO in coc", selectedCustomerPO);
+
+      const formData = {
+        cocNo,
+        customerName,
+        customerPONO,
+        soNO,
+        itemDescription,
+        inspectionReleaseNoteNo,
+        size,
+        bslType,
+        rawMaterialHeatNo,
+        lotNO,
+        material,
+        poSrNO,
+        quantity,
+        poNo: selectedCustomerPO.poNo,
+        listItemNo: selectedCustomerPO.POListNo,
+        listItemID: selectedCustomerPO._id,
+        date: date,
+      };
+
+      console.log("formData in coc", formData);
+
+      // Call your API endpoint here with axios
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/coc/create-coc-report`,
+        formData
+      );
+      console.log("response in quality module COC treat report", response);
+      router.push("/quality/certificate-compliance");
+    } catch (error) {}
+  };
 
   const handleDateChange = (date) => {
     setDate(date);
@@ -44,6 +83,7 @@ const CertificateOfCompilanceForm = () => {
   const handleGoBack = () => {
     router.back();
   };
+
   return (
     <Container>
       <div className="w-full p-8 mx-auto bg-white rounded shadow-md h-[85vh] overflow-y-auto">

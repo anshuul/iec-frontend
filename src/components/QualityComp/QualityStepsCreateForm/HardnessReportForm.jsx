@@ -54,7 +54,7 @@ const HardnessReportForm = () => {
       //   formData.append("stageOfInspection", stageOfInspection);
       //   formData.append("testResult", testResult);
       //   formData.append("date", date);
-
+      const selectedCustomerPO = JSON.parse(localStorage.getItem("selectedPOListItem"));
       const formData = {
         hdrNo,
         customerName,
@@ -71,16 +71,19 @@ const HardnessReportForm = () => {
         acceptanceStandard,
         stageOfInspection,
         testResult,
+        poNo: selectedCustomerPO.poNo,
+        listItemNo: selectedCustomerPO.POListNo,
+        listItemID: selectedCustomerPO._id,
         date: date,
       };
 
       // Call your API endpoint here with axios
       const response = await axios.post(
-        "${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/hardness/create-hardness-report",
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/hardness/create-hardness-report`,
         formData
       );
       console.log("response in quality module heat treat report", response);
-      router.push("/quality");
+      router.push("/quality/hardness-test-report");
     } catch (error) {
       console.error("Error occurred while saving form data:", error);
     }

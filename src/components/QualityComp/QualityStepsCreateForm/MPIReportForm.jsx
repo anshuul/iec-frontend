@@ -21,7 +21,7 @@ const MPIReportForm = () => {
 
   useEffect(() => {
     // Get data from localStorage when the component mounts
-    const data = JSON.parse(localStorage.getItem("selectedCustomerPO"));
+    const data = JSON.parse(localStorage.getItem("selectedPOListItem"));
     setSelectedCustomerPO(data);
   }, []);
 
@@ -232,6 +232,10 @@ const MPIReportForm = () => {
         pieGaugeCalibrationValidity
       );
       formData.append("date", date);
+
+      formData.append("poNo", selectedCustomerPO.poNo);
+      formData.append("listItemNo", selectedCustomerPO.POListNo);
+      formData.append("listItemID", selectedCustomerPO._id);
 
       formData.append("attachmentPoNo", selectedCustomerPO.poNo);
       formData.append("QualityProcessName", "MPIReport");

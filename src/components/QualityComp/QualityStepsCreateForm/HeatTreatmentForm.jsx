@@ -21,7 +21,7 @@ const HeatTreatmentForm = () => {
 
   useEffect(() => {
     // Get data from localStorage when the component mounts
-    const data = JSON.parse(localStorage.getItem("selectedCustomerPO"));
+    const data = JSON.parse(localStorage.getItem("selectedPOListItem"));
     setSelectedCustomerPO(data);
   }, []);
 
@@ -103,6 +103,9 @@ const HeatTreatmentForm = () => {
       formData.append("temperingProcessNot", temperingProcessNot);
       formData.append("date", date);
       formData.append("attachmentPoNo", selectedCustomerPO.poNo);
+      formData.append("poNo", selectedCustomerPO.poNo);
+      formData.append("listItemNo", selectedCustomerPO.POListNo);
+      formData.append("listItemID", selectedCustomerPO._id);
       formData.append("QualityProcessName", "HeatTreatment");
       selectedImages.forEach((image, index) => {
         formData.append(`newSelectedImages`, image);

@@ -4,7 +4,7 @@ export const getDispatchData = async (poNo, id) => {
     try {
         // Get the Dispatch sheet IDs
         const getDispatchId = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/dispatch/getBy-findDispatchIdByPoNoAndListItemNo?poNo=${poNo}&listItemID=${id}`
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/dispatch/getBy-findDispatchReleaseNoteIdByPoNoAndListItemNo?poNo=${poNo}&listItemID=${id}`
         );
 
         // dispatch sheet ID

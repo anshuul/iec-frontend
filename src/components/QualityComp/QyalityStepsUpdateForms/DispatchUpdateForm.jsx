@@ -339,13 +339,13 @@ const DispatchDispatchUpdateForm = () => {
                   name="attachment"
                   accept="image/*"
                   multiple
-                  //   onChange={handleImageSelection}
+                  //   onChange={handleImageSelection}    
                 />
                 <button
                   //   onClick={handleChooseImageClick}
                   className="flex items-center px-4 py-2 ml-2 text-black bg-gray-300 rounded"
                 >
-                  Choose Image
+                  Choose file
                   <FcGallery className="ml-2" />
                 </button>
                 <div className="flex flex-wrap ml-4">

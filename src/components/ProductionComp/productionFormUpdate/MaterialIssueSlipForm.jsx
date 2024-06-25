@@ -11,6 +11,8 @@ import { getHeatTreatmentData } from "@/utils/Quality_Module/getHeatTreatmentDat
 import { getHardnessData } from "@/utils/Quality_Module/getHardnessData";
 import { getMPIData } from "@/utils/Quality_Module/getMPIData";
 import { getCOCData } from "@/utils/Quality_Module/getCOCData";
+import { getInspectionData } from "@/utils/Quality_Module/getInspectionData";
+import { getDispatchData } from "@/utils/Quality_Module/getDispatchData";
 
 const MaterialIssueSlipForm = () => {
   const router = useRouter();
@@ -287,7 +289,31 @@ const MaterialIssueSlipForm = () => {
         }
       );
 
-      console.log("heatTreatmentID in update material slip", heatTreatmentID);
+      // Inspection Release Note
+      const { inspectionReportId } = await getInspectionData(
+        newCustomerPO.poNo,
+        listItemId
+      );
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/inspectionReleaseNote/UpdateInspectionReportByMaterialIssue-note/${inspectionReportId}`,
+        {
+          newCustomerPo: UpdatedMaterialIssueSlipData,
+          poNo: newCustomerPO.poNo,
+          createdBy: newCustomerPO.createdBy,
+        }
+      );
+
+      // Dispatch Release Note
+      const { dispatchReportId } = await getDispatchData(poNo, id);
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/dispatch/UpdateDispatchReportByMaterialIssue-report/${dispatchReportId}`,
+        {
+          newCustomerPo: UpdatedMaterialIssueSlipData,
+          poNo: newCustomerPO.poNo,
+          createdBy: newCustomerPO.createdBy,
+        }
+      );
+
       router.push("/production/material-issue-slip");
       console.log("Navigate Successfully!");
     } catch (error) {
@@ -296,8 +322,7 @@ const MaterialIssueSlipForm = () => {
       setLoading(false);
     }
   };
-  console.log("materialIssueForm in Form", materialIssueForm);
-  console.log("materialIssueForm.length.value", materialIssueForm.length);
+  
   const handleCalculate = () => {
     const {
       diameter,
