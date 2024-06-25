@@ -41,7 +41,46 @@ const DispatchForm = () => {
 
   const [date, setDate] = useState("");
 
-  const saveFormData = async () => {};
+  const saveFormData = async () => {
+    try {
+      const selectedCustomerPO = JSON.parse(
+        localStorage.getItem("selectedPOListItem")
+      );
+
+      const formData = {
+        daNo,
+        soNO,
+        customerName,
+        customerPONO,
+        productionDescription,
+        InspectionReleaseNoteNo,
+        customerPartylnspReportNo,
+        modeOfDispatch,
+        typeOfPacking,
+        bubblesheet,
+        visualInspection,
+        cleaningDone,
+        xyz,
+        itemDescription,
+        sNo,
+        quantity,
+        poNo: selectedCustomerPO.poNo,
+        listItemNo: selectedCustomerPO.POListNo,
+        listItemID: selectedCustomerPO._id,
+        date: date,
+      };
+
+      // Call your API endpoint here with axios
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/quality/dispatch/create-dispatch-report`,
+        formData
+      );
+      console.log("response in quality module heat treat report", response);
+      router.push("/quality/dispatch");
+    } catch (error) {
+      console.error("Error occurred while saving form data:", error);
+    }
+  };
 
   const handleDateChange = (date) => {
     setDate(date);
@@ -250,10 +289,10 @@ const DispatchForm = () => {
                   name="attachment"
                   accept="image/*"
                   multiple
-                //   onChange={handleImageSelection}
+                  //   onChange={handleImageSelection}
                 />
                 <button
-                //   onClick={handleChooseImageClick}
+                  //   onClick={handleChooseImageClick}
                   className="flex items-center px-4 py-2 ml-2 text-black bg-gray-300 rounded"
                 >
                   Choose Image
